@@ -1,0 +1,12 @@
+# Change Log
+# All notable changes to this project will be documented in this file.
+# This project adheres to [Semantic Versioning](http://semver.org/).
+# includes Added / Changed / Fixed
+
+## [0.2.0] UNRELEASED
+### Added
+- Added code formatter `yapf`.
+
+## [0.1.0] 2020-03-05
+### Added
+- Added gRPC / FastAPI stack requirements
