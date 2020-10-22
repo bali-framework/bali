@@ -6,6 +6,7 @@
 ## [0.2.0] UNRELEASED
 ### Added
 - Added code formatter `yapf`.
+- Added sqla-wrapper
 
 ## [0.1.0] 2020-03-05
 ### Added
