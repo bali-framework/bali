@@ -1,11 +1,10 @@
 import logging
 from functools import wraps
+from typing import Any
 
-from sqlalchemy import create_engine
-from sqlalchemy.exc import OperationalError
-from sqlalchemy.orm import scoped_session
-from sqlalchemy.orm import sessionmaker
 from sqla_wrapper import SQLAlchemy
+from sqlalchemy.exc import OperationalError
+from sqlalchemy.ext.declarative import as_declarative, declared_attr
 
 # from core.config import settings
 
@@ -17,6 +16,21 @@ error_logger = logging.getLogger('error')
 # SessionLocal = scoped_session(session_factory)
 
 # db = SQLAlchemy(settings.SQLALCHEMY_DATABASE_URI)
+
+
+@as_declarative()
+class Base:
+    id: Any
+    __name__: str
+
+    # Generate __tablename__ automatically
+
+    @declared_attr
+    def __tablename__(cls) -> str:
+        return cls.__name__.lower()
+
+    def to_dict(self):
+        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
 
 
 class DB:
