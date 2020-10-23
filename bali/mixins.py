@@ -3,6 +3,9 @@ from .core import db
 
 # noinspection PyMethodMayBeStatic
 class ServiceMixin:
+    def __init__(self):
+        self.db = db
+
     def setup(self):
         pass
 
