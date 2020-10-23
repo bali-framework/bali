@@ -3,6 +3,13 @@
 Simplify gRPC services and clients
 
 
+## database 
+
+```python
+from bali.core import db
+```
+
+
 ### CONTRIBUTE
 
 tag a version:

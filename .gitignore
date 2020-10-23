@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# PyCharm settings
+# TODO: enable some idea files
+.idea/
