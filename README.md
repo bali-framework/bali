@@ -7,6 +7,7 @@ Simplify gRPC services and clients
 
 ```python
 from bali.core import db
+db.connect('DATABASE_URI')  # connect to database when app started
 ```
 
 
