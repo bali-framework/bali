@@ -33,7 +33,7 @@ class DB:
         except AttributeError:
             if not self._session:
                 raise Exception('Database session not initialized')
-            return getattr(self._session, attr)(*args, **kwargs)
+            return getattr(self._session, attr)
 
 
 db = DB()
