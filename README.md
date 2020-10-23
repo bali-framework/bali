@@ -1,15 +1,25 @@
 # bali
 
-Simplify gRPC services and clients
+Simplify gRPC services & FastAPI 
 
 
-## database 
+## Database 
 
 ```python
 from bali.core import db
 db.connect('DATABASE_URI')  # connect to database when app started
 ```
 
+
+## Service Mixin
+
+```python
+# import 
+from bali.mixins import ServiceMixin
+
+class Hello(hello_pb2_grpc.HelloServiceServicer, ServiceMixin):
+    pass
+```
 
 ### CONTRIBUTE
 
