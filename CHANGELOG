@@ -3,7 +3,9 @@
 # This project adheres to [Semantic Versioning](http://semver.org/).
 # includes Added / Changed / Fixed
 
-## [0.3.0] UNRELEASED
+## [0.4.0] UNRELEASED
+
+## [0.3.0] 2020-11-02
 ### Added
 -- Added gRPC service unit test base class
 ### Fixed
