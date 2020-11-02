@@ -67,7 +67,7 @@ def retry_on_deadlock_decorator(func):
             except OperationalError as e:
                 # noinspection PyUnresolvedReferences
                 if any(msg in e.message for msg in lock_messages_error) \
-                        and attempt_count <= settings.MAXIMUM_RETRY_ON_DEADLOCK:
+                        and attempt_count <= MAXIMUM_RETRY_ON_DEADLOCK:
                     error_logger.error(
                         'Deadlock detected. Trying sql transaction once more. Attempts count: %s' %
                         (attempt_count + 1)
