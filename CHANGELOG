@@ -4,6 +4,10 @@
 # includes Added / Changed / Fixed
 
 ## [0.3.0] UNRELEASED
+### Added
+-- Added gRPC service unit test base class
+### Fixed
+- Fixed MAXIMUM_RETRY_ON_DEADLOCK not defined issue
 
 ## [0.2.1] 2020-10-23
 ### Added
