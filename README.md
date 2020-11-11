@@ -10,6 +10,7 @@ from bali.core import db
 db.connect('DATABASE_URI')  # connect to database when app started
 ```
 
+Base 
 
 ## Service Mixin
 
@@ -47,6 +48,15 @@ class TestDemoRPC(GRPCTestBase):
 ```
 
 ### CONTRIBUTE
+
+**Developer Environment**
+
+```bash
+pip install -r requirements_dev.txt
+``` 
+
+
+**Tag a new release**
 
 tag a version:
 

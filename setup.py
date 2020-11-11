@@ -1,3 +1,4 @@
+import bali
 from setuptools import find_packages, setup
 
 INSTALL_REQUIREMENTS = [
@@ -15,7 +16,7 @@ INSTALL_REQUIREMENTS = [
 
 setup(
     name='bali',
-    version='0.3.0',
+    version=bali.__version__,
     description='Simplify gRPC services and clients',
     url='https://github.com/JoshYuJump/bali',
     author='Josh.Yu',
