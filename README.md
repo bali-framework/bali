@@ -7,10 +7,32 @@ Simplify gRPC services & FastAPI
 
 ```python
 from bali.core import db
-db.connect('DATABASE_URI')  # connect to database when app started
+
+# connect to database when app started
+# db is a sqla-wrapper instance
+db.connect('DATABASE_URI')  
+  
 ```
 
-Base 
+Declarative mode with sqla-wrapper
+
+```python
+
+class User(db.Model):
+    __tablename__ "users"
+    id = db.Column(db.Integer, primary_key=True)
+    ...
+
+db.create_all()
+
+db.add(User(...))
+db.commit()
+
+todos = db.query(User).all()
+```
+
+More convenient usage, ref to [SQLA-Wrapper](https://github.com/jpsca/sqla-wrapper)
+
 
 ## Service Mixin
 
