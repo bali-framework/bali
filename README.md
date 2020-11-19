@@ -34,6 +34,40 @@ todos = db.query(User).all()
 More convenient usage, ref to [SQLA-Wrapper](https://github.com/jpsca/sqla-wrapper)
 
 
+Declare models inherit from convenient base models
+
+*BaseModel*
+
+```python
+# using BaseModel
+class User(db.BaseModel):
+    __tablename__ "users"
+    id = db.Column(db.Integer, primary_key=True)
+    ...
+```
+
+```python
+# BaseModel's source code 
+
+class BaseModel(db.Model):
+    __abstract__ = True
+
+    created_time = Column(DateTime(timezone=True), nullable=True, default=datetime.utcnow)
+    updated_time = Column(DateTime(timezone=True), nullable=True, default=datetime.utcnow)
+    is_active = Column(Boolean(), default=True)
+```
+
+## Schema
+
+*model_to_schema*
+
+```python
+# generate pydantic schema from models
+# `User` is a db.Model or db.BaseModel instance 
+from bali.schema import model_to_schema
+UserSchema = model_to_schema(User)
+```
+
 ## Service Mixin
 
 ```python
