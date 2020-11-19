@@ -1,0 +1,1 @@
+from pydantic_sqlalchemy import sqlalchemy_to_pydantic as model_to_schema

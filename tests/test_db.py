@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer
 
 from bali.db import db
-import pytest
 
 DB_URI = 'sqlite:///:memory:'
 
