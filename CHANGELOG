@@ -4,6 +4,10 @@
 # includes Added / Changed / Fixed
 
 ## [0.5.0] UNRELEASED
+### Added
+- Added model utility `BaseModel`
+- Added convenient way to generate Pydantic model
+- Added cache
 
 ## [0.4.1] 2020-11-12
 ### Changed
