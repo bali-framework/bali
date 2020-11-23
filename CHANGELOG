@@ -5,6 +5,13 @@
 
 ## [0.6.0] UNRELEASED
 
+## [0.5.2] 2020-11-23
+### Fixed
+- Fixed lost package `pydantic-sqlalchemy`
+
+## [0.5.1] 2020-11-19
+### Fixed
+- Fixed BaseModel's updated_time
 
 ## [0.5.0] 2020-11-19
 ### Added
