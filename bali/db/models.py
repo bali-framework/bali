@@ -12,4 +12,7 @@ def get_base_model(db):
         )
         is_active = Column(Boolean(), default=True)
 
+        def to_dict(self):
+            return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+
     return BaseModel

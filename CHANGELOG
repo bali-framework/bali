@@ -5,6 +5,10 @@
 
 ## [0.6.0] UNRELEASED
 
+## [0.5.3] 2020-11-23
+### Added
+- Added `to_dict()` method to BaseModel
+
 ## [0.5.2] 2020-11-23
 ### Fixed
 - Fixed lost package `pydantic-sqlalchemy`
