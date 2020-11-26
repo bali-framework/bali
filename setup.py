@@ -13,6 +13,7 @@ INSTALL_REQUIREMENTS = [
     'redis==3.5.3',
     'SQLAlchemy==1.3.19',
     'sqla-wrapper==4.200628',
+    'typer==0.3.2',
 ]
 
 setup(

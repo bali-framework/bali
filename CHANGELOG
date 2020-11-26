@@ -3,7 +3,11 @@
 # This project adheres to [Semantic Versioning](http://semver.org/).
 # includes Added / Changed / Fixed
 
-## [0.6.0] UNRELEASED
+## [0.7.0] UNRELEASED
+
+## [0.6.0] 2020-11-26
+### Added
+- Added bali Application Wrapper
 
 ## [0.5.3] 2020-11-23
 ### Added
