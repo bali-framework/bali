@@ -129,5 +129,4 @@ dmypy.json
 .pyre/
 
 # PyCharm settings
-# TODO: enable some idea files
 .idea/
