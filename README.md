@@ -2,6 +2,34 @@
 
 Simplify gRPC services & FastAPI 
 
+## Application 
+
+Create Application
+
+```python
+import greeter_server
+
+# Initialized App 
+app = Bali()
+# Updated settings
+app.settings(base_settings={'title': 'Bali App'})
+```
+
+launch 
+
+```bash
+# lauch RPC and HTTP service 
+python main.py
+
+# lauch RPC 
+python main.py --rpc
+
+# lauch HTTP
+python main.py --http
+```
+
+More usage of `Application`: [example](examples/main.py)
+
 
 ## Database 
 
