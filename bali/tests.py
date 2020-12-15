@@ -2,6 +2,8 @@ from concurrent import futures
 
 import grpc
 
+from bali.utils import get_service_adder
+
 
 class GRPCTestBase:
     server = None
@@ -15,7 +17,8 @@ class GRPCTestBase:
     def setup_class(self):
         self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
 
-        self.pb2_grpc.add_UserServiceServicer_to_server(self.server_class(), self.server)
+        add_service_to_server = get_service_adder(self.pb2_grpc)
+        add_service_to_server(self.server_class(), self.server)
         self.server.add_insecure_port(f'[::]:{self.port}')
         self.server.start()
 
