@@ -5,6 +5,14 @@
 
 ## [0.7.0] UNRELEASED
 
+## [0.6.1] UNRELEASED
+
+### Added
+- Updated `PYTHONPATH` when launch Bali application
+
+### Fixed
+- Fixed add_XXXServiceServicer_to_server in GRPCTestBase
+
 ## [0.6.0] 2020-11-26
 ### Added
 - Added bali Application Wrapper
