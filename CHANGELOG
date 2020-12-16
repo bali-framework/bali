@@ -4,6 +4,8 @@
 # includes Added / Changed / Fixed
 
 ## [0.7.0] UNRELEASED
+### Added
+- Added cache backend with Redis
 
 ## [0.6.1] UNRELEASED
 
