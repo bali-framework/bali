@@ -2,7 +2,7 @@ from concurrent import futures
 
 import grpc
 
-from bali.utils import get_service_adder
+from ._utils import get_service_adder
 
 
 class GRPCTestBase:

@@ -7,10 +7,9 @@
 ### Added
 - Added cache backend with Redis
 
-## [0.6.1] UNRELEASED
-
 ### Added
 - Updated `PYTHONPATH` when launch Bali application
+- Added dateparse utility
 
 ### Fixed
 - Fixed add_XXXServiceServicer_to_server in GRPCTestBase

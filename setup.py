@@ -2,6 +2,7 @@ import bali
 from setuptools import find_packages, setup
 
 INSTALL_REQUIREMENTS = [
+    'dateparser==1.0.0',
     'fastapi[all]==0.61.1',
     'grpcio==1.32.0',
     'grpcio-tools==1.32.0',
