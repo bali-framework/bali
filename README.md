@@ -15,7 +15,7 @@ app = Bali()
 app.settings(base_settings={'title': 'Bali App'})
 ```
 
-launch 
+Launch 
 
 ```bash
 # lauch RPC and HTTP service 
@@ -106,6 +106,20 @@ from bali.mixins import ServiceMixin
 
 class Hello(hello_pb2_grpc.HelloServiceServicer, ServiceMixin):
     pass
+```
+
+## Cache
+
+```python
+from bali.core import cache
+
+# Usage example (API)
+
+# Read cache 
+cache.get(key)
+
+# Set cache 
+cache.set(key, value, timeout=10)
 ```
 
 ## Utils
