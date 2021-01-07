@@ -9,6 +9,7 @@ async def process_middleware(request: Request, call_next):
 
     response = await call_next(request)
 
+    # remove db session when FastAPI request ended
     try:
         db.remove()
     except Exception:
