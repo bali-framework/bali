@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from ._utils import singleton
+from .middlewares import process_middleware
 
 
 @singleton
@@ -70,6 +71,7 @@ class Bali:
                 allow_methods=["*"],
                 allow_headers=["*"],
             )
+            self._app.middleware('http')(process_middleware)
 
     def launch(self, http: bool = False, rpc: bool = False):
         start_all = not any([http, rpc])
