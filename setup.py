@@ -6,6 +6,7 @@ INSTALL_REQUIREMENTS = [
     'fastapi[all]==0.61.1',
     'grpcio==1.32.0',
     'grpcio-tools==1.32.0',
+    'grpc-interceptor==0.13.0',
     'PyMySQL==0.10.1',
     'passlib[bcrypt]==1.7.2',
     'pillow==7.2.0',

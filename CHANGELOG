@@ -5,7 +5,14 @@
 
 ## [0.8.0] UNRELEASED
 
-## [0.7.0] UNRELEASED
+## [0.7.1] UNRELEASED
+
+### Added
+
+- Added gRPC interceptor process setup & teardown
+- Added FastAPI middleware process setup & teardown
+
+## [0.7.0] 2020-12-18
 ### Added
 - Added cache backend with Redis
 - Added dateparse utility

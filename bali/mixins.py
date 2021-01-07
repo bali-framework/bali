@@ -1,3 +1,4 @@
+import logging
 from .core import db
 
 
@@ -7,7 +8,7 @@ class ServiceMixin:
         self.db = db
 
     def setup(self):
-        pass
+        print('setup...')
 
     def teardown(self):
         # noinspection PyBroadException
@@ -17,6 +18,7 @@ class ServiceMixin:
             pass
 
     def __getattribute__(self, attr, *args, **kwargs):
+        print('__getattribute__')
         if attr in ['setup', 'teardown']:
             return super().__getattribute__(attr)
 
