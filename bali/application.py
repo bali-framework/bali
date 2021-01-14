@@ -7,6 +7,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from ._utils import singleton
 from .middlewares import process_middleware
+from fastapi.middleware.gzip import GZipMiddleware
 
 
 @singleton
@@ -64,6 +65,7 @@ class Bali:
         # cors
         backend_cors_origins = self.kwargs.get('backend_cors_origins')
         if backend_cors_origins:
+            self._app.add_middleware(GZipMiddleware)
             self._app.add_middleware(
                 CORSMiddleware,
                 allow_origins=[str(origin) for origin in backend_cors_origins],
