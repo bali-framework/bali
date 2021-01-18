@@ -3,6 +3,7 @@ from concurrent import futures
 import grpc
 
 from ._utils import get_service_adder
+from .interceptors import ProcessInterceptor
 
 
 class GRPCTestBase:
@@ -15,7 +16,10 @@ class GRPCTestBase:
     pb2_grpc = None
 
     def setup_class(self):
-        self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+        server = grpc.server(
+            futures.ThreadPoolExecutor(max_workers=10),
+            interceptors=[ProcessInterceptor()],
+        )
 
         add_service_to_server = get_service_adder(self.pb2_grpc)
         add_service_to_server(self.server_class(), self.server)
