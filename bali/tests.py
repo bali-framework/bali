@@ -16,7 +16,7 @@ class GRPCTestBase:
     pb2_grpc = None
 
     def setup_class(self):
-        server = grpc.server(
+        self.server = grpc.server(
             futures.ThreadPoolExecutor(max_workers=10),
             interceptors=[ProcessInterceptor()],
         )
