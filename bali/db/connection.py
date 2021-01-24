@@ -63,8 +63,11 @@ def retry_on_deadlock_decorator(func):
 
 def close_connection(func):
     def wrapper(*args, **kwargs):
-        result = func(*args, **kwargs)
-        db.remove()
+        try:
+            result = func(*args, **kwargs)
+        finally:
+            db.remove()
+
         return result
 
     return wrapper

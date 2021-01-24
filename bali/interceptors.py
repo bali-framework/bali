@@ -34,6 +34,9 @@ class ProcessInterceptor(ServerInterceptor):
         :return:
         """
         self.setup()
-        result = method(request, context)
-        self.teardown()
+        try:
+            result = method(request, context)
+        finally:
+            self.teardown()
+
         return result
