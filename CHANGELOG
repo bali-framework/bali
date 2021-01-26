@@ -3,9 +3,12 @@
 # This project adheres to [Semantic Versioning](http://semver.org/).
 # includes Added / Changed / Fixed
 
-## [0.8.0] UNRELEASED
+## [0.1.1] UNRELEASED
 
-## [0.7.4] UNRELEASED
+## [0.1.0] UNRELEASED
+### Added
+- Added db stub file to improve code intelligence
+- Ensure db remove even though exception raised
 ### Fixed
 - gRPC base tests lost `ProcessInterceptor`
 
