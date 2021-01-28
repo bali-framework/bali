@@ -8,7 +8,7 @@ class ServiceMixin:
         self.db = db
 
     def setup(self):
-        print('setup...')
+        pass
 
     def teardown(self):
         # noinspection PyBroadException
@@ -18,7 +18,6 @@ class ServiceMixin:
             pass
 
     def __getattribute__(self, attr, *args, **kwargs):
-        print('__getattribute__')
         if attr in ['setup', 'teardown']:
             return super().__getattribute__(attr)
 
