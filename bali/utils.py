@@ -132,19 +132,20 @@ class ProtobufPrinter(json_format._Printer):
 
 
 def MessageToDict(  # noqa
-    message,
-    including_default_value_fields=False,
-    preserving_proto_field_name=False,
-    use_integers_for_enums=False,
-    descriptor_pool=None,
-    float_precision=None
+        message,
+        including_default_value_fields=False,
+        preserving_proto_field_name=False,
+        use_integers_for_enums=False,
+        descriptor_pool=None,
+        float_precision=None
 ):
     printer = ProtobufPrinter(
-      including_default_value_fields,
-      preserving_proto_field_name,
-      use_integers_for_enums,
-      descriptor_pool,
-      float_precision=float_precision)
+        including_default_value_fields,
+        preserving_proto_field_name,
+        use_integers_for_enums,
+        descriptor_pool,
+        float_precision=float_precision
+    )
     return printer._MessageToJsonObject(message)  # noqa
 
 
