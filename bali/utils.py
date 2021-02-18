@@ -1,5 +1,5 @@
 from datetime import datetime, date
-from typing import Any
+from typing import Tuple
 
 # noinspection PyUnresolvedReferences
 import dateparser
@@ -47,18 +47,18 @@ OPERATORS = {
 }
 
 
-def dj_query(expression: str, value: Any):
+def dj_query(expression: str) -> Tuple:
     splitter = "__"
     col_name, op_name = expression, "exact"
     if splitter in col_name:
         col_name, op_name = col_name.rsplit(splitter, 1)
-    return OPERATORS[op_name](col_name, value)
+    return OPERATORS[op_name], col_name
 
 
 def dj_ordering(expression: str):
-    ordering = "-"
-    wrapper = desc if expression.startswith(ordering) else asc
-    return wrapper(expression.lstrip(ordering))
+    reverse = "-"
+    wrapper = desc if expression.startswith(reverse) else asc
+    return wrapper(expression.lstrip(reverse))
 
 
 class ProtobufParser(json_format._Parser):  # noqa
