@@ -7,6 +7,7 @@ from google.protobuf import json_format
 from sqlalchemy.sql import operators
 from sqlalchemy.sql.expression import extract, desc, asc
 
+# modified from https://github.com/jpsca/sqla-wrapper
 OPERATORS = {
     'isnull': lambda c, v: (c == None) if v else (c != None),  # noqa
     'exact': operators.eq,
