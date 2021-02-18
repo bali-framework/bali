@@ -56,12 +56,12 @@ def dj_query(expression: str, value: Any):
 
 
 def dj_ordering(expression: str):
-    start = "-"
-    wrapper = desc if expression.startswith(start) else asc
-    return wrapper(expression.lstrip(start))
+    ordering = "-"
+    wrapper = desc if expression.startswith(ordering) else asc
+    return wrapper(expression.lstrip(ordering))
 
 
-class ProtobufParser(json_format._Parser):
+class ProtobufParser(json_format._Parser):  # noqa
     def _ConvertValueMessage(self, value, message):
         """Convert a JSON representation into Value message."""
         if isinstance(value, dict):
@@ -84,7 +84,7 @@ class ProtobufParser(json_format._Parser):
             )
 
 
-class ProtobufPrinter(json_format._Printer):
+class ProtobufPrinter(json_format._Printer):  # noqa
     def _FieldToJsonObject(self, field, value):
         """Converts field value according to Proto3 JSON Specification."""
         if field.cpp_type == json_format.descriptor.FieldDescriptor.CPPTYPE_MESSAGE:
