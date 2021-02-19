@@ -4,7 +4,7 @@ from typing import Union
 
 import pytz
 
-TzInfoType = Union[pytz.UTC, pytz.tzinfo.DstTzInfo]
+TzInfoType = Union[type(pytz.UTC), pytz.tzinfo.DstTzInfo]
 StrTzInfoType = Union[TzInfoType, str]
 DEFAULT_TZ_INFO = "Asia/Jakarta"
 
@@ -68,7 +68,7 @@ def make_naive(
 
 def get_beginning_datetime(
         *,
-        year: int = 1,
+        year: int,
         month: int = 1,
         day: int = 1,
         timezone: StrTzInfoType = None,
