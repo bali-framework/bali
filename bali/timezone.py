@@ -4,7 +4,7 @@ from typing import Union
 
 import pytz
 
-TzInfoType = Union[pytz.UTC, pytz.tzinfo.DstTzInfo]
+TzInfoType = Union[type(pytz.UTC), pytz.tzinfo.DstTzInfo]
 StrTzInfoType = Union[TzInfoType, str]
 
 
@@ -59,3 +59,15 @@ def make_naive(
         pass
 
     return value.astimezone(timezone).replace(tzinfo=None)
+
+
+def get_beginning_datetime(
+        *,
+        year: int,
+        month: int = 1,
+        day: int = 1,
+        timezone: StrTzInfoType = None,
+        is_dst: bool = False,
+) -> datetime:
+    _datetime = datetime(year, month, day)
+    return make_aware(_datetime, timezone=timezone, is_dst=is_dst)
