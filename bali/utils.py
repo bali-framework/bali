@@ -49,7 +49,7 @@ OPERATORS = {
 }
 
 
-def dj_query(expression: str) -> Tuple:
+def dj_lookup_to_sqla(expression: str) -> Tuple:
     splitter = "__"
     col_name, op_name = expression, "exact"
     if splitter in col_name:
@@ -57,7 +57,7 @@ def dj_query(expression: str) -> Tuple:
     return OPERATORS[op_name], col_name
 
 
-def dj_ordering(expression: str):
+def dj_ordering_to_sqla(expression: str):
     reverse = "-"
     wrapper = desc if expression.startswith(reverse) else asc
     return wrapper(expression.lstrip(reverse))
