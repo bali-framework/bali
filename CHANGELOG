@@ -5,7 +5,11 @@
 
 ## [0.1.1] UNRELEASED
 
-## [0.1.0] UNRELEASED
+## [1.0.3] 2021-02-20
+### Fixed
+- locked uvicorn version (0.12.3) to fixed runtime error
+
+## [1.0.0] 2021-01-26
 ### Added
 - Added db stub file to improve code intelligence
 - Ensure db remove even though exception raised
