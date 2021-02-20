@@ -45,6 +45,9 @@ class BaseModel:
 
     def delete(self) -> None: ...
 
+    @classmethod
+    def count(cls: Type[_M], **attrs) -> int: ...
+
 
 class DB(SQLAlchemy):
     BaseModel: BaseModel
