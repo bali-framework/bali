@@ -20,7 +20,7 @@ def get_current_timezone_name() -> str:
 
 
 def now() -> datetime:
-    return datetime.now(get_current_timezone())
+    return datetime.now(pytz.UTC)
 
 
 def is_aware(value: datetime) -> bool:
@@ -64,15 +64,3 @@ def make_naive(
         pass
 
     return value.astimezone(timezone).replace(tzinfo=None)
-
-
-def get_beginning_datetime(
-        *,
-        year: int,
-        month: int = 1,
-        day: int = 1,
-        timezone: StrTzInfoType = None,
-        is_dst: bool = False,
-) -> datetime:
-    _datetime = datetime(year, month, day)
-    return make_aware(_datetime, timezone=timezone, is_dst=is_dst)

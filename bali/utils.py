@@ -7,7 +7,9 @@ from google.protobuf import json_format
 from sqlalchemy.sql import operators
 from sqlalchemy.sql.expression import extract, desc, asc
 
-# modified from https://github.com/jpsca/sqla-wrapper
+from bali.timezone import StrTzInfoType, make_aware
+
+# modified from https://github.com/absent1706/sqlalchemy-mixins
 OPERATORS = {
     'isnull': lambda c, v: (c == None) if v else (c != None),  # noqa
     'exact': operators.eq,
@@ -159,3 +161,15 @@ def ParseDict(  # noqa
     parser = ProtobufParser(ignore_unknown_fields, descriptor_pool)
     parser.ConvertMessage(js_dict, message)
     return message
+
+
+def get_beginning_datetime(
+        *,
+        year: int,
+        month: int = 1,
+        day: int = 1,
+        timezone: StrTzInfoType = None,
+        is_dst: bool = False,
+) -> datetime:
+    _datetime = datetime(year, month, day)
+    return make_aware(_datetime, timezone=timezone, is_dst=is_dst)

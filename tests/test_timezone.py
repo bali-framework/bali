@@ -51,7 +51,3 @@ def test_make_naive():
     d = datetime.now()
     with pytest.raises(AssertionError):
         timezone.make_naive(d)
-
-
-def test_get_beginning_datetime():
-    assert timezone.make_naive(timezone.get_beginning_datetime(year=2000)) == datetime(2000, 1, 1)
