@@ -6,10 +6,13 @@ import pytz
 
 TzInfoType = Union[type(pytz.UTC), pytz.tzinfo.DstTzInfo]
 StrTzInfoType = Union[TzInfoType, str]
+DEFAULT_TZ_INFO = "Asia/Jakarta"
 
 
 def get_current_timezone() -> TzInfoType:
-    return pytz.timezone(os.environ["TZ"])
+    """set default value *may* change historical code behaviour"""
+    tz_info = os.environ.get("TZ", DEFAULT_TZ_INFO)
+    return pytz.timezone(tz_info)
 
 
 def get_current_timezone_name() -> str:
@@ -30,6 +33,7 @@ def is_naive(value: datetime) -> bool:
 
 def make_aware(
         value: datetime,
+        *,
         timezone: StrTzInfoType = None,
         is_dst: bool = False,
 ) -> datetime:
@@ -47,6 +51,7 @@ def make_aware(
 
 def make_naive(
         value: datetime,
+        *,
         timezone: StrTzInfoType = None,
 ) -> datetime:
     assert is_aware(value), "expects an aware datetime"
