@@ -3,7 +3,7 @@ from functools import wraps
 
 from sqla_wrapper import SQLAlchemy
 from sqlalchemy.exc import OperationalError
-from .models import get_base_model
+from .models import get_base_model, AwareDateTime
 
 # from core.config import settings
 
