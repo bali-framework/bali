@@ -33,6 +33,7 @@ def is_naive(value: datetime) -> bool:
 
 def make_aware(
         value: datetime,
+        *,
         timezone: StrTzInfoType = None,
         is_dst: bool = False,
 ) -> datetime:
@@ -50,6 +51,7 @@ def make_aware(
 
 def make_naive(
         value: datetime,
+        *,
         timezone: StrTzInfoType = None,
 ) -> datetime:
     assert is_aware(value), "expects an aware datetime"
