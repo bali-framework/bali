@@ -41,6 +41,6 @@ def get_base_model(db):
 
         @classmethod
         def count(cls, **attrs) -> int:
-            return db.query(func.count(cls.id)).filter(*attrs).scalar()
+            return db.query(func.count(cls.id)).filter(**attrs).scalar()
 
     return BaseModel
