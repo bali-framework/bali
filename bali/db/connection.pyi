@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, Optional, Any, Type, TypeVar, Union
+from typing import Dict, Optional, Any, Type, TypeVar, Union, List
 
 from sqlalchemy.orm.query import Query
 from sqlalchemy.orm.session import Session
@@ -47,6 +47,9 @@ class BaseModel:
 
     @classmethod
     def count(cls: Type[_M], *conditions) -> int: ...
+
+    @classmethod
+    def get_fields(cls: Type[_M]) -> List[str]: ...
 
 
 class DB(SQLAlchemy):

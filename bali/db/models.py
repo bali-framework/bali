@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 
 import pytz
 from sqlalchemy import Column, DateTime, Boolean
@@ -42,5 +43,9 @@ def get_base_model(db):
         @classmethod
         def count(cls, *conditions) -> int:
             return db.query(func.count(cls.id)).filter(*conditions).scalar()
+
+        @classmethod
+        def get_fields(cls) -> List[str]:
+            return [c.name for c in cls.__table__.columns]
 
     return BaseModel
