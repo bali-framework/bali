@@ -6,10 +6,13 @@ import pytz
 
 TzInfoType = Union[type(pytz.UTC), pytz.tzinfo.DstTzInfo]
 StrTzInfoType = Union[TzInfoType, str]
+DEFAULT_TZ_INFO = "Asia/Jakarta"
 
 
 def get_current_timezone() -> TzInfoType:
-    return pytz.timezone(os.environ["TZ"])
+    """set default value *may* change historical code behaviour"""
+    tz_info = os.environ.get("TZ", DEFAULT_TZ_INFO)
+    return pytz.timezone(tz_info)
 
 
 def get_current_timezone_name() -> str:
