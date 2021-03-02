@@ -2,10 +2,10 @@ from datetime import datetime
 
 import pytz
 from sqlalchemy import Column, DateTime, Boolean
-from sqlalchemy.types import TypeDecorator
 from sqlalchemy.sql.functions import func
+from sqlalchemy.types import TypeDecorator
 
-from bali import timezone
+from ..utils import timezone
 
 
 class AwareDateTime(TypeDecorator):

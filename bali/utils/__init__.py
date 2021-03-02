@@ -1,10 +1,9 @@
-from datetime import date, datetime
+from datetime import datetime, date
 
-# noinspection PyUnresolvedReferences
-import dateparser
 from google.protobuf import json_format
 
-from bali.timezone import StrTzInfoType, make_aware
+from .dateparse import *
+from .timezone import StrTzInfoType, make_aware
 
 
 class ProtobufParser(json_format._Parser):  # noqa
@@ -97,10 +96,7 @@ def MessageToDict(  # noqa
 
 
 def ParseDict(  # noqa
-        js_dict,
-        message,
-        ignore_unknown_fields=False,
-        descriptor_pool=None
+    js_dict, message, ignore_unknown_fields=False, descriptor_pool=None
 ):
     parser = ProtobufParser(ignore_unknown_fields, descriptor_pool)
     parser.ConvertMessage(js_dict, message)
@@ -108,12 +104,12 @@ def ParseDict(  # noqa
 
 
 def get_beginning_datetime(
-        *,
-        year: int,
-        month: int = 1,
-        day: int = 1,
-        timezone: StrTzInfoType = None,
-        is_dst: bool = False,
+    *,
+    year: int,
+    month: int = 1,
+    day: int = 1,
+    timezone: StrTzInfoType = None,
+    is_dst: bool = False,
 ) -> datetime:
     _datetime = datetime(year, month, day)
     return make_aware(_datetime, timezone=timezone, is_dst=is_dst)
