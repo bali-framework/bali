@@ -10,7 +10,7 @@ class OrmConfig(BaseConfig):
 
 
 def model_to_schema(
-    db_model: Type, *, config: Type = OrmConfig, exclude: Container[str] = []  # noqa
+    db_model: Type, *, config: Type = OrmConfig, exclude: Container[str] = [], partial = False  # noqa
 ) -> Type[BaseModel]:
     mapper = inspect(db_model)
     fields = {}
@@ -28,6 +28,7 @@ def model_to_schema(
                 elif hasattr(column.type, "python_type"):
                     python_type = column.type.python_type
                 assert python_type, f"Could not infer python_type for {column}"
+
                 default = None
                 if column.default is None and not column.nullable:
                     default = ...
@@ -38,7 +39,11 @@ def model_to_schema(
                         default = column.default.arg
                     except AttributeError:
                         pass
-                fields[name] = (python_type, default)
+
+                if partial:
+                    fields[name] = (Optional[python_type], None)
+                else:
+                    fields[name] = (python_type, default)
     pydantic_model = create_model(
         db_model.__name__, __config__=config, **fields  # noqa
     )
