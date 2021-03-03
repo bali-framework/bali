@@ -33,8 +33,8 @@ def get_base_model(db):
     class BaseModel(db.Model):
         __abstract__ = True
 
-        created_time = Column(AwareDateTime, default=datetime.utcnow)
-        updated_time = Column(AwareDateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+        created_time = Column(DateTime, default=datetime.utcnow)
+        updated_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
         is_active = Column(Boolean, default=True)
 
         def to_dict(self):
