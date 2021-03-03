@@ -3,6 +3,12 @@
 # This project adheres to [Semantic Versioning](http://semver.org/).
 # includes Added / Changed / Fixed
 
+## [2.0.0] UNRELEASED
+### Added
+- Resource layer base class, support elegant RESTful CRUD
+- Refactor core layer, support multi dotenv variables
+- Handle metadata or context
+
 ## [1.2.0] UNRELEASED
 ### Added
 - Auto process float type in google.protobuf.struct
