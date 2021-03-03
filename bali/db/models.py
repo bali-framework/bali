@@ -42,7 +42,7 @@ def get_base_model(db):
 
         @classmethod
         def count(cls, **attrs) -> int:
-            return db.query(func.count(cls.id)).filter_by(**attrs).scalar()
+            return db.session.query(func.count(cls.id)).filter_by(**attrs).scalar()
 
         @classmethod
         def get_fields(cls) -> List[str]:
