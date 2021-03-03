@@ -30,6 +30,7 @@ setup(
     license='MIT',
     install_requires=INSTALL_REQUIREMENTS,
     packages=find_packages(),
+    package_data={'bali': ['db/*.pyi']},
     include_package_data=True,
     zip_safe=False,
 )
