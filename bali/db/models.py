@@ -41,8 +41,8 @@ def get_base_model(db):
             return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
 
         @classmethod
-        def count(cls, *conditions) -> int:
-            return db.query(func.count(cls.id)).filter(*conditions).scalar()
+        def count(cls, **attrs) -> int:
+            return db.query(func.count(cls.id)).filter_by(**attrs).scalar()
 
         @classmethod
         def get_fields(cls) -> List[str]:
