@@ -7,10 +7,11 @@
 ### Added
 - Auto process float type in google.protobuf.struct
 
-## [1.1.0] UNRELEASED
+## [1.1.0] 2021-03-03
 ### Added
-- timezone settings and utility
+- Added timezone settings and utility
 - RPC logging when defined log handler
+- New model method bind to BaseModel: count() and get_fields()
 
 ## [1.0.3] 2021-02-20
 ### Fixed
