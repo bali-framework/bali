@@ -15,8 +15,10 @@ class DB:
     def __init__(self):
         self._session = None
 
-    def connect(self, database_uri):
-        self._session = SQLAlchemy(database_uri)
+    def connect(self, database_uri, **kwargs):
+        kwargs.setdefault("pool_size", 5)
+        kwargs.setdefault("pool_recycle", 2 * 60 * 60)
+        self._session = SQLAlchemy(database_uri, **kwargs)
 
     def __getattribute__(self, attr, *args, **kwargs):
         try:
