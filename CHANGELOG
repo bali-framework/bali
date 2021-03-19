@@ -13,6 +13,12 @@
 ### Added
 - Auto process float type in google.protobuf.struct
 
+## [1.1.2] 2021-03-20
+### Fixed
+- Fixed close and remove session when FastAPI request completed
+### Changed
+- Added SQLAlchemy pool_recycle setting, default value is 2 hours
+
 ## [1.1.0] 2021-03-03
 ### Added
 - Added timezone settings and utility
