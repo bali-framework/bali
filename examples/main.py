@@ -1,3 +1,5 @@
+# noinspection PyUnresolvedReferences
+import config
 import greeter_server
 from bali.core import Bali
 from v1.app import router

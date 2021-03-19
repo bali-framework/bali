@@ -3,9 +3,27 @@
 # This project adheres to [Semantic Versioning](http://semver.org/).
 # includes Added / Changed / Fixed
 
-## [0.1.1] UNRELEASED
+## [2.0.0] UNRELEASED
+### Added
+- Resource layer base class, support elegant RESTful CRUD
+- Refactor core layer, support multi dotenv variables
+- Handle metadata or context
 
-## [0.1.0] UNRELEASED
+## [1.2.0] UNRELEASED
+### Added
+- Auto process float type in google.protobuf.struct
+
+## [1.1.0] 2021-03-03
+### Added
+- Added timezone settings and utility
+- RPC logging when defined log handler
+- New model method bind to BaseModel: count() and get_fields()
+
+## [1.0.3] 2021-02-20
+### Fixed
+- locked uvicorn version (0.12.3) to fixed runtime error
+
+## [1.0.0] 2021-01-26
 ### Added
 - Added db stub file to improve code intelligence
 - Ensure db remove even though exception raised
