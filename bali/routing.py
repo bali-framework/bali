@@ -2,6 +2,7 @@ import inspect
 from typing import Callable
 
 from fastapi import APIRouter as FastAPIRouter
+
 from bali.core import db
 
 
