@@ -1,26 +1,29 @@
 import inspect
-from typing import Callable
 
 from fastapi import APIRouter as FastAPIRouter
-from starlette.routing import get_name
+from fastapi.routing import APIRoute as FastAPIRoute
 
 from bali.core import db
 
 
-class APIRouter(FastAPIRouter):
+class APIRoute(FastAPIRoute):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # inject sqlalchemy scope session remove to endpoint
+        if not inspect.iscoroutinefunction(self.dependant.call):
+            self.dependant.call = self._inject_scoped_session_clear(self.dependant.call)
+
     @staticmethod
     def _inject_scoped_session_clear(endpoint: callable):
-        def injected_endpoint():
+        def injected_endpoint(*args, **kwargs):
             try:
-                return endpoint()
+                return endpoint(*args, **kwargs)
             finally:
                 db.remove()
+
         return injected_endpoint
 
-    def add_api_route(self, path: str, endpoint: Callable, *args, **kwargs):
-        # inject sqlalchemy scope session remove to endpoint
-        if not inspect.iscoroutinefunction(endpoint):
-            name = kwargs.get('name')
-            kwargs.update(name=get_name(endpoint) if name is None else name)
-            endpoint = self._inject_scoped_session_clear(endpoint)
-        return super().add_api_route(path, endpoint, *args, **kwargs)
+
+class APIRouter(FastAPIRouter):
+    def add_api_route(self, *args, **kwargs):
+        return super().add_api_route(*args, route_class_override=APIRoute, **kwargs)
