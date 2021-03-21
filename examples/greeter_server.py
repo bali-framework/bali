@@ -30,13 +30,9 @@ from bali.mixins import ServiceMixin
 def echo_container(request_id):
     # return
     print('### <%d> - running container ###' % request_id)
-    # 1 获取进程
     print('Process id: %s' % os.getpid())
-    # 1 获取线程ID,NAME
     t = threading.currentThread()
-    # 线程ID
     print('Thread id : %d' % t.ident)
-    # 线程NAME
     print('Thread name : %s' % t.getName())
     print('------------------------------\n')
 
