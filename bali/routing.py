@@ -13,7 +13,6 @@ class APIRouter(FastAPIRouter):
                 return endpoint()
             finally:
                 db.remove()
-                print('db removed...')
         return injected_endpoint
 
     def add_api_route(self, path: str, endpoint: Callable, *args, **kwargs):
