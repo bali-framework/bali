@@ -3,6 +3,8 @@ from pydantic import BaseSettings
 from .application import Bali
 from .cache import cache
 from .db import db
+# noinspection PyUnresolvedReferences
+from .routing import APIRouter
 
 _settings = BaseSettings()
 
@@ -18,7 +20,7 @@ def initialize(settings):
 
     # initialize db connections, default enabled db
     # can be disabled by `DISABLE_DB_CONNECTION` settings
-    if getattr(settings, 'DISABLE_DB_CONNECTION', False):
+    if not getattr(settings, 'DISABLE_DB_CONNECTION', False):
         if not hasattr(settings, 'SQLALCHEMY_DATABASE_URI'):
             raise Exception('Initialized db connection without `SQLALCHEMY_DATABASE_URI` setting')
 
@@ -27,7 +29,7 @@ def initialize(settings):
     # initialize cache connections, default enabled db
     # can be disabled by `DISABLED_DB_CONNECTION` settings
     # cache prefix can be custom by `CACHE_PREFIX`
-    if getattr(settings, 'DISABLE_CACHE_CONNECTION', False):
+    if not getattr(settings, 'DISABLE_CACHE_CONNECTION', False):
         if not hasattr(settings, 'CACHE_ADDRESS'):
             raise Exception('Initialized cache connection without `CACHE_ADDRESS` setting')
 

@@ -13,7 +13,7 @@ app = Bali(
     backend_cors_origins=['http://127.0.0.1'],
     rpc_service=greeter_server,
 )
-app.settings(title='Bali App')
+app.settings(title='Bali Example')
 
 if __name__ == "__main__":
     app.start()

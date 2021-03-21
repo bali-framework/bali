@@ -14,6 +14,9 @@
 """The Python implementation of the GRPC helloworld.Greeter server."""
 
 import logging
+import os
+import random
+import threading
 from concurrent import futures
 
 import grpc
@@ -24,12 +27,27 @@ from bali.interceptors import ProcessInterceptor
 from bali.mixins import ServiceMixin
 
 
+def echo_container(request_id):
+    # return
+    print('### <%d> - running container ###' % request_id)
+    # 1 获取进程
+    print('Process id: %s' % os.getpid())
+    # 1 获取线程ID,NAME
+    t = threading.currentThread()
+    # 线程ID
+    print('Thread id : %d' % t.ident)
+    # 线程NAME
+    print('Thread name : %s' % t.getName())
+    print('------------------------------\n')
+
+
 class Greeter(helloworld_pb2_grpc.GreeterServicer, ServiceMixin):
     def setup(self):
         print('Greeter Setup ...')
 
     def SayHello(self, request, context):
         print('Greeter.SayHello')
+        echo_container(random.randint(100, 999))
         return helloworld_pb2.HelloReply(message='Hello, %s!' % request.name)
 
 
