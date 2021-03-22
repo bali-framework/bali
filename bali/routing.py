@@ -1,12 +1,12 @@
 import inspect
 
 from fastapi import APIRouter as FastAPIRouter
-from fastapi.routing import APIRoute as FastAPIRoute
 
 from bali.core import db
+from .application import GzipRoute
 
 
-class APIRoute(FastAPIRoute):
+class APIRoute(GzipRoute):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # inject sqlalchemy scope session remove to endpoint
