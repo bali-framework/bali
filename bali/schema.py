@@ -33,13 +33,6 @@ def model_to_schema(
                 default = None
                 if column.default is None and not column.nullable:
                     default = ...
-                else:
-
-                    # A crude way to get default value from sqlalchemy column
-                    try:
-                        default = column.default.arg
-                    except AttributeError:
-                        pass
 
                 if partial:
                     fields[name] = (Optional[python_type], None)
