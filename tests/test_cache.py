@@ -1,3 +1,4 @@
+import os
 import pickle
 
 import pytest
@@ -12,7 +13,7 @@ PREFIX = 'test_service'
 class TestCache:
     # noinspection PyMethodMayBeStatic
     def setup_class(self):
-        cache.connect(HOST, prefix=PREFIX)
+        cache.connect(HOST, password=os.getenv('CACHE_PASSWORD'), prefix=PREFIX)
 
     def teardown_class(self):
         pass
@@ -23,7 +24,7 @@ class TestCache:
         result = cache.set('test_int', value)
         assert result is True, 'Cache int value failed'
 
-        redis = StrictRedis(HOST)
+        redis = StrictRedis(HOST, password=os.getenv('CACHE_PASSWORD'))
         redis_key = f'{PREFIX}:cache:{key}'
         assert int(redis.get(redis_key).decode('utf-8')) == value, 'Cache int value verify failed'
 
@@ -36,7 +37,7 @@ class TestCache:
         result = cache.set(key, value)
         assert result is True, 'Cache str value failed'
 
-        redis = StrictRedis(HOST)
+        redis = StrictRedis(HOST, password=os.getenv('CACHE_PASSWORD'))
         redis_key = f'{PREFIX}:cache:{key}'
         redis_result = pickle.loads(redis.get(redis_key))
         assert redis_result == value, 'Cache str value verify failed'
@@ -50,7 +51,7 @@ class TestCache:
         result = cache.set(key, value)
         assert result is True, 'Cache list value failed'
 
-        redis = StrictRedis(HOST)
+        redis = StrictRedis(HOST, password=os.getenv('CACHE_PASSWORD'))
         redis_key = f'{PREFIX}:cache:{key}'
         redis_result = pickle.loads(redis.get(redis_key))
         assert redis_result == value, 'Cache list value verify failed'
@@ -64,7 +65,7 @@ class TestCache:
         result = cache.set(key, value)
         assert result is True, 'Cache dict value failed'
 
-        redis = StrictRedis(HOST)
+        redis = StrictRedis(HOST, password=os.getenv('CACHE_PASSWORD'))
         redis_key = f'{PREFIX}:cache:{key}'
         redis_result = pickle.loads(redis.get(redis_key))
         assert redis_result == value, 'Cache dict value verify failed'

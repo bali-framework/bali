@@ -3,7 +3,7 @@ from datetime import datetime
 import pytz
 import pytest
 
-from bali import timezone
+from bali.utils import timezone
 
 
 def test_get_current_timezone():

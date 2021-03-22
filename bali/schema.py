@@ -3,6 +3,7 @@ from typing import Container, Optional, Type
 from pydantic import BaseConfig, BaseModel, create_model
 from sqlalchemy.inspection import inspect
 from sqlalchemy.orm.properties import ColumnProperty
+from pydantic_sqlalchemy import sqlalchemy_to_pydantic
 
 
 class OrmConfig(BaseConfig):

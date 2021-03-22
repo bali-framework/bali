@@ -6,7 +6,12 @@ from .db import db
 # noinspection PyUnresolvedReferences
 from .routing import APIRouter
 
-_settings = BaseSettings()
+
+class Settings(BaseSettings):
+    ENABLED_RPC_LOGGING: str = False
+
+
+_settings = Settings()
 
 
 def initialize(settings):

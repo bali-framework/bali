@@ -1,7 +1,6 @@
 from datetime import datetime
 
-from bali import timezone
-from bali.utils import dateparser, get_beginning_datetime
+from bali.utils import timezone, dateparser, get_beginning_datetime
 
 
 def test_parse_dmy_date():
