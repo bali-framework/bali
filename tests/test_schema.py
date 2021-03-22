@@ -2,7 +2,6 @@ from sqlalchemy import Column, Integer
 
 from bali.db import db
 from bali.schema import model_to_schema
-from pydantic_sqlalchemy import sqlalchemy_to_pydantic
 
 DB_URI = 'sqlite:///:memory:'
 
@@ -35,7 +34,6 @@ def test_model_to_schema_from_orm():
     user = User.create()
     # noinspection PyPep8Naming
     UserSchema = model_to_schema(User)
-    # UserSchema = sqlalchemy_to_pydantic(User)
 
     user_schema = UserSchema.from_orm(user)
     assert user_schema.id == 1
