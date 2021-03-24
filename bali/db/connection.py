@@ -19,7 +19,7 @@ class DB:
         kwargs.setdefault("pool_size", 5)
         kwargs.setdefault("pool_recycle", 2 * 60 * 60)
 
-        # 对于复杂任务，开发者需要自己注意当前操作对象是否需要从数据库加载最新版本
+        # developers need to know when the ORM object needs to reload from the db
         kwargs.setdefault("expire_on_commit", False)
         self._session = SQLAlchemy(database_uri, **kwargs)
 
