@@ -18,6 +18,9 @@ class DB:
     def connect(self, database_uri, **kwargs):
         kwargs.setdefault("pool_size", 5)
         kwargs.setdefault("pool_recycle", 2 * 60 * 60)
+
+        # developers need to know when the ORM object needs to reload from the db
+        kwargs.setdefault("expire_on_commit", False)
         self._session = SQLAlchemy(database_uri, **kwargs)
 
     def __getattribute__(self, attr, *args, **kwargs):
