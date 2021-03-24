@@ -5,6 +5,8 @@ import threading
 from bali.core import APIRouter
 from bali.core import db
 from models import Item
+from pydantic import BaseModel
+from pydantic_sqlalchemy import sqlalchemy_to_pydantic
 
 
 router = APIRouter()
@@ -55,12 +57,18 @@ def sync_root():
     return {"message": "Sync Hello World"}
 
 
-@router.get("/sync/items")
+# class ItemModel(BaseModel):
+#     id: int
+#     name: str
+
+ItemModel = sqlalchemy_to_pydantic(Item)
+
+
+@router.get("/sync/items", response_model=ItemModel)
 def sync_list_items():
     request_id = random.randint(100, 999)
     echo_container(request_id)
     echo_db_info(request_id)
-    items = list(Item.query().all())
-    # db._session._session.remove()
-    # db.remove()
-    return items
+    # item = Item.query().first()
+    item = Item.create(name='test1')
+    return item
