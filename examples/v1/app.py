@@ -1,13 +1,13 @@
 import os
 import random
 import threading
+import time
+
+from pydantic_sqlalchemy import sqlalchemy_to_pydantic
 
 from bali.core import APIRouter
 from bali.core import db
 from models import Item
-from pydantic import BaseModel
-from pydantic_sqlalchemy import sqlalchemy_to_pydantic
-
 
 router = APIRouter()
 
@@ -70,5 +70,19 @@ def sync_list_items():
     echo_container(request_id)
     echo_db_info(request_id)
     # item = Item.query().first()
-    item = Item.create(name='test1')
+    with db.transaction():
+        # time.sleep(10)
+        item = Item.create(name='test1')
+    return item
+
+
+@router.get("/sync/slow/items", response_model=ItemModel)
+def sync_slow_list_items():
+    request_id = random.randint(100, 999)
+    echo_container(request_id)
+    echo_db_info(request_id)
+    # item = Item.query().first()
+    with db.transaction():
+        time.sleep(30)
+        item = Item.create(name='slow')
     return item

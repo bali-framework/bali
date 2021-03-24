@@ -2,9 +2,12 @@ from pydantic import BaseSettings
 # noinspection PyUnresolvedReferences
 from .application import Bali
 from .cache import cache
-from .db import db
+from .db import db, transaction
 # noinspection PyUnresolvedReferences
 from .routing import APIRouter
+
+# Bind transaction to db
+setattr(db, 'transaction', transaction)
 
 
 class Settings(BaseSettings):

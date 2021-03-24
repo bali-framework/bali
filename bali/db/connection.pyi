@@ -61,4 +61,7 @@ class DB(SQLAlchemy):
     def session(self) -> Session: ...
 
 
+    def transaction(self) -> None: ...
+
+
 db = DB()
