@@ -21,7 +21,7 @@ INSTALL_REQUIREMENTS = [
 ]
 
 setup(
-    name='bali',
+    name='bali-core',
     version=bali.__version__,
     description='Simplify gRPC services and clients',
     url='https://github.com/JoshYuJump/bali',
