@@ -17,13 +17,13 @@ class AwareDateTime(TypeDecorator):
         return datetime
 
     def process_result_value(self, value: datetime, dialect):
-        return timezone.make_aware(value, timezone=pytz.UTC)
+        return timezone.make_aware(value, timezone=pytz.utc)
 
     def process_bind_param(self, value: datetime, dialect):
         if timezone.is_naive(value):
-            value = timezone.make_aware(value, timezone=timezone.get_current_timezone())
+            value = timezone.make_aware(value)
 
-        return timezone.make_naive(value, timezone=pytz.UTC)
+        return timezone.make_naive(value, timezone=pytz.utc)
 
     def process_literal_param(self, value: datetime, dialect):
         return value.isoformat()
