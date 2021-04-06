@@ -21,7 +21,7 @@ class AwareDateTime(TypeDecorator):
 
     def process_bind_param(self, value: datetime, dialect):
         if timezone.is_naive(value):
-            return value
+            value = timezone.make_aware(value, timezone=timezone.get_current_timezone())
 
         return timezone.make_naive(value, timezone=pytz.UTC)
 
