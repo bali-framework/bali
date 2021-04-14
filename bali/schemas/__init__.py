@@ -3,7 +3,8 @@ from typing import Container, Optional, Type
 from pydantic import BaseConfig, BaseModel, create_model
 from sqlalchemy.inspection import inspect
 from sqlalchemy.orm.properties import ColumnProperty
-from pydantic_sqlalchemy import sqlalchemy_to_pydantic
+
+from generic import *
 
 
 class OrmConfig(BaseConfig):
@@ -11,7 +12,11 @@ class OrmConfig(BaseConfig):
 
 
 def model_to_schema(
-    db_model: Type, *, config: Type = OrmConfig, exclude: Container[str] = [], partial = False  # noqa
+    db_model: Type,
+    *,
+    config: Type = OrmConfig,
+    exclude: Container[str] = [],
+    partial=False  # noqa
 ) -> Type[BaseModel]:
     mapper = inspect(db_model)
     fields = {}
@@ -39,6 +44,8 @@ def model_to_schema(
                 else:
                     fields[name] = (python_type, default)
     pydantic_model = create_model(
-        db_model.__name__, __config__=config, **fields  # noqa
+        db_model.__name__,
+        __config__=config,
+        **fields  # noqa
     )
     return pydantic_model
