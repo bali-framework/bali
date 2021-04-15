@@ -4,7 +4,7 @@ from pydantic import BaseConfig, BaseModel, create_model
 from sqlalchemy.inspection import inspect
 from sqlalchemy.orm.properties import ColumnProperty
 
-from generic import *
+from .generic import *
 
 
 class OrmConfig(BaseConfig):

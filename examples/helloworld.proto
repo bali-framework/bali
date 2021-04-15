@@ -1,4 +1,9 @@
 syntax = "proto3";
+
+package helloworld;
+
+import "google/protobuf/struct.proto";
+
 // The greeting service definition.
 service Greeter {
   // Sends a greeting
@@ -14,3 +19,35 @@ message HelloRequest {
 message HelloReply {
   string message = 1;
 }
+
+// *** Generic RPC Messages <Start> version 1 ***
+message GetRequest {
+  int32 id = 1;
+}
+message ListRequest {
+  google.protobuf.Struct filters = 1;
+  int32 offset = 2;
+  int32 limit = 3;
+  repeated string ordering = 4;
+}
+message CreateRequest {
+  google.protobuf.Struct data = 1;
+}
+message UpdateRequest {
+  int32 id = 1;
+  google.protobuf.Struct data = 2;
+}
+message DeleteRequest {
+  int32 id = 1;
+}
+message ItemResponse {
+  google.protobuf.Struct data = 1;
+}
+message ListResponse {
+  repeated google.protobuf.Struct data = 1;
+  int32 count = 2;
+}
+message ResultResponse {
+  bool result = 1;
+}
+// *** Generic RPC Messages <End> ***
