@@ -8,6 +8,7 @@ import "google/protobuf/struct.proto";
 service Greeter {
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (HelloReply) {}
+  rpc GetGreeter (GetRequest) returns (ItemResponse) {}
 }
 
 // The request message containing the user's name.

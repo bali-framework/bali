@@ -83,7 +83,7 @@ def MessageToDict(  # noqa
         preserving_proto_field_name=False,
         use_integers_for_enums=False,
         descriptor_pool=None,
-        float_precision=None
+        float_precision=None,
 ):
     printer = ProtobufPrinter(
         including_default_value_fields,
@@ -96,7 +96,10 @@ def MessageToDict(  # noqa
 
 
 def ParseDict(  # noqa
-    js_dict, message, ignore_unknown_fields=False, descriptor_pool=None
+    js_dict,
+    message,
+    ignore_unknown_fields=False,
+    descriptor_pool=None,
 ):
     parser = ProtobufParser(ignore_unknown_fields, descriptor_pool)
     parser.ConvertMessage(js_dict, message)

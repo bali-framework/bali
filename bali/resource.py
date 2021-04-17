@@ -10,12 +10,13 @@ from collections import OrderedDict
 from typing import Optional, Callable
 
 from fastapi_pagination import LimitOffsetPage, paginate
+from google.protobuf import message
 from pydantic import BaseModel
 
 from .routing import APIRouter
 from .schemas import ResultResponse
 
-__all__ = ['Resource']
+__all__ = ['Resource', 'GENERIC_ACTIONS']
 
 GENERIC_ACTIONS = OrderedDict()
 GENERIC_ACTIONS['get'] = {'detail': True}
@@ -35,8 +36,13 @@ class Resource:
 
     _actions = GENERIC_ACTIONS
 
-    def __init__(self):
-        pass
+    def __init__(self, request=None, context=None, response_message=None):
+        self._request = request
+        self._context = context
+        self._response_message = response_message
+
+        self._is_rpc = isinstance(self._request, message.Message)
+        self._is_http = not self._is_rpc
 
     @classmethod
     def as_router(cls):

@@ -14,12 +14,14 @@
 """The Python implementation of the GRPC helloworld.Greeter client."""
 
 from __future__ import print_function
+
 import logging
 
 import grpc
 
 import helloworld_pb2
 import helloworld_pb2_grpc
+from bali.utils import MessageToDict
 
 
 def run():
@@ -29,7 +31,12 @@ def run():
     with grpc.insecure_channel('localhost:50051') as channel:
         stub = helloworld_pb2_grpc.GreeterStub(channel)
         response = stub.SayHello(helloworld_pb2.HelloRequest(name='you'))
-    print("Greeter client received: " + response.message)
+        print("Greeter client received <SayHello>: %s" % response.message)
+
+    with grpc.insecure_channel('localhost:50051') as channel:
+        stub = helloworld_pb2_grpc.GreeterStub(channel)
+        response = stub.GetGreeter(helloworld_pb2.GetRequest(id=3))
+        print("Greeter client received <GetGreeter>: %s" % MessageToDict(response))
 
 
 if __name__ == '__main__':
