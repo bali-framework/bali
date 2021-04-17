@@ -191,7 +191,7 @@ def root():
     return {"message": "Hello World"}
 ```
 
-> More usage of `Resource`: [GreeterResource](examples/resource/greeter.py)
+> More usage of `Resource`: [GreeterResource](examples/resources/greeter.py)
 
 
 ## Service Mixin
