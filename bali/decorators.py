@@ -7,8 +7,6 @@ from .utils import MessageToDict, ParseDict
 def compatible_method(func):
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
-        print('self', self)
-        print('self._is_rpc', self._is_rpc)
 
         # Put args to inner function from request object
         if self._is_rpc:
