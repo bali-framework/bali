@@ -5,24 +5,24 @@ A Resource layer base class to handle FastAPI and gRPC requests and responses
 Resource's method input is Pydantic schema
 
 """
-import types
+import inspect
+from collections import OrderedDict
+from typing import Optional, Callable
 
-import decamelize
-
-from typing import Optional, List, Callable
+from fastapi_pagination import LimitOffsetPage, paginate
+from pydantic import BaseModel
 
 from .routing import APIRouter
 from .schemas import ResultResponse
 
 __all__ = ['Resource']
 
-GENERIC_ACTIONS = [
-    'get',
-    'list',
-    'create',
-    'update',
-    'delete',
-]
+GENERIC_ACTIONS = OrderedDict()
+GENERIC_ACTIONS['get'] = {'detail': True}
+GENERIC_ACTIONS['list'] = {'detail': False}
+GENERIC_ACTIONS['create'] = {'detail': False}
+GENERIC_ACTIONS['update'] = {'detail': True}
+GENERIC_ACTIONS['delete'] = {'detail': True}
 
 
 class Resource:
@@ -34,6 +34,9 @@ class Resource:
     schema = None
 
     _actions = GENERIC_ACTIONS
+
+    def __init__(self):
+        pass
 
     @classmethod
     def as_router(cls):
@@ -51,10 +54,10 @@ class RouterGenerator:
 
     def __call__(self):
         # noinspection PyProtectedMember
-        for action in self.cls._actions:
+        for action, extra in self.cls._actions.items():
             if not hasattr(self.cls, action):
                 continue
-            self.add_route(action)
+            self.add_route(action, extra)
         return self.router
 
     @property
@@ -63,14 +66,20 @@ class RouterGenerator:
 
     @property
     def primary_key(self):
-        # return f'{decamelize.convert(self.resource_name)}_id'
         return 'id'
 
     def _list(self) -> Callable:
+        """
+        list action default using fastapi-pagination to process paginate
+        """
         resource = self.cls()
 
-        def route(id: int):
-            return getattr(resource, 'get')(pk=id)
+        def route():
+            result = getattr(resource, 'list')()
+            if isinstance(result, BaseModel):
+                return result
+            else:
+                return paginate(result)
 
         return route
 
@@ -113,63 +122,73 @@ class RouterGenerator:
         def endpoint():
             return getattr(resource, action)()
 
-        function_string = """
-def endpoint_detail({args}):
-    if {primary_key}.isdigit():
-        {primary_key} = int({primary_key})
-    return getattr(resource, action)(pk={primary_key})
-""".format(
-            args=f'schema_in: resource.schema, {self.primary_key}',
-            primary_key=self.primary_key,
-        )
+        def endpoint_detail(pk: int):
+            return getattr(resource, action)(pk)
 
-        module_code = compile(function_string, '', 'exec')
-        function_code = [c for c in module_code.co_consts if isinstance(c, types.CodeType)][0]
-        base_globals = {}
-        # noinspection PyTypeChecker
-        base_globals.update(__builtins__, resource=resource, action=action)
-        endpoint_detail = types.FunctionType(function_code, base_globals)
+        def endpoint_schema(schema_in: BaseModel):
+            return getattr(resource, action)(schema_in)
 
-        return endpoint_detail if detail else endpoint
+        sig = inspect.signature(getattr(self.cls, action))
 
-    def add_route(self, action):
+        route = endpoint
+        if detail:
+            route = endpoint_detail
+        elif 'schema_in' in sig.parameters:
+            route = endpoint_schema
+            params = list(sig.parameters.values())[1:]
+            route.__signature__ = sig.replace(parameters=params)
+
+        return route
+
+    def add_route(self, action, extra):
+        detail = extra.get('detail')
+        path = '/{%s}' % self.primary_key if detail else ''
+
         if action == 'list':
             self.router.add_api_route(
-                '',
+                path,
                 self._list(),
                 methods=['GET'],
-                response_model=self.cls.schema and Optional[List[self.cls.schema]],
+                response_model=LimitOffsetPage[self.cls.schema],
                 summary=f'List {self.resource_name}'
             )
-        if action == 'create':
+        elif action == 'create':
             self.router.add_api_route(
-                '',
+                path,
                 self._create(),
                 methods=['POST'],
                 response_model=self.cls.schema and Optional[self.cls.schema],
                 summary=f'Create {self.resource_name}'
             )
-        if action == 'get':
+        elif action == 'get':
             self.router.add_api_route(
-                '/{%s}' % self.primary_key,
+                path,
                 self._get(),
                 methods=['GET'],
                 response_model=self.cls.schema,
                 summary=f'Get {self.resource_name}'
             )
-        if action == 'update':
+        elif action == 'update':
             self.router.add_api_route(
-                '/{%s}' % self.primary_key,
+                path,
                 self._update(),
                 methods=['PATCH'],
                 response_model=self.cls.schema,
                 summary=f'Update {self.resource_name}'
             )
-        if action == 'delete':
+        elif action == 'delete':
             self.router.add_api_route(
-                '/{%s}' % self.primary_key,
+                path,
                 self._delete(),
                 methods=['DELETE'],
                 response_model=ResultResponse,
                 summary=f'Delete {self.resource_name}'
+            )
+        else:
+            methods = extra.get('methods')
+            self.router.add_api_route(
+                f"{path}/{action.replace('_', '-')}",
+                self.get_endpoint(action, detail),
+                methods=methods,
+                summary=f"{action.replace('_', ' ')}"
             )

@@ -7,6 +7,7 @@ import uvicorn
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.routing import APIRoute
+from fastapi_pagination import add_pagination
 from starlette.middleware.cors import CORSMiddleware
 
 from ._utils import singleton
@@ -100,6 +101,8 @@ class Bali:
                 allow_headers=["*"],
             )
             self._app.middleware('http')(process_middleware)
+
+        add_pagination(self._app)
 
     def launch(self, http: bool = False, rpc: bool = False):
         start_all = not any([http, rpc])

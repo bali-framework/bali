@@ -1,11 +1,11 @@
 import functools
 import inspect
+from typing import List
 
-from fastapi import APIRouter as FastAPIRouter, HTTPException
+from fastapi import APIRouter as FastAPIRouter
 
 from bali.core import db
 from .application import GzipRoute
-from typing import Any, Callable, Generic, List, Optional, Type
 
 
 class APIRoute(GzipRoute):

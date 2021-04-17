@@ -1,4 +1,5 @@
 import re
+import types
 from typing import Callable
 
 from grpc import Server
@@ -11,6 +12,7 @@ def singleton(cls):
         if cls not in _instance:
             _instance[cls] = cls(*args, **kwargs)
         return _instance[cls]
+
     return inner
 
 

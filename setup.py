@@ -5,6 +5,7 @@ INSTALL_REQUIREMENTS = [
     'dateparser==1.0.0',
     'decamelize==0.1.2',
     'fastapi[all]==0.63.0',
+    'fastapi-pagination==0.7.0',
     'grpcio==1.32.0',
     'grpcio-tools==1.32.0',
     'grpc-interceptor==0.13.0',
