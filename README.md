@@ -100,7 +100,7 @@ class BaseModel(db.Model):
 ```python
 # generate pydantic schema from models
 # `User` is a db.Model or db.BaseModel instance 
-from bali.schema import model_to_schema
+from bali.schemas import model_to_schema
 UserSchema = model_to_schema(User)
 ```
 
