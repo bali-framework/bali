@@ -16,25 +16,21 @@ from pydantic import BaseModel
 from .routing import APIRouter
 from .schemas import ResultResponse
 
-__all__ = ['Resource', 'GENERIC_ACTIONS']
-
-GENERIC_ACTIONS = OrderedDict()
-GENERIC_ACTIONS['get'] = {'detail': True}
-GENERIC_ACTIONS['list'] = {'detail': False}
-GENERIC_ACTIONS['create'] = {'detail': False}
-GENERIC_ACTIONS['update'] = {'detail': True}
-GENERIC_ACTIONS['delete'] = {'detail': True}
+__all__ = ['Resource']
 
 
 class Resource:
-    """Base Resource"""
+    """Base Resource
+
+    Generic Actions is get, list, create, update, delete
+    """
 
     # Resource's name, should automatic recognition is not provided
     name = None
 
     schema = None
 
-    _actions = GENERIC_ACTIONS
+    _actions = OrderedDict()
 
     def __init__(self, request=None, context=None, response_message=None):
         self._request = request
@@ -147,12 +143,10 @@ class RouterGenerator:
         return route
 
     def add_route(self, action, extra):
-        detail = extra.get('detail')
-        path = '/{%s}' % self.primary_key if detail else ''
 
         if action == 'list':
             self.router.add_api_route(
-                path,
+                '',
                 self._list(),
                 methods=['GET'],
                 response_model=LimitOffsetPage[self.cls.schema],
@@ -160,7 +154,7 @@ class RouterGenerator:
             )
         elif action == 'create':
             self.router.add_api_route(
-                path,
+                '',
                 self._create(),
                 methods=['POST'],
                 response_model=self.cls.schema and Optional[self.cls.schema],
@@ -168,7 +162,7 @@ class RouterGenerator:
             )
         elif action == 'get':
             self.router.add_api_route(
-                path,
+                '/{%s}' % self.primary_key,
                 self._get(),
                 methods=['GET'],
                 response_model=self.cls.schema,
@@ -176,7 +170,7 @@ class RouterGenerator:
             )
         elif action == 'update':
             self.router.add_api_route(
-                path,
+                '/{%s}' % self.primary_key,
                 self._update(),
                 methods=['PATCH'],
                 response_model=self.cls.schema,
@@ -184,14 +178,16 @@ class RouterGenerator:
             )
         elif action == 'delete':
             self.router.add_api_route(
-                path,
+                '/{%s}' % self.primary_key,
                 self._delete(),
                 methods=['DELETE'],
                 response_model=ResultResponse,
                 summary=f'Delete {self.resource_name}'
             )
         else:
+            detail = extra.get('detail')
             methods = extra.get('methods')
+            path = '/{%s}' % self.primary_key if detail else ''
             self.router.add_api_route(
                 f"{path}/{action.replace('_', '-')}",
                 self.get_endpoint(action, detail),

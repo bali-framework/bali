@@ -1,6 +1,5 @@
 import functools
 from pydantic import BaseModel
-from .resource import GENERIC_ACTIONS
 from .utils import MessageToDict, ParseDict
 
 
@@ -43,15 +42,24 @@ def compatible_method(func):
     return wrapper
 
 
-def action(methods=None, detail=None, url_path=None, **kwargs):
+def action(methods=None, detail=None, **kwargs):
     """
     Mark a Resource method as a routable action.
 
     Set the `detail` boolean to determine if this action should apply to
     instance/detail requests or collection/list requests.
+
+    :param methods:
+    :param detail:
+    :param kwargs:
+        only_http: the action only support http
+        only_rpc: the action only support rpc
     """
     methods = ['get'] if (methods is None) else methods
     methods = [method.lower() for method in methods]
+
+    only_http = kwargs.get('only_http', False)
+    only_rpc = kwargs.get('only_rpc', False)
 
     class Action:
         def __init__(self, func):
@@ -61,10 +69,11 @@ def action(methods=None, detail=None, url_path=None, **kwargs):
             # replace ourself with the original method
             setattr(owner, name, compatible_method(self.func))
 
-            if self.func.__name__ in GENERIC_ACTIONS.keys():
+            # Append actions to Resource._actions
+            # Only for http actions
+            if only_rpc:
                 return
 
-            # Append actions to Resource._actions
             _actions = getattr(owner, '_actions')
             _actions[self.func.__name__] = {
                 'detail': detail,
