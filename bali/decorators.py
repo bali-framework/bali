@@ -15,26 +15,33 @@ def compatible_method(func):
                 if isinstance(result, BaseModel):
                     result = result.dict()
                 return ParseDict({'data': result}, self._response_message())
+
             elif func.__name__ == 'list':
                 result = func(self, MessageToDict(self._request))
                 # Paginated the result queryset or iterable object
                 return result
+
             elif func.__name__ == 'create':
                 result = func(self, MessageToDict(self._request))
                 if isinstance(result, BaseModel):
                     result = result.dict()
                 return ParseDict({'data': result}, self._response_message())
+
             elif func.__name__ == 'update':
                 result = func(self, MessageToDict(self._request))
                 if isinstance(result, BaseModel):
                     result = result.dict()
                 return ParseDict({'data': result}, self._response_message())
+
             elif func.__name__ == 'delete':
                 pk = self._request.id
                 result = func(self, pk)
                 return ParseDict({'result': bool(result)}, self._response_message())
 
-            result = func(self, *args, **kwargs)
+            # custom action
+            result = func(self, MessageToDict(self._request))
+            if isinstance(result, BaseModel):
+                result = result.dict()
             return ParseDict(result, self._response_message())
 
         return func(self, *args, **kwargs)
@@ -52,14 +59,14 @@ def action(methods=None, detail=None, **kwargs):
     :param methods:
     :param detail:
     :param kwargs:
-        only_http: the action only support http
-        only_rpc: the action only support rpc
+        http_only: the action only support http
+        rpc_only: the action only support rpc
     """
     methods = ['get'] if (methods is None) else methods
     methods = [method.lower() for method in methods]
 
-    only_http = kwargs.get('only_http', False)
-    only_rpc = kwargs.get('only_rpc', False)
+    http_only = kwargs.get('http_only', False)
+    rpc_only = kwargs.get('rpc_only', False)
 
     class Action:
         def __init__(self, func):
@@ -71,7 +78,7 @@ def action(methods=None, detail=None, **kwargs):
 
             # Append actions to Resource._actions
             # Only for http actions
-            if only_rpc:
+            if rpc_only:
                 return
 
             _actions = getattr(owner, '_actions')
