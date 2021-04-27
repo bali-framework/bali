@@ -1,5 +1,8 @@
 import functools
+
+from fastapi.dependencies.utils import get_typed_signature
 from pydantic import BaseModel
+
 from .utils import MessageToDict, ParseDict
 
 
@@ -39,7 +42,8 @@ def compatible_method(func):
                 return ParseDict({'result': bool(result)}, self._response_message())
 
             # custom action
-            result = func(self, MessageToDict(self._request))
+            schema_in = get_schema_in(func)
+            result = func(self, schema_in(**MessageToDict(self._request)))
             if isinstance(result, BaseModel):
                 result = result.dict()
             return ParseDict(result, self._response_message())
@@ -89,3 +93,22 @@ def action(methods=None, detail=None, **kwargs):
             setattr(owner, '_actions', _actions)
 
     return Action
+
+
+def get_schema_in(func):
+    typed_signature = get_typed_signature(func)
+    signature_params = typed_signature.parameters
+
+    # 1st argument is self
+    # 2st argument is schema_in
+    index = 0
+    for param_name, param in signature_params.items():
+        index += 1
+        if index == 2 or param_name == 'schema_in':
+            schema_in = param.annotation
+            if not schema_in:
+                raise ValueError('Custom actions must provide `schema_in` argument with annotation')
+
+            return schema_in
+    else:
+        raise ValueError('Custom actions arguments error')
