@@ -1,7 +1,9 @@
 from pydantic import BaseSettings
+
 # noinspection PyUnresolvedReferences
 from .application import Bali
 from .cache import cache
+from .cache_memoize import cache_memoize
 from .db import db, transaction
 # noinspection PyUnresolvedReferences
 from .routing import APIRouter
@@ -12,7 +14,6 @@ setattr(db, 'transaction', transaction)
 
 class Settings(BaseSettings):
     ENABLED_RPC_LOGGING: str = False
-
 
 _settings = Settings()
 

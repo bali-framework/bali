@@ -8,9 +8,15 @@ MARKER = object()
 
 
 def cache_memoize(timeout):
+    def noop(*args):
+        return args
+
+    args_rewrite = noop
+
     def decorator(func):
         def _default_make_cache_key(*args, **kwargs):
             cache_key = "cache_memoize:" + ":".join(
+                [quote(str(x)) for x in args_rewrite(args)] +
                 [quote("{}={}".format(k, v)) for k, v in kwargs.items()]
             )
             return hashlib.md5(cache_key.encode('utf-8')).hexdigest()
