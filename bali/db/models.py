@@ -18,17 +18,19 @@ class AwareDateTime(TypeDecorator):
     def python_type(self):
         return datetime
 
-    def process_result_value(self, value: datetime, dialect):
-        return timezone.make_aware(value, timezone=pytz.UTC)
+    def process_result_value(self, value, _):
+        if value is not None:
+            value = timezone.make_aware(value, timezone=pytz.utc)
 
-    def process_bind_param(self, value: datetime, dialect):
-        if timezone.is_naive(value):
-            return value
+        return value
 
-        return timezone.make_naive(value, timezone=pytz.UTC)
+    def process_bind_param(self, value, _):
+        if value is not None:
+            if timezone.is_naive(value):
+                value = timezone.make_aware(value)
 
-    def process_literal_param(self, value: datetime, dialect):
-        return value.isoformat()
+            value = timezone.make_naive(value, timezone=pytz.utc)
+        return value
 
 
 context_auto_commit = ContextVar('context_auto_commit', default=True)
