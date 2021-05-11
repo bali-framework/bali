@@ -8,7 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.functions import func
 from sqlalchemy.types import TypeDecorator
 
-from ..utils import timezone
+from bali.utils import timezone
 
 
 class AwareDateTime(TypeDecorator):
@@ -40,8 +40,8 @@ def get_base_model(db):
     class BaseModel(db.Model):
         __abstract__ = True
 
-        created_time = Column(DateTime, default=datetime.utcnow)
-        updated_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+        created_time = Column(AwareDateTime, default=timezone.now)
+        updated_time = Column(AwareDateTime, default=timezone.now, onupdate=timezone.now)
         is_active = Column(Boolean, default=True)
 
         @classmethod
