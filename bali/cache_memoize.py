@@ -30,7 +30,7 @@ def cache_memoize(timeout):
             if _refresh:
                 result = MARKER
             else:
-                result = cache.get(cache_key, MARKER)
+                result = cache.get(cache_key) or MARKER
 
             if result is MARKER:
                 result = func(*args, **kwargs)

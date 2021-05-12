@@ -1,12 +1,19 @@
 from fastapi_pagination import LimitOffsetPage, LimitOffsetParams, paginate
 from fastapi import Query
 
-from bali.core import APIRouter
+from bali.core import APIRouter, cache_memoize
 from models import Item
 from resources import GreeterResource
 from schemas import ItemModel
 
 router = APIRouter()
+
+
+@cache_memoize(10)
+def get_cacheable_items():
+    items = list(Item.query().all())
+    print('load from db')
+    return items
 
 
 @router.get("/")
@@ -16,8 +23,7 @@ async def root():
 
 @router.get("/items", response_model=LimitOffsetPage[ItemModel])
 def list_items():
-    items = list(Item.query().all())
-    return paginate(items)
+    return paginate(get_cacheable_items())
 
 #
 # @router.get("/sync")
