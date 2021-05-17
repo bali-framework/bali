@@ -9,6 +9,7 @@ import inspect
 from collections import OrderedDict
 from typing import Optional, Callable
 
+from fastapi import Request
 from fastapi_pagination import LimitOffsetPage, paginate
 from google.protobuf import message
 from pydantic import BaseModel
@@ -76,7 +77,7 @@ class RouterGenerator:
         """
         resource = self.cls()
 
-        def route():
+        def route(request: Request):
             result = getattr(resource, 'list')()
             if isinstance(result, BaseModel):
                 return result

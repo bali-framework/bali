@@ -25,6 +25,16 @@ class GreeterStub(object):
                 request_serializer=helloworld__pb2.GetRequest.SerializeToString,
                 response_deserializer=helloworld__pb2.ItemResponse.FromString,
                 )
+        self.ListGreeter = channel.unary_unary(
+                '/helloworld.Greeter/ListGreeter',
+                request_serializer=helloworld__pb2.ListRequest.SerializeToString,
+                response_deserializer=helloworld__pb2.ListResponse.FromString,
+                )
+        self.CreateGreeter = channel.unary_unary(
+                '/helloworld.Greeter/CreateGreeter',
+                request_serializer=helloworld__pb2.CreateRequest.SerializeToString,
+                response_deserializer=helloworld__pb2.ItemResponse.FromString,
+                )
 
 
 class GreeterServicer(object):
@@ -44,6 +54,18 @@ class GreeterServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def ListGreeter(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CreateGreeter(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_GreeterServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -55,6 +77,16 @@ def add_GreeterServicer_to_server(servicer, server):
             'GetGreeter': grpc.unary_unary_rpc_method_handler(
                     servicer.GetGreeter,
                     request_deserializer=helloworld__pb2.GetRequest.FromString,
+                    response_serializer=helloworld__pb2.ItemResponse.SerializeToString,
+            ),
+            'ListGreeter': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListGreeter,
+                    request_deserializer=helloworld__pb2.ListRequest.FromString,
+                    response_serializer=helloworld__pb2.ListResponse.SerializeToString,
+            ),
+            'CreateGreeter': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreateGreeter,
+                    request_deserializer=helloworld__pb2.CreateRequest.FromString,
                     response_serializer=helloworld__pb2.ItemResponse.SerializeToString,
             ),
     }
@@ -98,6 +130,40 @@ class Greeter(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/helloworld.Greeter/GetGreeter',
             helloworld__pb2.GetRequest.SerializeToString,
+            helloworld__pb2.ItemResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ListGreeter(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/helloworld.Greeter/ListGreeter',
+            helloworld__pb2.ListRequest.SerializeToString,
+            helloworld__pb2.ListResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def CreateGreeter(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/helloworld.Greeter/CreateGreeter',
+            helloworld__pb2.CreateRequest.SerializeToString,
             helloworld__pb2.ItemResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -5,7 +5,6 @@ from bali.decorators import action
 from bali.resource import Resource
 from bali.schemas import GetRequest, ListRequest
 
-
 GREETERS = [{'id': i, 'content': 'Hi, number %s' % i} for i in range(10)]
 
 
@@ -27,15 +26,17 @@ class GreeterResource(Resource):
         return [g for g in GREETERS if g.get('id') == pk][0]
 
     @action()
-    def list(self, schema_in: ListRequest):
-        return GREETERS[:schema_in.limit]
+    def list(self, schema_in: ListRequest = None):
+        # `list` NOT FULL SUPPORT HTTP REQUEST
+        # return GREETERS[:schema_in.limit]
+        return GREETERS
 
     @action()
-    def create(self, schema_in: schema):
+    def create(self, schema_in: schema = None):
         return {'id': schema_in.id, 'content': schema_in.content}
 
     @action()
-    def update(self, schema_in: schema, pk=None):
+    def update(self, schema_in: schema = None, pk=None):
         return {'id': pk, 'content': schema_in.content}
 
     @action()

@@ -27,9 +27,6 @@ from resources import GreeterResource
 
 
 class Greeter(helloworld_pb2_grpc.GreeterServicer, ServiceMixin):
-    def setup(self):
-        print('Greeter Setup ...')
-
     def SayHello(self, request, context):
         print('Greeter.SayHello')
         return helloworld_pb2.HelloReply(message='Hello, %s!' % request.name)
@@ -37,6 +34,14 @@ class Greeter(helloworld_pb2_grpc.GreeterServicer, ServiceMixin):
     def GetGreeter(self, request, context):
         print('Greeter.GetGreeter')
         return GreeterResource(request, context, pb2.ItemResponse).get()
+
+    def ListGreeter(self, request, context):
+        print('Greeter.ListGreeter')
+        return GreeterResource(request, context, pb2.ListResponse).list()
+
+    def CreateGreeter(self, request, context):
+        print('Greeter.CreateGreeter')
+        return GreeterResource(request, context, pb2.ItemResponse).create()
 
 
 def serve():

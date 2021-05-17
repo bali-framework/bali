@@ -9,6 +9,8 @@ service Greeter {
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (HelloReply) {}
   rpc GetGreeter (GetRequest) returns (ItemResponse) {}
+  rpc ListGreeter (ListRequest) returns (ListResponse) {}
+  rpc CreateGreeter (CreateRequest) returns (ItemResponse) {}
 }
 
 // The request message containing the user's name.
@@ -21,7 +23,7 @@ message HelloReply {
   string message = 1;
 }
 
-// *** Generic RPC Messages <Start> version 1 ***
+// *** Generic RPC Messages <Start> version 2 ***
 message GetRequest {
   int32 id = 1;
 }
@@ -46,7 +48,10 @@ message ItemResponse {
 }
 message ListResponse {
   repeated google.protobuf.Struct data = 1;
-  int32 count = 2;
+  int32 count = 2;  // deprecated
+  int32 offset = 3;
+  int32 limit = 4;
+  int32 total = 5;
 }
 message ResultResponse {
   bool result = 1;

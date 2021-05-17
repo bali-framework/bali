@@ -21,7 +21,7 @@ import grpc
 
 import helloworld_pb2
 import helloworld_pb2_grpc
-from bali.utils import MessageToDict
+from bali.utils import MessageToDict, ParseDict
 
 
 def run():
@@ -37,6 +37,25 @@ def run():
         stub = helloworld_pb2_grpc.GreeterStub(channel)
         response = stub.GetGreeter(helloworld_pb2.GetRequest(id=3))
         print("Greeter client received <GetGreeter>: %s" % MessageToDict(response))
+
+    with grpc.insecure_channel('localhost:50051') as channel:
+        stub = helloworld_pb2_grpc.GreeterStub(channel)
+        data = {
+            'id': 1,
+            'content': 'Greeter',
+        }
+        request_pb = ParseDict(
+            {'data': data},
+            helloworld_pb2.CreateRequest(),
+            ignore_unknown_fields=True,
+        )
+        response = stub.CreateGreeter(request_pb)
+        print("Greeter client received <CreateGreeter>: %s" % MessageToDict(response))
+
+    with grpc.insecure_channel('localhost:50051') as channel:
+        stub = helloworld_pb2_grpc.GreeterStub(channel)
+        response = stub.ListGreeter(helloworld_pb2.ListRequest(limit=2, offset=3))
+        print("Greeter client received <ListGreeter>: %s" % MessageToDict(response))
 
 
 if __name__ == '__main__':

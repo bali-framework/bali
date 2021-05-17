@@ -1,6 +1,8 @@
 import functools
 
 from fastapi.dependencies.utils import get_typed_signature
+from fastapi_pagination import LimitOffsetPage, paginate, LimitOffsetParams, set_page
+from fastapi_pagination.limit_offset import Page
 from pydantic import BaseModel
 
 from .utils import MessageToDict, ParseDict
@@ -12,41 +14,61 @@ def compatible_method(func):
 
         # Put args to inner function from request object
         if self._is_rpc:
+            request_data = MessageToDict(
+                self._request,
+                including_default_value_fields=True,
+                preserving_proto_field_name=True,
+            )
+
             if func.__name__ == 'get':
                 pk = self._request.id
                 result = func(self, pk)
                 if isinstance(result, BaseModel):
                     result = result.dict()
-                return ParseDict({'data': result}, self._response_message())
+                response_data = {'data': result}
 
             elif func.__name__ == 'list':
-                result = func(self, MessageToDict(self._request))
+                schema_in = get_schema_in(func)
+                result = func(self, schema_in(**request_data))
                 # Paginated the result queryset or iterable object
-                return result
+                if isinstance(result, BaseModel):
+                    return result
+                else:
+                    set_page(Page)
+                    params = LimitOffsetParams(
+                        limit=request_data.get('limit') or 10,
+                        offset=request_data.get('offset'),
+                    )
+                    paginator = paginate(result, params)
+                    response_data = paginator.dict()
+                    response_data.update(
+                        count=response_data.get('total'),
+                        data=response_data.get('items'),
+                    )
 
-            elif func.__name__ == 'create':
-                result = func(self, MessageToDict(self._request))
+            elif func.__name__ in ['create', 'update']:
+                schema_in = get_schema_in(func)
+                data = request_data.get('data')
+                result = func(self, schema_in(**data))
                 if isinstance(result, BaseModel):
                     result = result.dict()
-                return ParseDict({'data': result}, self._response_message())
-
-            elif func.__name__ == 'update':
-                result = func(self, MessageToDict(self._request))
-                if isinstance(result, BaseModel):
-                    result = result.dict()
-                return ParseDict({'data': result}, self._response_message())
+                response_data = {'data': result}
 
             elif func.__name__ == 'delete':
                 pk = self._request.id
                 result = func(self, pk)
-                return ParseDict({'result': bool(result)}, self._response_message())
+                response_data = {'result': bool(result)}
 
-            # custom action
-            schema_in = get_schema_in(func)
-            result = func(self, schema_in(**MessageToDict(self._request)))
-            if isinstance(result, BaseModel):
-                result = result.dict()
-            return ParseDict(result, self._response_message())
+            else:
+                # custom action
+                schema_in = get_schema_in(func)
+                result = func(self, schema_in(**request_data))
+                if isinstance(result, BaseModel):
+                    result = result.dict()
+                response_data = result
+
+            # Convert response data to gRPC response
+            return ParseDict(response_data, self._response_message(), ignore_unknown_fields=True)
 
         return func(self, *args, **kwargs)
 
