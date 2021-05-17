@@ -4,6 +4,7 @@ from typing import List, Optional
 from bali.decorators import action
 from bali.resource import Resource
 from bali.schemas import GetRequest, ListRequest
+from permissions import IsAuthenticated
 
 GREETERS = [{'id': i, 'content': 'Hi, number %s' % i} for i in range(10)]
 
@@ -24,6 +25,7 @@ class GreeterResource(Resource):
         {'name': str},
         {'title': Optional[str]},
     ]
+    permission_classes = [IsAuthenticated]
 
     @action()
     def get(self, pk=None):

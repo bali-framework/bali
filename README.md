@@ -112,7 +112,7 @@ Resource’s design borrows several key concepts from the REST architectural sty
 
 Inspired by `ViewSet` in Django REST Framework.
 
-**Generic HTTP/RPC Actions**
+### Generic HTTP/RPC Actions
 
 Generic HTTP/RPC support actions:
 
@@ -161,7 +161,7 @@ class GreeterResource(Resource):
 ```
 
 
-**Custom HTTP/RPC Actions**
+### Custom HTTP/RPC Actions
 
 Custom actions also decorated by `@action`, but `detail` signature is required.
 
@@ -177,7 +177,7 @@ def custom_action(self):
 > `False` means action set of resources, url path is '/{resources}'.
 > 
 
-**Override HTTP Actions**
+### Override HTTP Actions
 
 If the default HTTP action template is not satisfied your request, you can override HTTP actions.
 
@@ -206,6 +206,8 @@ class Hello(hello_pb2_grpc.HelloServiceServicer, ServiceMixin):
 
 ## Cache
 
+### Cache API
+
 ```python
 from bali.core import cache
 
@@ -216,6 +218,18 @@ cache.get(key)
 
 # Set cache 
 cache.set(key, value, timeout=10)
+```
+
+### cache memoize
+
+```python
+# Import the cache_memoize from bali core 
+from bali.core import cache_memoize
+
+# Attach decorator to cacheable function with a timeout of 100 seconds.
+@cache_memoize(100)
+def expensive_function(start, end):
+    return random.randint(start, end)
 ```
 
 ## Utils
@@ -257,7 +271,7 @@ class TestDemoRPC(GRPCTestBase):
         pass
 ```
 
-### CONTRIBUTE
+## CONTRIBUTE
 
 **Developer Environment**
 

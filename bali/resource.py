@@ -11,7 +11,7 @@ from collections import OrderedDict
 from typing import Optional, Callable
 
 import typing
-from fastapi import Request
+from fastapi import Request, HTTPException, status
 from fastapi_pagination import LimitOffsetPage, paginate
 from google.protobuf import message
 from pydantic import BaseModel
@@ -32,6 +32,8 @@ class Resource:
     name = None
 
     schema = None
+    filters = []
+    permission_classes = []
 
     _actions = OrderedDict()
 
@@ -43,12 +45,14 @@ class Resource:
         self._is_rpc = isinstance(self._request, message.Message)
         self._is_http = not self._is_rpc
 
+        self.auth = BaseModel()
+
     @classmethod
     def as_router(cls):
         return RouterGenerator(cls)()
 
 
-# noinspection PyShadowingBuiltins
+# noinspection PyShadowingBuiltins,PyUnresolvedReferences,PyProtectedMember,PyShadowingNames,DuplicatedCode
 class RouterGenerator:
     """
     Generator router from Resource class
@@ -74,6 +78,15 @@ class RouterGenerator:
     def primary_key(self):
         return 'id'
 
+    def check_permissions(self, resource):
+        for permission_class in self.cls.permission_classes:
+            permission = permission_class(resource)
+            if not permission.check():
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail='Permission Denied',
+                )
+
     def _get_ordered_filters(self):
         filters = OrderedDict()
         for item in self.cls.filters:
@@ -89,6 +102,7 @@ class RouterGenerator:
         resource = self.cls()
 
         def route(request: Request = None):
+            self.check_permissions(resource)
             params = request.query_params._dict
 
             # parse filters
@@ -96,6 +110,7 @@ class RouterGenerator:
             for k, v in params.items():
                 if k not in self._ordered_filters:
                     continue
+                # noinspection PyBroadException
                 try:
                     # Convert param and retrieve param
                     params_converter = self._ordered_filters.get(k)
@@ -103,7 +118,9 @@ class RouterGenerator:
                         params_converter = params_converter.__args__[0]
                     filters[k] = params_converter(v)
                 except Exception as ex:
-                    logging.warning('Query params `%s`(value: %s) type convert failed', k, v)
+                    logging.warning(
+                        'Query params `%s`(value: %s) type convert failed, exception: %s', k, v, ex
+                    )
                     continue
 
             schema_in = ListRequest(**params, filters=filters)
@@ -138,6 +155,7 @@ class RouterGenerator:
         resource = self.cls()
 
         def route(id: int):
+            self.check_permissions(resource)
             return getattr(resource, 'get')(pk=id)
 
         return route
@@ -146,6 +164,7 @@ class RouterGenerator:
         resource = self.cls()
 
         def route(schema_in: resource.schema):
+            self.check_permissions(resource)
             return getattr(resource, 'create')(schema_in)
 
         return route
@@ -154,6 +173,7 @@ class RouterGenerator:
         resource = self.cls()
 
         def route(schema_in: resource.schema, id: int):
+            self.check_permissions(resource)
             return getattr(resource, 'update')(schema_in, pk=id)
 
         return route
@@ -162,6 +182,7 @@ class RouterGenerator:
         resource = self.cls()
 
         def route(id: int):
+            self.check_permissions(resource)
             return getattr(resource, 'delete')(pk=id)
 
         return route
@@ -171,12 +192,15 @@ class RouterGenerator:
         resource = self.cls()
 
         def endpoint():
+            self.check_permissions(resource)
             return getattr(resource, action)()
 
         def endpoint_detail(pk: int):
+            self.check_permissions(resource)
             return getattr(resource, action)(pk)
 
         def endpoint_schema(schema_in: BaseModel):
+            self.check_permissions(resource)
             return getattr(resource, action)(schema_in)
 
         sig = inspect.signature(getattr(self.cls, action))
