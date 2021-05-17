@@ -20,6 +20,10 @@ class APIRoute(GzipRoute):
         @functools.wraps(endpoint)
         def injected_endpoint(*args, **kwargs):
             try:
+                # hack Resource list action endpoint
+                # ignored all query params in `kwargs`
+                if endpoint.__qualname__ == 'RouterGenerator._list.<locals>.route':
+                    return endpoint(*args, **{'request': kwargs.get('request')})
                 return endpoint(*args, **kwargs)
             finally:
                 db.remove()

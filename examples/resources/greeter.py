@@ -20,6 +20,10 @@ class GreeterFilter(BaseModel):
 class GreeterResource(Resource):
 
     schema = Greeter
+    filters = [
+        {'name': str},
+        {'title': Optional[str]},
+    ]
 
     @action()
     def get(self, pk=None):
@@ -29,6 +33,7 @@ class GreeterResource(Resource):
     def list(self, schema_in: ListRequest = None):
         # `list` NOT FULL SUPPORT HTTP REQUEST
         # return GREETERS[:schema_in.limit]
+        print(schema_in.filters.get('name'))
         return GREETERS
 
     @action()

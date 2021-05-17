@@ -5,17 +5,19 @@ A Resource layer base class to handle FastAPI and gRPC requests and responses
 Resource's method input is Pydantic schema
 
 """
+import logging
 import inspect
 from collections import OrderedDict
 from typing import Optional, Callable
 
+import typing
 from fastapi import Request
 from fastapi_pagination import LimitOffsetPage, paginate
 from google.protobuf import message
 from pydantic import BaseModel
 
 from .routing import APIRouter
-from .schemas import ResultResponse
+from .schemas import ListRequest, ResultResponse
 
 __all__ = ['Resource']
 
@@ -54,6 +56,7 @@ class RouterGenerator:
     def __init__(self, cls):
         self.cls = cls
         self.router = APIRouter()
+        self._ordered_filters = self._get_ordered_filters()
 
     def __call__(self):
         # noinspection PyProtectedMember
@@ -71,18 +74,63 @@ class RouterGenerator:
     def primary_key(self):
         return 'id'
 
+    def _get_ordered_filters(self):
+        filters = OrderedDict()
+        for item in self.cls.filters:
+            k = item.keys().__iter__().__next__()
+            v = item.values().__iter__().__next__()
+            filters[k] = v
+        return filters
+
     def _list(self) -> Callable:
         """
         list action default using fastapi-pagination to process paginate
         """
         resource = self.cls()
 
-        def route(request: Request):
-            result = getattr(resource, 'list')()
+        def route(request: Request = None):
+            params = request.query_params._dict
+
+            # parse filters
+            filters = {}
+            for k, v in params.items():
+                if k not in self._ordered_filters:
+                    continue
+                try:
+                    # Convert param and retrieve param
+                    params_converter = self._ordered_filters.get(k)
+                    if isinstance(params_converter, typing._GenericAlias):
+                        params_converter = params_converter.__args__[0]
+                    filters[k] = params_converter(v)
+                except Exception as ex:
+                    logging.warning('Query params `%s`(value: %s) type convert failed', k, v)
+                    continue
+
+            schema_in = ListRequest(**params, filters=filters)
+
+            result = getattr(resource, 'list')(schema_in)
             if isinstance(result, BaseModel):
                 return result
             else:
                 return paginate(result)
+
+        # update route's signatures
+        parameters = []
+        for k, v in self._ordered_filters.items():
+            default = inspect.Parameter.empty
+            if isinstance(v, typing._GenericAlias):
+                default = None if type(None) in v.__args__ else default
+            parameters.append(
+                inspect.Parameter(
+                    name=k,
+                    kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                    default=default,
+                    annotation=v,
+                )
+            )
+        sig = inspect.signature(route)
+        parameters.extend(sig.parameters.values())
+        route.__signature__ = sig.replace(parameters=parameters)
 
         return route
 
@@ -144,7 +192,6 @@ class RouterGenerator:
         return route
 
     def add_route(self, action, extra):
-
         if action == 'list':
             self.router.add_api_route(
                 '',
