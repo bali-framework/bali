@@ -1,4 +1,6 @@
+from enum import Enum
 from datetime import datetime, date
+from decimal import Decimal
 
 from google.protobuf import json_format
 
@@ -13,8 +15,6 @@ class ProtobufParser(json_format._Parser):  # noqa
             self._ConvertStructMessage(value, message.struct_value)
         elif isinstance(value, list):
             self._ConvertListValueMessage(value, message.list_value)
-        elif isinstance(value, (datetime, date)):
-            message.string_value = value.isoformat()
         elif value is None:
             message.null_value = 0
         elif isinstance(value, bool):
@@ -23,6 +23,12 @@ class ProtobufParser(json_format._Parser):  # noqa
             message.string_value = value
         elif isinstance(value, json_format._INT_OR_FLOAT):  # noqa
             message.number_value = value
+        elif isinstance(value, (datetime, date)):
+            message.string_value = value.isoformat()
+        elif isinstance(value, Enum):
+            message.string_value = value.name
+        elif isinstance(value, Decimal):
+            message.string_value = str(value)
         else:
             raise json_format.ParseError(
                 'Value {0} has unexpected type {1}.'.format(value, type(value))
