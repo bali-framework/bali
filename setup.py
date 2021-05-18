@@ -1,6 +1,11 @@
 import bali
 from setuptools import find_packages, setup
 
+
+def read(f):
+    return open(f, 'r', encoding='utf-8').read()
+
+
 INSTALL_REQUIREMENTS = [
     'dateparser==1.0.0',
     'decamelize==0.1.2',
@@ -25,7 +30,9 @@ INSTALL_REQUIREMENTS = [
 setup(
     name='bali-core',
     version=bali.__version__,
-    description='Simplify gRPC services and clients',
+    description='Simplify FastAPI integrate gRPC services development',
+    long_description=read('README.md'),
+    long_description_content_type='text/markdown',
     url='https://github.com/JoshYuJump/bali',
     author='Josh.Yu',
     author_email='josh.yu_8@live.com',

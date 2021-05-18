@@ -1,6 +1,6 @@
 # bali
 
-Simplify gRPC services & FastAPI
+Simplify FastAPI integrate gRPC services development
 
 ## Install
 
