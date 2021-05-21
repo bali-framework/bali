@@ -15,7 +15,8 @@ def cache_memoize(timeout):
 
     def decorator(func):
         def _default_make_cache_key(*args, **kwargs):
-            cache_key = "cache_memoize:" + ":".join(
+            prefix_ = ".".join((func.__module__ or "", func.__qualname__))
+            cache_key = "cache_memoize:" + ":" + prefix_ + ":".join(
                 [quote(str(x)) for x in args_rewrite(args)] +
                 [quote("{}={}".format(k, v)) for k, v in kwargs.items()]
             )
