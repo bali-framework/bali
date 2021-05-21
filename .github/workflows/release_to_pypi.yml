@@ -4,8 +4,9 @@
 name: Release to PyPI
 
 on:
-  release:
-    types: [created]
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   deploy:
