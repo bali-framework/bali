@@ -39,6 +39,8 @@ More usage of `Application`: [example](examples/main.py)
 
 ## Database 
 
+### connect
+
 ```python
 from bali.core import db
 
@@ -48,7 +50,7 @@ db.connect('DATABASE_URI')
   
 ```
 
-Declarative mode with sqla-wrapper
+### Declarative mode with sqla-wrapper
 
 ```python
 
@@ -68,7 +70,7 @@ todos = db.query(User).all()
 More convenient usage, ref to [SQLA-Wrapper](https://github.com/jpsca/sqla-wrapper)
 
 
-Declare models inherit from convenient base models
+### Declare models inherit from convenient base models
 
 *BaseModel*
 
@@ -91,6 +93,17 @@ class BaseModel(db.Model):
         DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow
     )
     is_active = Column(Boolean(), default=True)
+```
+
+### Operators
+
+Operators provided `get_filters_expr` to transform filters (dict) to SQLAlchemy expressions.  
+
+```python
+from bali.db.operators import get_filters_expr
+from models import User
+
+users = User.query().filter(*get_filters_expr(User, **filters)).all()
 ```
 
 ## Schema
