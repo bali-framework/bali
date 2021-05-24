@@ -95,6 +95,15 @@ class BaseModel(db.Model):
     is_active = Column(Boolean(), default=True)
 ```
 
+### Transaction
+
+SQLA-wrapper default model behavior is auto commit, auto commit will be disabled with `db.transaction` context. 
+
+```python
+with db.transaction():
+    item = Item.create(name='test1')
+```
+
 ### Operators
 
 Operators provided `get_filters_expr` to transform filters (dict) to SQLAlchemy expressions.  
