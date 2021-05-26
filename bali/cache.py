@@ -43,7 +43,7 @@ class Cache:
             if not self._client:
                 raise Exception('Cache client not initialized')
 
-            return getattr(self._session, attr)
+            return getattr(self._client, attr)
 
     def make_key(self, key):
         return f'{self.prefix}:cache:{key}'
