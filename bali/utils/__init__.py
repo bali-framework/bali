@@ -25,9 +25,14 @@ class ProtobufParser(json_format._Parser):  # noqa
         elif isinstance(value, json_format._INT_OR_FLOAT):  # noqa
             message.number_value = value
         elif isinstance(value, (datetime, date)):
-            if is_aware(value):
+            try:
+                assert is_aware(value)
+            except (AttributeError, AssertionError):
+                pass
+            else:
                 value = value.astimezone(pytz.utc)
-            message.string_value = value.isoformat()
+            finally:
+                message.string_value = value.isoformat()
         elif isinstance(value, Enum):
             message.string_value = value.name
         elif isinstance(value, Decimal):
