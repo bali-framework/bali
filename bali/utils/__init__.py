@@ -2,10 +2,11 @@ from enum import Enum
 from datetime import datetime, date
 from decimal import Decimal
 
+import pytz
 from google.protobuf import json_format
 
 from .dateparse import *
-from .timezone import StrTzInfoType, make_aware
+from .timezone import StrTzInfoType, make_aware, is_aware
 
 
 class ProtobufParser(json_format._Parser):  # noqa
@@ -24,6 +25,8 @@ class ProtobufParser(json_format._Parser):  # noqa
         elif isinstance(value, json_format._INT_OR_FLOAT):  # noqa
             message.number_value = value
         elif isinstance(value, (datetime, date)):
+            if is_aware(value):
+                value = value.astimezone(pytz.utc)
             message.string_value = value.isoformat()
         elif isinstance(value, Enum):
             message.string_value = value.name
