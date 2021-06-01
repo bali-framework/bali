@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x10helloworld.proto\x12\nhelloworld\x1a\x1cgoogle/protobuf/struct.proto\"\x1c\n\x0cHelloRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"\x1d\n\nHelloReply\x12\x0f\n\x07message\x18\x01 \x01(\t\"\x18\n\nGetRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"h\n\x0bListRequest\x12(\n\x07\x66ilters\x18\x01 \x01(\x0b\x32\x17.google.protobuf.Struct\x12\x0e\n\x06offset\x18\x02 \x01(\x05\x12\r\n\x05limit\x18\x03 \x01(\x05\x12\x10\n\x08ordering\x18\x04 \x03(\t\"6\n\rCreateRequest\x12%\n\x04\x64\x61ta\x18\x01 \x01(\x0b\x32\x17.google.protobuf.Struct\"B\n\rUpdateRequest\x12\n\n\x02id\x18\x01 \x01(\x05\x12%\n\x04\x64\x61ta\x18\x02 \x01(\x0b\x32\x17.google.protobuf.Struct\"\x1b\n\rDeleteRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"5\n\x0cItemResponse\x12%\n\x04\x64\x61ta\x18\x01 \x01(\x0b\x32\x17.google.protobuf.Struct\"r\n\x0cListResponse\x12%\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32\x17.google.protobuf.Struct\x12\r\n\x05\x63ount\x18\x02 \x01(\x05\x12\x0e\n\x06offset\x18\x03 \x01(\x05\x12\r\n\x05limit\x18\x04 \x01(\x05\x12\r\n\x05total\x18\x05 \x01(\x05\" \n\x0eResultResponse\x12\x0e\n\x06result\x18\x01 \x01(\x08\x32\x97\x02\n\x07Greeter\x12>\n\x08SayHello\x12\x18.helloworld.HelloRequest\x1a\x16.helloworld.HelloReply\"\x00\x12@\n\nGetGreeter\x12\x16.helloworld.GetRequest\x1a\x18.helloworld.ItemResponse\"\x00\x12\x42\n\x0bListGreeter\x12\x17.helloworld.ListRequest\x1a\x18.helloworld.ListResponse\"\x00\x12\x46\n\rCreateGreeter\x12\x19.helloworld.CreateRequest\x1a\x18.helloworld.ItemResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x10helloworld.proto\x12\nhelloworld\x1a\x1cgoogle/protobuf/struct.proto\"\x1c\n\x0cHelloRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"\x1d\n\nHelloReply\x12\x0f\n\x07message\x18\x01 \x01(\t\"\x18\n\nGetRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"h\n\x0bListRequest\x12(\n\x07\x66ilters\x18\x01 \x01(\x0b\x32\x17.google.protobuf.Struct\x12\x0e\n\x06offset\x18\x02 \x01(\x05\x12\r\n\x05limit\x18\x03 \x01(\x05\x12\x10\n\x08ordering\x18\x04 \x03(\t\"6\n\rCreateRequest\x12%\n\x04\x64\x61ta\x18\x01 \x01(\x0b\x32\x17.google.protobuf.Struct\"B\n\rUpdateRequest\x12\n\n\x02id\x18\x01 \x01(\x05\x12%\n\x04\x64\x61ta\x18\x02 \x01(\x0b\x32\x17.google.protobuf.Struct\"\x1b\n\rDeleteRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"5\n\x0cItemResponse\x12%\n\x04\x64\x61ta\x18\x01 \x01(\x0b\x32\x17.google.protobuf.Struct\"r\n\x0cListResponse\x12%\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32\x17.google.protobuf.Struct\x12\r\n\x05\x63ount\x18\x02 \x01(\x05\x12\x0e\n\x06offset\x18\x03 \x01(\x05\x12\r\n\x05limit\x18\x04 \x01(\x05\x12\r\n\x05total\x18\x05 \x01(\x05\" \n\x0eResultResponse\x12\x0e\n\x06result\x18\x01 \x01(\x08\x32\xdd\x03\n\x07Greeter\x12>\n\x08SayHello\x12\x18.helloworld.HelloRequest\x1a\x16.helloworld.HelloReply\"\x00\x12@\n\nGetGreeter\x12\x16.helloworld.GetRequest\x1a\x18.helloworld.ItemResponse\"\x00\x12\x42\n\x0bListGreeter\x12\x17.helloworld.ListRequest\x1a\x18.helloworld.ListResponse\"\x00\x12\x46\n\rCreateGreeter\x12\x19.helloworld.CreateRequest\x1a\x18.helloworld.ItemResponse\"\x00\x12=\n\x07GetItem\x12\x16.helloworld.GetRequest\x1a\x18.helloworld.ItemResponse\"\x00\x12@\n\tListItems\x12\x17.helloworld.ListRequest\x1a\x18.helloworld.ListResponse\"\x00\x12\x43\n\nCreateItem\x12\x19.helloworld.CreateRequest\x1a\x18.helloworld.ItemResponse\"\x00\x62\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_struct__pb2.DESCRIPTOR,])
 
@@ -499,7 +499,7 @@ _GREETER = _descriptor.ServiceDescriptor(
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
   serialized_start=614,
-  serialized_end=893,
+  serialized_end=1091,
   methods=[
   _descriptor.MethodDescriptor(
     name='SayHello',
@@ -535,6 +535,36 @@ _GREETER = _descriptor.ServiceDescriptor(
     name='CreateGreeter',
     full_name='helloworld.Greeter.CreateGreeter',
     index=3,
+    containing_service=None,
+    input_type=_CREATEREQUEST,
+    output_type=_ITEMRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='GetItem',
+    full_name='helloworld.Greeter.GetItem',
+    index=4,
+    containing_service=None,
+    input_type=_GETREQUEST,
+    output_type=_ITEMRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='ListItems',
+    full_name='helloworld.Greeter.ListItems',
+    index=5,
+    containing_service=None,
+    input_type=_LISTREQUEST,
+    output_type=_LISTRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='CreateItem',
+    full_name='helloworld.Greeter.CreateItem',
+    index=6,
     containing_service=None,
     input_type=_CREATEREQUEST,
     output_type=_ITEMRESPONSE,

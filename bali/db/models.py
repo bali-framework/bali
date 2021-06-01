@@ -97,6 +97,9 @@ def get_base_model(db):
         def to_dict(self):
             return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
 
+        def dict(self):
+            return self.to_dict()
+
         @classmethod
         def count(cls, **attrs) -> int:
             return db.session.query(func.count(cls.id)).filter_by(**attrs).scalar()

@@ -23,10 +23,10 @@ import helloworld_pb2 as pb2
 import helloworld_pb2_grpc
 from bali.interceptors import ProcessInterceptor
 from bali.mixins import ServiceMixin
-from resources import GreeterResource
+from resources import GreeterResource, ItemResource
 
 
-class Greeter(helloworld_pb2_grpc.GreeterServicer, ServiceMixin):
+class GrpcServer(helloworld_pb2_grpc.GreeterServicer, ServiceMixin):
     def SayHello(self, request, context):
         print('Greeter.SayHello')
         return helloworld_pb2.HelloReply(message='Hello, %s!' % request.name)
@@ -43,13 +43,19 @@ class Greeter(helloworld_pb2_grpc.GreeterServicer, ServiceMixin):
         print('Greeter.CreateGreeter')
         return GreeterResource(request, context, pb2.ItemResponse).create()
 
+    def GetItem(self, request, context):
+        return ItemResource(request, context, pb2.ItemResponse).get()
+
+    def ListItems(self, request, context):
+        return ItemResource(request, context, pb2.ListResponse).list()
+
 
 def serve():
     server = grpc.server(
         futures.ThreadPoolExecutor(max_workers=10),
         interceptors=[ProcessInterceptor()],
     )
-    helloworld_pb2_grpc.add_GreeterServicer_to_server(Greeter(), server)
+    helloworld_pb2_grpc.add_GreeterServicer_to_server(GrpcServer(), server)
     server.add_insecure_port('[::]:50051')
     server.start()
     print("gRPC Service Hello world started")

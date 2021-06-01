@@ -4,6 +4,8 @@ from sqlalchemy import desc, asc
 from sqlalchemy.sql import operators
 from sqlalchemy.sql.expression import extract
 
+from ..exceptions import OperatorModelError
+
 OPERATOR_SPLITTER = '__'
 
 OPERATORS = {
@@ -46,6 +48,9 @@ OPERATORS = {
 
 
 def get_filters_expr(cls, **filters):
+    if not callable(cls):
+        raise OperatorModelError('Operator model must provide')
+
     expressions = []
     for attr, value in filters.items():
         if OPERATOR_SPLITTER in attr:

@@ -7,4 +7,4 @@ class IsAuthenticated(BasePermission):
     """
 
     def has_permission(self):
-        return False
+        return True

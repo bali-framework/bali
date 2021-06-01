@@ -1,10 +1,12 @@
 import functools
 
 from fastapi.dependencies.utils import get_typed_signature
-from fastapi_pagination import LimitOffsetPage, paginate, LimitOffsetParams, set_page
+from fastapi_pagination import LimitOffsetParams, set_page
 from fastapi_pagination.limit_offset import Page
 from pydantic import BaseModel
 
+from .exceptions import ReturnTypeError
+from .paginate import paginate
 from .utils import MessageToDict, ParseDict
 
 
@@ -23,7 +25,7 @@ def compatible_method(func):
             if func.__name__ == 'get':
                 pk = self._request.id
                 result = func(self, pk)
-                if isinstance(result, BaseModel):
+                if not isinstance(result, dict):
                     result = result.dict()
                 response_data = {'data': result}
 
@@ -32,25 +34,20 @@ def compatible_method(func):
                 result = func(self, schema_in(**request_data))
                 # Paginated the result queryset or iterable object
                 if isinstance(result, BaseModel):
-                    return result
+                    raise ReturnTypeError('Generic actions `list` should return a sequence')
                 else:
                     set_page(Page)
                     params = LimitOffsetParams(
                         limit=request_data.get('limit') or 10,
                         offset=request_data.get('offset'),
                     )
-                    paginator = paginate(result, params)
-                    response_data = paginator.dict()
-                    response_data.update(
-                        count=response_data.get('total'),
-                        data=response_data.get('items'),
-                    )
+                    response_data = paginate(result, params=params, is_rpc=True)
 
             elif func.__name__ in ['create', 'update']:
                 schema_in = get_schema_in(func)
                 data = request_data.get('data')
                 result = func(self, schema_in(**data))
-                if isinstance(result, BaseModel):
+                if not isinstance(result, dict):
                     result = result.dict()
                 response_data = {'data': result}
 
@@ -63,7 +60,7 @@ def compatible_method(func):
                 # custom action
                 schema_in = get_schema_in(func)
                 result = func(self, schema_in(**request_data))
-                if isinstance(result, BaseModel):
+                if not isinstance(result, dict):
                     result = result.dict()
                 response_data = result
 

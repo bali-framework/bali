@@ -1,6 +1,6 @@
 # noinspection PyUnresolvedReferences
 import config
-import greeter_server
+import grpc_server
 from bali.core import Bali
 from v1.app import router
 from fastapi_pagination import LimitOffsetPage, add_pagination, paginate
@@ -13,7 +13,7 @@ app = Bali(
         'prefix': '/v1',
     }],
     backend_cors_origins=['http://127.0.0.1'],
-    rpc_service=greeter_server,
+    rpc_service=grpc_server,
 )
 app.settings(title='Bali Example')
 

@@ -57,6 +57,16 @@ def run():
         response = stub.ListGreeter(helloworld_pb2.ListRequest(limit=2, offset=3))
         print("Greeter client received <ListGreeter>: %s" % MessageToDict(response))
 
+    with grpc.insecure_channel('localhost:50051') as channel:
+        stub = helloworld_pb2_grpc.GreeterStub(channel)
+        response = stub.GetItem(helloworld_pb2.GetRequest(id=1))
+        print("Greeter client received <GetItem>: %s" % MessageToDict(response))
+
+    with grpc.insecure_channel('localhost:50051') as channel:
+        stub = helloworld_pb2_grpc.GreeterStub(channel)
+        response = stub.ListItems(helloworld_pb2.ListRequest(limit=2, offset=3))
+        print("Greeter client received <ListItems>: %s" % MessageToDict(response))
+
 
 if __name__ == '__main__':
     logging.basicConfig()

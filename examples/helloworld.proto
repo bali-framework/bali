@@ -11,6 +11,10 @@ service Greeter {
   rpc GetGreeter (GetRequest) returns (ItemResponse) {}
   rpc ListGreeter (ListRequest) returns (ListResponse) {}
   rpc CreateGreeter (CreateRequest) returns (ItemResponse) {}
+  // item resource
+  rpc GetItem (GetRequest) returns (ItemResponse) {}
+  rpc ListItems (ListRequest) returns (ListResponse) {}
+  rpc CreateItem (CreateRequest) returns (ItemResponse) {}
 }
 
 // The request message containing the user's name.

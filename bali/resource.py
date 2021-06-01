@@ -5,17 +5,18 @@ A Resource layer base class to handle FastAPI and gRPC requests and responses
 Resource's method input is Pydantic schema
 
 """
-import logging
 import inspect
+import logging
+import typing
 from collections import OrderedDict
 from typing import Optional, Callable
 
-import typing
 from fastapi import Request, HTTPException, status
-from fastapi_pagination import LimitOffsetPage, paginate
+from fastapi_pagination import LimitOffsetPage
 from google.protobuf import message
 from pydantic import BaseModel
 
+from .paginate import paginate
 from .routing import APIRouter
 from .schemas import ListRequest, ResultResponse
 
@@ -126,10 +127,7 @@ class RouterGenerator:
             schema_in = ListRequest(**params, filters=filters)
 
             result = getattr(resource, 'list')(schema_in)
-            if isinstance(result, BaseModel):
-                return result
-            else:
-                return paginate(result)
+            return paginate(result)
 
         # update route's signatures
         parameters = []

@@ -35,6 +35,21 @@ class GreeterStub(object):
                 request_serializer=helloworld__pb2.CreateRequest.SerializeToString,
                 response_deserializer=helloworld__pb2.ItemResponse.FromString,
                 )
+        self.GetItem = channel.unary_unary(
+                '/helloworld.Greeter/GetItem',
+                request_serializer=helloworld__pb2.GetRequest.SerializeToString,
+                response_deserializer=helloworld__pb2.ItemResponse.FromString,
+                )
+        self.ListItems = channel.unary_unary(
+                '/helloworld.Greeter/ListItems',
+                request_serializer=helloworld__pb2.ListRequest.SerializeToString,
+                response_deserializer=helloworld__pb2.ListResponse.FromString,
+                )
+        self.CreateItem = channel.unary_unary(
+                '/helloworld.Greeter/CreateItem',
+                request_serializer=helloworld__pb2.CreateRequest.SerializeToString,
+                response_deserializer=helloworld__pb2.ItemResponse.FromString,
+                )
 
 
 class GreeterServicer(object):
@@ -66,6 +81,25 @@ class GreeterServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetItem(self, request, context):
+        """item resource
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListItems(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CreateItem(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_GreeterServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -86,6 +120,21 @@ def add_GreeterServicer_to_server(servicer, server):
             ),
             'CreateGreeter': grpc.unary_unary_rpc_method_handler(
                     servicer.CreateGreeter,
+                    request_deserializer=helloworld__pb2.CreateRequest.FromString,
+                    response_serializer=helloworld__pb2.ItemResponse.SerializeToString,
+            ),
+            'GetItem': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetItem,
+                    request_deserializer=helloworld__pb2.GetRequest.FromString,
+                    response_serializer=helloworld__pb2.ItemResponse.SerializeToString,
+            ),
+            'ListItems': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListItems,
+                    request_deserializer=helloworld__pb2.ListRequest.FromString,
+                    response_serializer=helloworld__pb2.ListResponse.SerializeToString,
+            ),
+            'CreateItem': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreateItem,
                     request_deserializer=helloworld__pb2.CreateRequest.FromString,
                     response_serializer=helloworld__pb2.ItemResponse.SerializeToString,
             ),
@@ -163,6 +212,57 @@ class Greeter(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/helloworld.Greeter/CreateGreeter',
+            helloworld__pb2.CreateRequest.SerializeToString,
+            helloworld__pb2.ItemResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetItem(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/helloworld.Greeter/GetItem',
+            helloworld__pb2.GetRequest.SerializeToString,
+            helloworld__pb2.ItemResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ListItems(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/helloworld.Greeter/ListItems',
+            helloworld__pb2.ListRequest.SerializeToString,
+            helloworld__pb2.ListResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def CreateItem(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/helloworld.Greeter/CreateItem',
             helloworld__pb2.CreateRequest.SerializeToString,
             helloworld__pb2.ItemResponse.FromString,
             options, channel_credentials,
