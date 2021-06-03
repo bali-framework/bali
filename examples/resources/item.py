@@ -1,5 +1,7 @@
 from typing import Optional
 
+from pydantic import BaseModel
+
 from bali.db.operators import get_filters_expr
 from bali.decorators import action
 from bali.resource import Resource
@@ -7,6 +9,10 @@ from bali.schemas import ListRequest
 from models import Item
 from permissions import IsAuthenticated
 from schemas import ItemModel
+
+
+class QFilter(BaseModel):
+    name: str
 
 
 class ItemResource(Resource):
@@ -45,8 +51,17 @@ class ItemResource(Resource):
     @action(detail=False)
     def recents(self):
         """List recent 2 record"""
-        return Item.query().limit(2)
+        items = Item.query().limit(2)
+        return [self.schema(**item.dict()) for item in items]
+
+    @action(detail=False)
+    def recents_q(self, schema_in: QFilter = None):
+        """List recent 2 record"""
+        print('schema_in', schema_in)
+        items = Item.query().limit(2)
+        return [self.schema(**item.dict()) for item in items]
 
     @action(detail=True)
     def items_recents(self, pk=None):
-        return Item.query().filter(id=pk).limit(1)
+        items = Item.query().filter(id=pk).limit(1)
+        return [self.schema(**item.dict()) for item in items]

@@ -104,10 +104,16 @@ def action(methods=None, detail=None, **kwargs):
             if rpc_only:
                 return
 
+            try:
+                schema_in_annotation = get_schema_in(self.func)
+            except ValueError:
+                schema_in_annotation = None
+
             _actions = getattr(owner, '_actions')
             _actions[self.func.__name__] = {
                 'detail': detail,
                 'methods': methods,
+                'schema_in_annotation': schema_in_annotation,
             }
             setattr(owner, '_actions', _actions)
 

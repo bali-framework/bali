@@ -60,5 +60,5 @@ class GreeterResource(Resource):
 
     @action(detail=False, methods=['post'])
     def custom_create(self, schema_in: GreeterFilter):
-        processed = schema_in
+        print('schema_in', schema_in)
         return GREETERS[0]

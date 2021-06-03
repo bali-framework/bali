@@ -192,7 +192,7 @@ class RouterGenerator:
 
         return route
 
-    def get_endpoint(self, action, detail=False, schema=None):
+    def get_endpoint(self, action, detail=False, methods=list, schema_in_annotation=None):
         """Convert Resource instance method to FastAPI endpoint"""
         resource = self.cls()
 
@@ -204,8 +204,10 @@ class RouterGenerator:
             self.check_permissions(resource)
             return getattr(resource, action)(pk)
 
-        def endpoint_schema(schema_in: BaseModel):
+        def endpoint_schema(schema_in: BaseModel = None, **kwargs):
             self.check_permissions(resource)
+            if 'get' in methods and schema_in_annotation:
+                schema_in = schema_in_annotation(**kwargs)
             return getattr(resource, action)(schema_in)
 
         sig = inspect.signature(getattr(self.cls, action))
@@ -216,7 +218,22 @@ class RouterGenerator:
         elif 'schema_in' in sig.parameters:
             route = endpoint_schema
             params = list(sig.parameters.values())[1:]
-            route.__signature__ = sig.replace(parameters=params)
+            if 'get' in methods and schema_in_annotation:
+                # Destructor the `schema_in` to Query
+                for field, annotation in schema_in_annotation.__fields__.items():
+                    params = params[1:]
+                    params.append(
+                        inspect.Parameter(
+                            name=field,
+                            kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                            default=annotation.default,
+                            annotation=annotation.type_,
+                        )
+                    )
+                route.__signature__ = sig.replace(parameters=params)
+            else:
+                params = list(sig.parameters.values())[1:]
+                route.__signature__ = sig.replace(parameters=params)
 
         return route
 
@@ -264,10 +281,16 @@ class RouterGenerator:
         else:
             detail = extra.get('detail')
             methods = extra.get('methods')
+            schema_in_annotation = extra.get('schema_in_annotation')
             path = '/{%s}' % self.primary_key if detail else ''
             self.router.add_api_route(
                 f"{path}/{action.replace('_', '-')}",
-                self.get_endpoint(action, detail),
+                self.get_endpoint(
+                    action,
+                    detail,
+                    methods=methods,
+                    schema_in_annotation=schema_in_annotation,
+                ),
                 methods=methods,
                 summary=f"{action.replace('_', ' ')}"
             )
