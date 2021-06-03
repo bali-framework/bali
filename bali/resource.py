@@ -64,8 +64,15 @@ class RouterGenerator:
         self._ordered_filters = self._get_ordered_filters()
 
     def __call__(self):
+
+        generic_actions = ['get', 'list', 'create', 'update', 'delete']
+        # To fixed generic get action `/item/{id}` conflict with custom action `/item/hello`,
+        # must make sure get action `/item/{id}` is below custom action
+        actions = sorted(self.cls._actions.keys(), key=lambda x: x in generic_actions)
+
         # noinspection PyProtectedMember
-        for action, extra in self.cls._actions.items():
+        for action in actions:
+            extra = self.cls._actions.get(action)
             if not hasattr(self.cls, action):
                 continue
             self.add_route(action, extra)

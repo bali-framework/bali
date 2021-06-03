@@ -44,6 +44,7 @@ class ItemResource(Resource):
 
     @action(detail=False)
     def recents(self):
+        """List recent 2 record"""
         return Item.query().limit(2)
 
     @action(detail=True)
