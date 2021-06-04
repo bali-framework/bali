@@ -19,7 +19,9 @@ class ItemResource(Resource):
 
     schema = ItemModel
     filters = [
-        {'name': Optional[str]},
+        {
+            'name': Optional[str]
+        },
     ]
     permission_classes = [IsAuthenticated]
 
@@ -63,5 +65,5 @@ class ItemResource(Resource):
 
     @action(detail=True)
     def items_recents(self, pk=None):
-        items = Item.query().filter(id=pk).limit(1)
+        items = Item.query().filter(Item.id == pk).limit(1)
         return [self.schema(**item.dict()) for item in items]

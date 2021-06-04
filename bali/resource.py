@@ -160,7 +160,8 @@ class RouterGenerator:
     def _get(self) -> Callable:
         resource = self.cls()
 
-        def route(id: int):
+        def route(id: int, request: Request = None):
+            resource._request = request
             self.check_permissions(resource)
             return getattr(resource, 'get')(pk=id)
 
@@ -201,6 +202,7 @@ class RouterGenerator:
         resource = self.cls()
 
         def endpoint(request: Request = None):
+            resource._request = request
             self.check_permissions(resource)
             return getattr(resource, action)()
 
@@ -239,7 +241,16 @@ class RouterGenerator:
                 route.__signature__ = sig.replace(parameters=params)
             else:
                 params = list(sig.parameters.values())[1:]
-                route.__signature__ = sig.replace(parameters=params)
+
+            params.append(
+                inspect.Parameter(
+                    name='request',
+                    kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                    default=None,
+                    annotation=Request,
+                )
+            )
+            route.__signature__ = sig.replace(parameters=params)
 
         return route
 
