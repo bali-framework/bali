@@ -16,7 +16,6 @@ class BasePermission:
         """
         Return `True` if permission is granted, `False` otherwise.
         """
-        self.process_auth()
         return True
 
     def process_auth(self):

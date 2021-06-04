@@ -110,6 +110,7 @@ class RouterGenerator:
         resource = self.cls()
 
         def route(request: Request = None):
+            resource._request = request
             self.check_permissions(resource)
             params = request.query_params._dict
 
@@ -168,7 +169,8 @@ class RouterGenerator:
     def _create(self) -> Callable:
         resource = self.cls()
 
-        def route(schema_in: resource.schema):
+        def route(schema_in: resource.schema, request: Request = None):
+            resource._request = request
             self.check_permissions(resource)
             return getattr(resource, 'create')(schema_in)
 
@@ -177,7 +179,8 @@ class RouterGenerator:
     def _update(self) -> Callable:
         resource = self.cls()
 
-        def route(schema_in: resource.schema, id: int):
+        def route(schema_in: resource.schema, id: int, request: Request = None):
+            resource._request = request
             self.check_permissions(resource)
             return getattr(resource, 'update')(schema_in, pk=id)
 
@@ -186,7 +189,8 @@ class RouterGenerator:
     def _delete(self) -> Callable:
         resource = self.cls()
 
-        def route(id: int):
+        def route(id: int, request: Request = None):
+            resource._request = request
             self.check_permissions(resource)
             return getattr(resource, 'delete')(pk=id)
 
@@ -196,15 +200,17 @@ class RouterGenerator:
         """Convert Resource instance method to FastAPI endpoint"""
         resource = self.cls()
 
-        def endpoint():
+        def endpoint(request: Request = None):
             self.check_permissions(resource)
             return getattr(resource, action)()
 
-        def endpoint_detail(pk: int):
+        def endpoint_detail(pk: int, request: Request = None):
+            resource._request = request
             self.check_permissions(resource)
             return getattr(resource, action)(pk)
 
-        def endpoint_schema(schema_in: BaseModel = None, **kwargs):
+        def endpoint_schema(schema_in: BaseModel = None, request: Request = None, **kwargs):
+            resource._request = request
             self.check_permissions(resource)
             if 'get' in methods and schema_in_annotation:
                 schema_in = schema_in_annotation(**kwargs)
