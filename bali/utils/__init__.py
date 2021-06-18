@@ -65,7 +65,10 @@ class ProtobufPrinter(json_format._Printer):  # noqa
                 # Use base64 Data encoding for bytes
                 return json_format.base64.b64encode(value).decode('utf-8')
             else:
-                return value
+                try:
+                    return datetime.fromisoformat(value)
+                except ValueError:
+                    return value
         elif field.cpp_type == json_format.descriptor.FieldDescriptor.CPPTYPE_BOOL:
             return bool(value)
         elif field.cpp_type in json_format._INT64_TYPES:  # noqa
