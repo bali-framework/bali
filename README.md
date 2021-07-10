@@ -293,6 +293,11 @@ class TestDemoRPC(GRPCTestBase):
         pass
 ```
 
+## Related Projects
+
+[![bali-cli](https://github-readme-stats.vercel.app/api/pin/?username=JoshYuJump&repo=bali-cli)](https://github.com/JoshYuJump/bali-cli)
+
+
 ## CONTRIBUTE
 
 **Developer Environment**
