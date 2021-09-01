@@ -1,10 +1,11 @@
 from contextvars import ContextVar
 from datetime import datetime
-from typing import List
+from typing import List, Dict
 
 import pytz
 from sqlalchemy import Column, DateTime, Boolean
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql.functions import func
 from sqlalchemy.types import TypeDecorator
 
@@ -24,7 +25,7 @@ class AwareDateTime(TypeDecorator):
 
         return value
 
-    def process_bind_param(self, value, dialect):
+    def process_bind_param(self, value, _):
         if value is not None and timezone.is_aware(value):
             value = timezone.make_naive(value, timezone=pytz.utc)
 
@@ -107,5 +108,59 @@ def get_base_model(db):
         @classmethod
         def get_fields(cls) -> List[str]:
             return [c.name for c in cls.__table__.columns]
+
+        @classmethod
+        def get_or_create(cls, defaults: Dict = None, **kwargs):
+            instance = db.session.query(cls).filter_by(**kwargs).one_or_none()
+            if instance:
+                return instance, False
+
+            instance = cls(**{**kwargs, **(defaults or {})})  # noqa
+            try:
+                db.session.add(instance)
+                db.session.commit()
+                return instance, True
+            except SQLAlchemyError:
+                db.session.rollback()
+                instance = db.session.query(cls).filter_by(**kwargs).one()
+                return instance, False
+
+        @classmethod
+        def update_or_create(cls, defaults: Dict = None, **kwargs):
+            try:
+                try:
+                    instance = (
+                        db.session.query(cls)
+                        .filter_by(**kwargs)
+                        .populate_existing()
+                        .with_for_update()
+                        .one()
+                    )
+                except NoResultFound:
+                    instance = cls(**{**kwargs, **(defaults or {})})  # noqa
+                    try:
+                        db.session.add(instance)
+                        db.session.commit()
+                    except SQLAlchemyError:
+                        db.session.rollback()
+                        instance = (
+                            db.session.query(cls)
+                            .filter_by(**kwargs)
+                            .populate_existing()
+                            .with_for_update()
+                            .one()
+                        )
+                    else:
+                        return instance, True
+            except SQLAlchemyError:
+                db.session.rollback()
+                raise
+            else:
+                for k, v in defaults.items():
+                    setattr(instance, k, v)
+                db.session.add(instance)
+                db.session.commit()
+                db.session.refresh(instance)
+                return instance, False
 
     return BaseModel
