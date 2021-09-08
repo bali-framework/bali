@@ -229,6 +229,17 @@ def root():
 
 <i>New in version 2.1.</i>
 
+```python
+class UserResource(ModelResource):
+    model = User
+    schema = UserSchema
+    filters = [
+        {'username': str},
+        {'age': Optional[str]},
+    ]  # yapf: disable
+    permission_classes = [IsAuthenticated]
+```
+
 
 ## Service Mixin
 
