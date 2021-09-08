@@ -8,6 +8,10 @@ Simplify FastAPI integrate gRPC services development
 pip install bali-core
 ```
 
+## Project structure layout
+
+
+
 ## Application 
 
 Create Application
@@ -134,6 +138,8 @@ Resource’s design borrows several key concepts from the REST architectural sty
 
 Inspired by `ViewSet` in Django REST Framework.
 
+Actions' name according [`Standard methods` in Google API design guide](https://cloud.google.com/apis/design/standard_methods) 
+
 ### Generic HTTP/RPC Actions
 
 Generic HTTP/RPC support actions:
@@ -151,7 +157,10 @@ Generic Actions examples:
 ```python
 
 # 1. import `Resource` base class
-from bali.resource import Resource
+## before 2.1
+from bali.resource import Resource  # deprecated in 3.0
+## New from 2.1
+from bali.resources import Resource
 
 
 # 2. implementation actions inherited from Resource
@@ -178,7 +187,7 @@ class GreeterResource(Resource):
 
     @action()
     def delete(self, pk=None):
-        return {'result': True}
+        return {'id': pk, 'result': True}  # using `id` instand of `result`
 
 ```
 
@@ -214,6 +223,11 @@ def root():
 ```
 
 > More usage of `Resource`: [GreeterResource](examples/resources/greeter.py)
+
+
+### ModelResource
+
+<i>New in version 2.1.</i>
 
 
 ## Service Mixin
@@ -297,27 +311,3 @@ class TestDemoRPC(GRPCTestBase):
 
 [![bali-cli](https://github-readme-stats.vercel.app/api/pin/?username=JoshYuJump&repo=bali-cli)](https://github.com/JoshYuJump/bali-cli)
 [![cookiecutter-bali](https://github-readme-stats.vercel.app/api/pin/?username=Ed-XCF&repo=cookiecutter-bali)](https://github.com/Ed-XCF/cookiecutter-bali)
-
-
-## CONTRIBUTE
-
-**Developer Environment**
-
-```bash
-pip install -r requirements_dev.txt
-``` 
-
-
-**Tag a new release**
-
-tag a version:
-
-```bash
-git tag -a v0.1.0
-```
-
-push tags to remote:
-
-```bash
-git push --tags
-```

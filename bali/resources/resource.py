@@ -20,7 +20,15 @@ from ..paginate import paginate
 from ..routing import APIRouter
 from ..schemas import ListRequest, ResultResponse
 
-__all__ = ['Resource']
+__all__ = ['Resource', 'GENERIC_ACTIONS']
+
+GENERIC_ACTIONS = [
+    'list',
+    'get',
+    'create',
+    'update',
+    'delete',
+]
 
 
 class Resource:
@@ -65,10 +73,9 @@ class RouterGenerator:
 
     def __call__(self):
 
-        generic_actions = ['get', 'list', 'create', 'update', 'delete']
         # To fixed generic get action `/item/{id}` conflict with custom action `/item/hello`,
         # must make sure get action `/item/{id}` is below custom action
-        actions = sorted(self.cls._actions.keys(), key=lambda x: x in generic_actions)
+        actions = sorted(self.cls._actions.keys(), key=lambda x: x in GENERIC_ACTIONS)
 
         # noinspection PyProtectedMember
         for action in actions:
