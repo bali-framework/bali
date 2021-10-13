@@ -3,8 +3,10 @@
 # This project adheres to [Semantic Versioning](http://semver.org/).
 # includes Added / Changed / Fixed
 
-## [2.1.0] UNRELEASED
+## [3.0.0] UNRELEASED
 ### Added
+- Supported uvicorn 0.15
+- Database model support asynchronous
 
 ### Changed
 - Adjusted version range dependency packages

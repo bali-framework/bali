@@ -13,28 +13,42 @@ error_logger = logging.getLogger('error')
 # noinspection PyPep8Naming
 class DB:
     def __init__(self):
-        self._session = None
+        self._db = None
 
-    def connect(self, database_uri, **kwargs):
-        kwargs.setdefault("pool_size", 5)
-        kwargs.setdefault("pool_recycle", 2 * 60 * 60)
+    def connect(
+        self,
+        database_uri,
+        engine_options=None,
+        session_options=None,
+        **kwargs
+    ):
+        engine_options = engine_options or {}
+        engine_options.setdefault("pool_size", 5)
+        engine_options.setdefault("pool_recycle", 2 * 60 * 60)
 
-        # developers need to know when the ORM object needs to reload from the db
-        kwargs.setdefault("expire_on_commit", False)
-        self._session = SQLAlchemy(database_uri, **kwargs)
+        session_options = session_options or {}
+        # developers need to know when the ORM object needs to reload
+        # from the db
+        session_options.setdefault("expire_on_commit", False)
+
+        self._db = SQLAlchemy(
+            database_uri,
+            engine_options=engine_options,
+            session_options=session_options,
+        )
 
     def __getattribute__(self, attr, *args, **kwargs):
         try:
             return super().__getattribute__(attr)
         except AttributeError:
-            if not self._session:
+            if not self._db:
                 raise Exception('Database session not initialized')
 
             # BaseModel
             if attr == 'BaseModel':
                 return get_base_model(self)
 
-            return getattr(self._session, attr)
+            return getattr(self._db, attr)
 
 
 db = DB()
@@ -56,8 +70,8 @@ def retry_on_deadlock_decorator(func):
                 if any(msg in e.message for msg in lock_messages_error) \
                         and attempt_count <= MAXIMUM_RETRY_ON_DEADLOCK:
                     error_logger.error(
-                        'Deadlock detected. Trying sql transaction once more. Attempts count: %s' %
-                        (attempt_count + 1)
+                        'Deadlock detected. Trying sql transaction once more. Attempts count: %s'
+                        % (attempt_count + 1)
                     )
                 else:
                     raise

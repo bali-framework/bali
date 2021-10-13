@@ -46,8 +46,8 @@ def get_base_model(db):
         @classmethod
         def exists(cls, **attrs):
             """Returns whether an object with these attributes exists."""
-            equery = cls.query().filter_by(**attrs).exists()
-            return bool(db.session.query(equery).scalar())
+            query = cls.query().filter_by(**attrs).exists()
+            return bool(db.s.query(query).scalar())
 
         @classmethod
         def create(cls, **attrs):
@@ -61,7 +61,7 @@ def get_base_model(db):
             try:
                 return cls.create(**attrs)
             except IntegrityError:
-                db.session.rollback()
+                db.s.rollback()
                 return cls.first(**attrs)
 
         @classmethod
@@ -80,20 +80,20 @@ def get_base_model(db):
 
         @classmethod
         def query(cls):
-            return db.session.query(cls)
+            return db.s.query(cls)
 
         def save(self):
             """Override default model's save"""
             global context_auto_commit
-            db.session.add(self)
-            db.session.commit() if context_auto_commit.get() else db.session.flush()
+            db.s.add(self)
+            db.s.commit() if context_auto_commit.get() else db.s.flush()
             return self
 
         def delete(self):
             """Override default model's delete"""
             global context_auto_commit
-            db.session.delete(self)
-            db.session.commit() if context_auto_commit.get() else db.session.flush()
+            db.s.delete(self)
+            db.s.commit() if context_auto_commit.get() else db.s.flush()
 
         def to_dict(self):
             return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
@@ -103,7 +103,7 @@ def get_base_model(db):
 
         @classmethod
         def count(cls, **attrs) -> int:
-            return db.session.query(func.count(cls.id)).filter_by(**attrs).scalar()
+            return db.s.query(func.count(cls.id)).filter_by(**attrs).scalar()
 
         @classmethod
         def get_fields(cls) -> List[str]:
@@ -111,18 +111,18 @@ def get_base_model(db):
 
         @classmethod
         def get_or_create(cls, defaults: Dict = None, **kwargs):
-            instance = db.session.query(cls).filter_by(**kwargs).one_or_none()
+            instance = db.s.query(cls).filter_by(**kwargs).one_or_none()
             if instance:
                 return instance, False
 
             instance = cls(**{**kwargs, **(defaults or {})})  # noqa
             try:
-                db.session.add(instance)
-                db.session.commit()
+                db.s.add(instance)
+                db.s.commit()
                 return instance, True
             except SQLAlchemyError:
-                db.session.rollback()
-                instance = db.session.query(cls).filter_by(**kwargs).one()
+                db.s.rollback()
+                instance = db.s.query(cls).filter_by(**kwargs).one()
                 return instance, False
 
         @classmethod
@@ -130,7 +130,7 @@ def get_base_model(db):
             try:
                 try:
                     instance = (
-                        db.session.query(cls)
+                        db.s.query(cls)
                         .filter_by(**kwargs)
                         .populate_existing()
                         .with_for_update()
@@ -139,12 +139,12 @@ def get_base_model(db):
                 except NoResultFound:
                     instance = cls(**{**kwargs, **(defaults or {})})  # noqa
                     try:
-                        db.session.add(instance)
-                        db.session.commit()
+                        db.s.add(instance)
+                        db.s.commit()
                     except SQLAlchemyError:
-                        db.session.rollback()
+                        db.s.rollback()
                         instance = (
-                            db.session.query(cls)
+                            db.s.query(cls)
                             .filter_by(**kwargs)
                             .populate_existing()
                             .with_for_update()
@@ -153,14 +153,14 @@ def get_base_model(db):
                     else:
                         return instance, True
             except SQLAlchemyError:
-                db.session.rollback()
+                db.s.rollback()
                 raise
             else:
                 for k, v in defaults.items():
                     setattr(instance, k, v)
-                db.session.add(instance)
-                db.session.commit()
-                db.session.refresh(instance)
+                db.s.add(instance)
+                db.s.commit()
+                db.s.refresh(instance)
                 return instance, False
 
     return BaseModel
