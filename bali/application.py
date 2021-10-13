@@ -47,8 +47,9 @@ class Bali:
             return super().__getattribute__(attr)
         except AttributeError:
             if not self._app:
+                print(f'attr: {attr}')
                 # uvicorn entry is __call__
-                if attr == '__call__':
+                if attr == '__call__' or attr == '__getstate__':
                     self.http()
                     return getattr(self._app, attr)
 

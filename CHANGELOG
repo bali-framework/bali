@@ -5,6 +5,7 @@
 
 ## [3.0.0] UNRELEASED
 ### Added
+- Upgraded to sql-wrapper v5.0.0dev
 - Supported uvicorn 0.15
 - Database model support asynchronous
 
