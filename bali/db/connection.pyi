@@ -55,13 +55,16 @@ class BaseModel:
 class DB(SQLAlchemy):
     BaseModel: BaseModel
 
+    _async_engine: Any
+
     def connect(self, database_uri: str) -> None: ...
 
     @property
     def session(self) -> Session: ...
 
-
     def transaction(self) -> None: ...
+
+    async def async_session(self) -> Any: ...
 
 
 db = DB()

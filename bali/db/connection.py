@@ -1,19 +1,32 @@
 import logging
 from functools import wraps
 
+from contextlib import asynccontextmanager
 from sqla_wrapper import SQLAlchemy
 from sqlalchemy.exc import OperationalError
-from .models import get_base_model, AwareDateTime
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.orm import sessionmaker
+
+from .models import get_base_model
 
 # from core.config import settings
 
 error_logger = logging.getLogger('error')
 
+database_schema_async_maps = [
+    ('sqlite://', 'sqlite+aiosqlite://'),
+    ('mysql+pymysql://', 'mysql+aiomysql://'),
+    ('postgres://', 'postgresql+asyncpg://'),
+]
+
 
 # noinspection PyPep8Naming
 class DB:
     def __init__(self):
-        self._db = None
+        self._db = None  # sync engine
+        self._async_engine = None  # async engine
+        self.async_session = None  # async session maker
 
     def connect(
         self,
@@ -31,10 +44,21 @@ class DB:
         # from the db
         session_options.setdefault("expire_on_commit", False)
 
+        # Sync mode db instance
         self._db = SQLAlchemy(
             database_uri,
             engine_options=engine_options,
             session_options=session_options,
+        )
+        async_database_uri = database_uri
+        for sync_schema, async_schema in database_schema_async_maps:
+            async_database_uri = async_database_uri.replace(
+                sync_schema, async_schema
+            )
+        self._async_engine = create_async_engine(async_database_uri)
+
+        self.async_session = sessionmaker(
+            self._async_engine, class_=AsyncSession, expire_on_commit=False
         )
 
     def __getattribute__(self, attr, *args, **kwargs):

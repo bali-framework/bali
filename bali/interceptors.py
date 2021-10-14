@@ -21,7 +21,7 @@ class ProcessInterceptor(ServerInterceptor):
 
     def teardown(self):
         try:
-            db.remove()
+            db.s.remove()
         except Exception:
             pass
 

@@ -7,7 +7,8 @@
 ### Added
 - Upgraded to sql-wrapper v5.0.0dev
 - Supported uvicorn 0.15
-- Database model support asynchronous
+- Model support asynchronous
+- Resource support asynchronous
 ### Changed
 - Removed main.py default launch behavior
 
