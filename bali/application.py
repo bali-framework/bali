@@ -106,14 +106,13 @@ class Bali:
         add_pagination(self._app)
 
     def launch(self, http: bool = False, rpc: bool = False):
-        start_all = not any([http, rpc])
-        if start_all:
-            return self._start_all()
+        if not http and not rpc:
+            typer.echo('Please provided launch service type: --http or --rpc')
 
         if http:
             self._launch_http()
 
-        if start_all or rpc:
+        if rpc:
             self._launch_rpc()
 
     def start(self):
