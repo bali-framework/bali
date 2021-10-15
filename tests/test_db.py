@@ -78,7 +78,5 @@ def test_fetch_entity_sync():
 
 @pytest.mark.asyncio
 async def test_fetch_entity_async():
-    async with db.async_session() as async_session:
-        user = await User.get_by_username('Ary')
-
+    user = await User.get_by_username('Ary')
     assert user.username == 'Ary'
