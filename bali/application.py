@@ -1,4 +1,5 @@
 import gzip
+import inspect
 from multiprocessing import Process
 from typing import Callable
 
@@ -12,6 +13,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from ._utils import singleton
 from .middlewares import process_middleware
+from .utils import sync_exec
 
 
 class GzipRequest(Request):
@@ -65,11 +67,14 @@ class Bali:
         self._app = FastAPI(**self.base_settings)
         uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, access_log=True)
 
-    def _launch_rpc(self):
+    async def _launch_rpc(self):
         service = self.kwargs.get('rpc_service')
         if not service:
             raise Exception('rpc_service not provided')
-        service.serve()
+        if inspect.iscoroutinefunction(service.serve):
+            await service.serve()
+        else:
+            service.serve()
 
     def _start_all(self):
         process_http = Process(target=self._launch_http)
@@ -113,7 +118,7 @@ class Bali:
             self._launch_http()
 
         if rpc:
-            self._launch_rpc()
+            sync_exec(self._launch_rpc())
 
     def start(self):
         typer.run(self.launch)

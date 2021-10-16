@@ -5,7 +5,7 @@ fastapi-pagination==0.7.4
 grpcio>=1.32.0,<1.40
 grpcio-tools>=1.32.0,<1.40
 grpc-interceptor==0.13.0
-PyMySQL==0.10.1
+PyMySQL<=0.9.3,>=0.9
 passlib[bcrypt]==1.7.2
 pillow>=7.2.0,<8.3
 protobuf==3.13.0
