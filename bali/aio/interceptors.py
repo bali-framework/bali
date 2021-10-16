@@ -32,7 +32,7 @@ class ProcessInterceptor(ServerInterceptor):
     ) -> Any:
         self.setup()
         try:
-            result = await continuation()
+            result = await continuation(handler_call_details)
         finally:
             self.teardown()
 

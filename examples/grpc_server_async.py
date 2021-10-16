@@ -53,7 +53,7 @@ class GrpcServer(helloworld_pb2_grpc.GreeterServicer, ServiceMixin):
 
 
 async def serve():
-    server = grpc.aio.server()
+    server = grpc.aio.server(interceptors=(ProcessInterceptor(), ))
     helloworld_pb2_grpc.add_GreeterServicer_to_server(GrpcServer(), server)
     server.add_insecure_port('[::]:50051')
     await server.start()
