@@ -28,44 +28,44 @@ def run():
     # NOTE(gRPC Python Team): .close() is possible on a channel and should be
     # used in circumstances in which the with statement does not fit the needs
     # of the code.
-    with grpc.insecure_channel('localhost:50051') as channel:
-        stub = helloworld_pb2_grpc.GreeterStub(channel)
-        response = stub.SayHello(helloworld_pb2.HelloRequest(name='you'))
-        print("Greeter client received <SayHello>: %s" % response.message)
-
-    with grpc.insecure_channel('localhost:50051') as channel:
-        stub = helloworld_pb2_grpc.GreeterStub(channel)
-        response = stub.GetGreeter(helloworld_pb2.GetRequest(id=3))
-        print("Greeter client received <GetGreeter>: %s" % MessageToDict(response))
-
-    with grpc.insecure_channel('localhost:50051') as channel:
-        stub = helloworld_pb2_grpc.GreeterStub(channel)
-        data = {
-            'id': 1,
-            'content': 'Greeter',
-        }
-        request_pb = ParseDict(
-            {'data': data},
-            helloworld_pb2.CreateRequest(),
-            ignore_unknown_fields=True,
-        )
-        response = stub.CreateGreeter(request_pb)
-        print("Greeter client received <CreateGreeter>: %s" % MessageToDict(response))
-
-    with grpc.insecure_channel('localhost:50051') as channel:
-        stub = helloworld_pb2_grpc.GreeterStub(channel)
-        response = stub.ListGreeter(helloworld_pb2.ListRequest(limit=2, offset=3))
-        print("Greeter client received <ListGreeter>: %s" % MessageToDict(response))
-
-    with grpc.insecure_channel('localhost:50051') as channel:
-        stub = helloworld_pb2_grpc.GreeterStub(channel)
-        response = stub.GetItem(helloworld_pb2.GetRequest(id=1))
-        print("Greeter client received <GetItem>: %s" % MessageToDict(response))
+    # with grpc.insecure_channel('localhost:50051') as channel:
+    #     stub = helloworld_pb2_grpc.GreeterStub(channel)
+    #     response = stub.SayHello(helloworld_pb2.HelloRequest(name='you'))
+    #     # print("Greeter client received <SayHello>: %s" % response.message)
+    #
+    # with grpc.insecure_channel('localhost:50051') as channel:
+    #     stub = helloworld_pb2_grpc.GreeterStub(channel)
+    #     response = stub.GetGreeter(helloworld_pb2.GetRequest(id=3))
+    #     # print("Greeter client received <GetGreeter>: %s" % MessageToDict(response))
+    #
+    # with grpc.insecure_channel('localhost:50051') as channel:
+    #     stub = helloworld_pb2_grpc.GreeterStub(channel)
+    #     data = {
+    #         'id': 1,
+    #         'content': 'Greeter',
+    #     }
+    #     request_pb = ParseDict(
+    #         {'data': data},
+    #         helloworld_pb2.CreateRequest(),
+    #         ignore_unknown_fields=True,
+    #     )
+    #     response = stub.CreateGreeter(request_pb)
+    #     # print("Greeter client received <CreateGreeter>: %s" % MessageToDict(response))
+    #
+    # with grpc.insecure_channel('localhost:50051') as channel:
+    #     stub = helloworld_pb2_grpc.GreeterStub(channel)
+    #     response = stub.ListGreeter(helloworld_pb2.ListRequest(limit=2, offset=3))
+    #     # print("Greeter client received <ListGreeter>: %s" % MessageToDict(response))
+    #
+    # with grpc.insecure_channel('localhost:50051') as channel:
+    #     stub = helloworld_pb2_grpc.GreeterStub(channel)
+    #     response = stub.GetItem(helloworld_pb2.GetRequest(id=1))
+    #     print("Greeter client received <GetItem>: %s" % MessageToDict(response))
 
     with grpc.insecure_channel('localhost:50051') as channel:
         stub = helloworld_pb2_grpc.GreeterStub(channel)
         response = stub.ListItems(helloworld_pb2.ListRequest(limit=2, offset=3))
-        print("Greeter client received <ListItems>: %s" % MessageToDict(response))
+        # print("Greeter client received <ListItems>: %s" % MessageToDict(response))
 
 
 if __name__ == '__main__':

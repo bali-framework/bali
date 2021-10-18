@@ -3,8 +3,14 @@
 # This project adheres to [Semantic Versioning](http://semver.org/).
 # includes Added / Changed / Fixed
 
-## [2.1.0] UNRELEASED
+## [3.0.0] UNRELEASED
 ### Added
+- Upgraded to sql-wrapper v5.0.0dev
+- Supported uvicorn 0.15
+- Model support asynchronous
+- Resource support asynchronous
+### Changed
+- Removed main.py default launch behavior
 
 ### Changed
 - Adjusted version range dependency packages

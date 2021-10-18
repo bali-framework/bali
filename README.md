@@ -28,9 +28,6 @@ app.settings(base_settings={'title': 'Bali App'})
 Launch 
 
 ```bash
-# lauch RPC and HTTP service 
-python main.py
-
 # lauch RPC 
 python main.py --rpc
 

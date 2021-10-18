@@ -14,6 +14,8 @@
 """The Python implementation of the GRPC helloworld.Greeter server."""
 
 import logging
+import asyncio
+
 from concurrent import futures
 
 import grpc
@@ -21,7 +23,7 @@ import grpc
 import helloworld_pb2
 import helloworld_pb2 as pb2
 import helloworld_pb2_grpc
-from bali.interceptors import ProcessInterceptor
+from bali.aio.interceptors import ProcessInterceptor
 from bali.mixins import ServiceMixin
 from resources import GreeterResource, ItemResource
 
@@ -46,22 +48,22 @@ class GrpcServer(helloworld_pb2_grpc.GreeterServicer, ServiceMixin):
     # def GetItem(self, request, context):
     #     return ItemResource(request, context, pb2.ItemResponse).get()
 
-    def ListItems(self, request, context):
-        return ItemResource(request, context, pb2.ListResponse).list()
+    async def ListItems(self, request, context):
+        return await ItemResource(request, context,
+                                  pb2.ListResponse).list_async()
 
 
-def serve():
-    server = grpc.server(
-        futures.ThreadPoolExecutor(max_workers=10),
-        interceptors=[ProcessInterceptor()],
+async def serve():
+    server = grpc.aio.server(
+        interceptors=(ProcessInterceptor(), ), maximum_concurrent_rpcs=10
     )
     helloworld_pb2_grpc.add_GreeterServicer_to_server(GrpcServer(), server)
     server.add_insecure_port('[::]:50051')
-    server.start()
+    await server.start()
     print("gRPC Service Hello world started")
-    server.wait_for_termination()
+    await server.wait_for_termination()
 
 
 if __name__ == '__main__':
     logging.basicConfig()
-    serve()
+    asyncio.run(serve())

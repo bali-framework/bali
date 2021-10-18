@@ -1,3 +1,4 @@
+import asyncio
 from enum import Enum
 from datetime import datetime, date
 from decimal import Decimal
@@ -130,3 +131,8 @@ def get_beginning_datetime(
 ) -> datetime:
     _datetime = datetime(year, month, day)
     return make_aware(_datetime, timezone=timezone, is_dst=is_dst)
+
+
+def sync_exec(coro):
+    loop = asyncio.get_event_loop()
+    return loop.run_until_complete(coro)
