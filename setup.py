@@ -20,7 +20,7 @@ setup(
     author_email='josh.yu_8@live.com',
     license='MIT',
     install_requires=INSTALL_REQUIREMENTS,
-    packages=find_packages(),
+    packages=find_packages(exclude=['examples', 'examples.*', 'tests']),
     package_data={'bali': ['db/*.pyi']},
     include_package_data=True,
     zip_safe=False,

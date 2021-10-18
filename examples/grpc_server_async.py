@@ -29,31 +29,34 @@ from resources import GreeterResource, ItemResource
 
 
 class GrpcServer(helloworld_pb2_grpc.GreeterServicer, ServiceMixin):
-    def SayHello(self, request, context):
-        print('Greeter.SayHello')
-        return helloworld_pb2.HelloReply(message='Hello, %s!' % request.name)
+    # def SayHello(self, request, context):
+    #     print('Greeter.SayHello')
+    #     return helloworld_pb2.HelloReply(message='Hello, %s!' % request.name)
+    #
+    # def GetGreeter(self, request, context):
+    #     print('Greeter.GetGreeter')
+    #     return GreeterResource(request, context, pb2.ItemResponse).get()
+    #
+    # def ListGreeter(self, request, context):
+    #     print('Greeter.ListGreeter')
+    #     return GreeterResource(request, context, pb2.ListResponse).list()
+    #
+    # def CreateGreeter(self, request, context):
+    #     print('Greeter.CreateGreeter')
+    #     return GreeterResource(request, context, pb2.ItemResponse).create()
+    #
+    # def GetItem(self, request, context):
+    #     return ItemResource(request, context, pb2.ItemResponse).get()
 
-    def GetGreeter(self, request, context):
-        print('Greeter.GetGreeter')
-        return GreeterResource(request, context, pb2.ItemResponse).get()
-
-    def ListGreeter(self, request, context):
-        print('Greeter.ListGreeter')
-        return GreeterResource(request, context, pb2.ListResponse).list()
-
-    def CreateGreeter(self, request, context):
-        print('Greeter.CreateGreeter')
-        return GreeterResource(request, context, pb2.ItemResponse).create()
-
-    def GetItem(self, request, context):
-        return ItemResource(request, context, pb2.ItemResponse).get()
-
-    def ListItems(self, request, context):
-        return ItemResource(request, context, pb2.ListResponse).list()
+    async def ListItems(self, request, context):
+        return await ItemResource(request, context,
+                                  pb2.ListResponse).list_async()
 
 
 async def serve():
-    server = grpc.aio.server(interceptors=(ProcessInterceptor(), ))
+    server = grpc.aio.server(
+        interceptors=(ProcessInterceptor(), ), maximum_concurrent_rpcs=10
+    )
     helloworld_pb2_grpc.add_GreeterServicer_to_server(GrpcServer(), server)
     server.add_insecure_port('[::]:50051')
     await server.start()

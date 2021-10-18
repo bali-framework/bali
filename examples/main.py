@@ -1,6 +1,6 @@
 # noinspection PyUnresolvedReferences
 import config
-import grpc_server
+# import grpc_server
 import grpc_server_async
 from bali.core import Bali
 from v1.app import router
