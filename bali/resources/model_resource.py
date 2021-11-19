@@ -38,6 +38,8 @@ class ModelResource(Resource):
         item = self.model.first(id=pk)
         # noinspection PyUnresolvedReferences
         for k, v in schema_in.dict():
+            if v is None:
+                continue
             setattr(item, k, v)
         return item.save()
 
