@@ -37,7 +37,7 @@ class ModelResource(Resource):
     def update(self, schema_in: schema = None, pk=None):
         item = self.model.first(id=pk)
         # noinspection PyUnresolvedReferences
-        for k, v in schema_in.dict():
+        for k, v in schema_in.dict().items():
             if v is None:
                 continue
             setattr(item, k, v)

@@ -7,10 +7,10 @@ import pytz
 TzInfoType = Union[type(pytz.utc), pytz.tzinfo.DstTzInfo]
 StrTzInfoType = Union[TzInfoType, str]
 DEFAULT_TZ_INFO = "Asia/Jakarta"
+NotAwareDescription = "expects an aware datetime"
 
 
 def get_current_timezone() -> TzInfoType:
-    """set default value *may* change historical code behaviour"""
     tz_info = os.environ.get("TZ", DEFAULT_TZ_INFO)
     return pytz.timezone(tz_info)
 
@@ -54,7 +54,7 @@ def make_naive(
         *,
         timezone: StrTzInfoType = None,
 ) -> datetime:
-    assert is_aware(value), "expects an aware datetime"
+    assert is_aware(value), NotAwareDescription
 
     if timezone is None:
         timezone = get_current_timezone()
@@ -64,3 +64,16 @@ def make_naive(
         pass
 
     return value.astimezone(timezone).replace(tzinfo=None)
+
+
+def localtime(value: datetime = None, timezone: StrTzInfoType = None):
+    value, timezone = value or now(), timezone or get_current_timezone()
+    if isinstance(timezone, str):
+        timezone = pytz.timezone(timezone)
+
+    assert is_aware(value), NotAwareDescription
+    return value.astimezone(timezone)
+
+
+def localdate(value: datetime = None, timezone: StrTzInfoType = None):
+    return localtime(value, timezone).date()
