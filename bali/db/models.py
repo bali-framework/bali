@@ -95,11 +95,10 @@ def get_base_model(db):
             db.session.delete(self)
             db.session.commit() if context_auto_commit.get() else db.session.flush()
 
-        def to_dict(self):
+        def _asdict(self):
             return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
 
-        def dict(self):
-            return self.to_dict()
+        dict = to_dict = _asdict
 
         @classmethod
         def count(cls, **attrs) -> int:

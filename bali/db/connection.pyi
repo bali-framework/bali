@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, Optional, Any, Type, TypeVar, Union, List
+from typing import Dict, Optional, Any, Type, TypeVar, Union, List, Tuple
 
 from sqlalchemy.orm.query import Query
 from sqlalchemy.orm.session import Session
@@ -17,7 +17,11 @@ class BaseModel:
     updated_time: _DateTimeField
     is_active: _BooleanField
 
+    def _asdict(self) -> Dict[str, Any]: ...
+
     def to_dict(self) -> Dict[str, Any]: ...
+
+    def dict(self) -> Dict[str, Any]: ...
 
     @classmethod
     def exists(cls: Type[_M], **attrs) -> bool: ...
@@ -50,6 +54,12 @@ class BaseModel:
 
     @classmethod
     def get_fields(cls: Type[_M]) -> List[str]: ...
+
+    @classmethod
+    def get_or_create(cls: Type[_M], defaults: Dict[str, Any], **attrs) -> Tuple[_M, bool]: ...
+
+    @classmethod
+    def update_or_create(cls: Type[_M], defaults: Dict[str, Any], **attrs) -> Tuple[_M, bool]: ...
 
 
 class DB(SQLAlchemy):
