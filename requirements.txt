@@ -2,8 +2,8 @@ dateparser==1.0.0
 decamelize==0.1.2
 fastapi[all]==0.63.0
 fastapi-pagination==0.7.4
-grpcio>=1.32.0,<1.40
-grpcio-tools>=1.32.0,<1.40
+grpcio>=1.32.0,<1.42
+grpcio-tools>=1.32.0,<1.42
 grpc-interceptor==0.13.0
 PyMySQL==0.10.1
 passlib[bcrypt]==1.7.2
