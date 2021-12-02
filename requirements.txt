@@ -7,7 +7,7 @@ grpcio-tools>=1.32.0,<1.40
 grpc-interceptor==0.13.0
 PyMySQL==0.10.1
 passlib[bcrypt]==1.7.2
-pillow>=7.2.0,<8.3
+pillow>=7.2.0,<8.4
 protobuf>=3.15,<3.18
 pydantic-sqlalchemy>=0.0.7,<1
 python-jose[cryptography]==3.2.0
