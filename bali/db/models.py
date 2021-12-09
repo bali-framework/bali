@@ -5,9 +5,12 @@ from typing import List, Dict
 import pytz
 from sqlalchemy import Column, DateTime, Boolean
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql.functions import func
 from sqlalchemy.types import TypeDecorator
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.inspection import inspect
 
 from ..utils import timezone
 
@@ -95,10 +98,17 @@ def get_base_model(db):
             db.session.delete(self)
             db.session.commit() if context_auto_commit.get() else db.session.flush()
 
-        def _asdict(self):
-            return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+        def to_dict(self, include_hybrid_property=False):
+            output_fields = []
+            for i in inspect(type(self)).all_orm_descriptors:
+                if isinstance(i, InstrumentedAttribute):
+                    output_fields.append(i.key)
+                elif isinstance(i, hybrid_property) and include_hybrid_property:
+                    output_fields.append(i.__name__)
 
-        dict = to_dict = _asdict
+            return {i: getattr(self, i, None) for i in output_fields}
+
+        dict = _asdict = to_dict
 
         @classmethod
         def count(cls, **attrs) -> int:
