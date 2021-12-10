@@ -16,4 +16,4 @@ class CaseComparator(Comparator):
         return case(self.whens, self.expression)
 
     def __eq__(self, other):
-        return self.expression.__clause_element__().in_(self.reversed_whens[other])
+        return super().__clause_element__().in_(self.reversed_whens[other])
