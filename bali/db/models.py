@@ -41,6 +41,7 @@ context_auto_commit = ContextVar('context_auto_commit', default=True)
 def get_base_model(db):
     class BaseModel(db.Model):
         __abstract__ = True
+        __asdict_include_hybrid_property__ = False
 
         created_time = Column(DateTime, default=datetime.utcnow)
         updated_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -98,17 +99,17 @@ def get_base_model(db):
             db.session.delete(self)
             db.session.commit() if context_auto_commit.get() else db.session.flush()
 
-        def to_dict(self, include_hybrid_property=False):
+        def _asdict(self):
             output_fields = []
             for i in inspect(type(self)).all_orm_descriptors:
                 if isinstance(i, InstrumentedAttribute):
                     output_fields.append(i.key)
-                elif isinstance(i, hybrid_property) and include_hybrid_property:
+                elif isinstance(i, hybrid_property) and self.__asdict_include_hybrid_property__:
                     output_fields.append(i.__name__)
 
             return {i: getattr(self, i, None) for i in output_fields}
 
-        dict = _asdict = to_dict
+        dict = to_dict = _asdict
 
         @classmethod
         def count(cls, **attrs) -> int:
