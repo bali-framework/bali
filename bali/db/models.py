@@ -99,7 +99,12 @@ def get_base_model(db):
             db.session.delete(self)
             db.session.commit() if context_auto_commit.get() else db.session.flush()
 
-        def _asdict(self, include_hybrid_properties=__asdict_include_hybrid_properties__):
+        def _asdict(self, **kwargs):
+            include_hybrid_properties = kwargs.setdefault(
+                "include_hybrid_properties",
+                self.__asdict_include_hybrid_properties__
+            )
+
             output_fields = []
             for i in inspect(type(self)).all_orm_descriptors:
                 if isinstance(i, InstrumentedAttribute):
