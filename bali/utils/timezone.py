@@ -1,5 +1,6 @@
+import calendar
 import os
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from typing import Union
 
 import pytz
@@ -66,7 +67,7 @@ def make_naive(
     return value.astimezone(timezone).replace(tzinfo=None)
 
 
-def localtime(value: datetime = None, timezone: StrTzInfoType = None):
+def localtime(value: datetime = None, timezone: StrTzInfoType = None) -> datetime:
     value, timezone = value or now(), timezone or get_current_timezone()
     if isinstance(timezone, str):
         timezone = pytz.timezone(timezone)
@@ -75,5 +76,26 @@ def localtime(value: datetime = None, timezone: StrTzInfoType = None):
     return value.astimezone(timezone)
 
 
-def localdate(value: datetime = None, timezone: StrTzInfoType = None):
+def localdate(value: datetime = None, timezone: StrTzInfoType = None) -> date:
     return localtime(value, timezone).date()
+
+
+def start_of(
+        granularity: str,
+        value: datetime = None,
+        *,
+        timezone: StrTzInfoType = None,
+) -> datetime:
+    value = localtime(value, timezone)
+    if granularity == "year":
+        value = value.replace(month=1, day=1)
+    elif granularity == "month":
+        value = value.replace(day=1)
+    elif granularity == "week":
+        value = value - timedelta(days=calendar.weekday(value.year, value.month, value.day))
+    elif granularity == "day":
+        pass
+    else:
+        raise ValueError("Granularity must be year, month, week or day")
+
+    return value.replace(hour=0, minute=0, second=0, microsecond=0)
