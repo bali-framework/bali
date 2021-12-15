@@ -1,6 +1,6 @@
 import calendar
 import os
-from datetime import datetime
+from datetime import datetime, date
 from typing import Union
 
 import pytz
@@ -68,7 +68,7 @@ def make_naive(
     return value.astimezone(timezone).replace(tzinfo=None)
 
 
-def localtime(value: datetime = None, timezone: StrTzInfoType = None):
+def localtime(value: datetime = None, timezone: StrTzInfoType = None) -> datetime:
     value, timezone = value or now(), timezone or get_current_timezone()
     if isinstance(timezone, str):
         timezone = pytz.timezone(timezone)
@@ -77,7 +77,7 @@ def localtime(value: datetime = None, timezone: StrTzInfoType = None):
     return value.astimezone(timezone)
 
 
-def localdate(value: datetime = None, timezone: StrTzInfoType = None):
+def localdate(value: datetime = None, timezone: StrTzInfoType = None) -> date:
     return localtime(value, timezone).date()
 
 
@@ -86,7 +86,7 @@ def start_of(
         value: datetime = None,
         *,
         timezone: StrTzInfoType = None,
-):
+) -> datetime:
     value = localtime(value, timezone)
     if granularity == "year":
         value = value.replace(month=1, day=1)
