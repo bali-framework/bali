@@ -1,8 +1,10 @@
+import calendar
 import os
 from datetime import datetime
 from typing import Union
 
 import pytz
+from dateutil.relativedelta import relativedelta
 
 TzInfoType = Union[type(pytz.utc), pytz.tzinfo.DstTzInfo]
 StrTzInfoType = Union[TzInfoType, str]
@@ -64,3 +66,26 @@ def make_naive(
         pass
 
     return value.astimezone(timezone).replace(tzinfo=None)
+
+
+def start_of(
+        granularity: str,
+        value: datetime = None,
+        *,
+        timezone: StrTzInfoType = None,
+):
+    value = localtime(value, timezone)
+    if granularity == "year":
+        value = value.replace(month=1, day=1)
+    elif granularity == "month":
+        value = value.replace(day=1)
+    elif granularity == "week":
+        value = value - relativedelta(days=calendar.weekday(value.year, value.month, value.day))
+    elif granularity == "day":
+        value = value.replace(hour=0)
+    elif granularity == "hour":
+        pass
+    else:
+        raise ValueError("Granularity must be year, month, week, day or hour")
+
+    return value.replace(minute=0, second=0, microsecond=0)
