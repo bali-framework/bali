@@ -1,10 +1,9 @@
 import calendar
 import os
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from typing import Union
 
 import pytz
-from dateutil.relativedelta import relativedelta
 
 TzInfoType = Union[type(pytz.utc), pytz.tzinfo.DstTzInfo]
 StrTzInfoType = Union[TzInfoType, str]
@@ -93,12 +92,10 @@ def start_of(
     elif granularity == "month":
         value = value.replace(day=1)
     elif granularity == "week":
-        value = value - relativedelta(days=calendar.weekday(value.year, value.month, value.day))
+        value = value - timedelta(days=calendar.weekday(value.year, value.month, value.day))
     elif granularity == "day":
-        value = value.replace(hour=0)
-    elif granularity == "hour":
         pass
     else:
-        raise ValueError("Granularity must be year, month, week, day or hour")
+        raise ValueError("Granularity must be year, month, week or day")
 
-    return value.replace(minute=0, second=0, microsecond=0)
+    return value.replace(hour=0, minute=0, second=0, microsecond=0)
