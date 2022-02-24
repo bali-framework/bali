@@ -29,37 +29,36 @@ class AsyncGreeterResource(Resource):
 
     @action(http_only=True)
     async def get(self, pk=None):
-        print('async greeter pk: %s' % pk)
         return [g for g in GREETERS if g.get('id') == pk][0]
 
     @action()
-    def list(self, schema_in: ListRequest = None):
+    async def list(self, schema_in: ListRequest = None):
         # `list` NOT FULL SUPPORT HTTP REQUEST
         # return GREETERS[:schema_in.limit]
         print(schema_in.filters.get('name'))
         return GREETERS
 
     @action()
-    def create(self, schema_in: schema = None):
+    async def create(self, schema_in: schema = None):
         return {'id': schema_in.id, 'content': schema_in.content}
 
     @action()
-    def update(self, schema_in: schema = None, pk=None):
+    async def update(self, schema_in: schema = None, pk=None):
         return {'id': pk, 'content': schema_in.content}
 
     @action()
-    def delete(self, pk=None):
+    async def delete(self, pk=None):
         return {'result': True}
 
     @action(detail=False)
-    def recents(self):
+    async def recents(self):
         return GREETERS[:2]
 
     @action(detail=True)
-    def items_recents(self, pk=None):
+    async def items_recents(self, pk=None):
         return [g for g in GREETERS if g.get('id') == pk]
 
     @action(detail=False, methods=['post'])
-    def custom_create(self, schema_in: AsyncGreeterFilter):
+    async def custom_create(self, schema_in: AsyncGreeterFilter):
         print('schema_in', schema_in)
         return GREETERS[0]

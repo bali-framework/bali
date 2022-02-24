@@ -119,16 +119,27 @@ class RouterGenerator:
     ):
         """Convert Resource instance method to FastAPI endpoint"""
         resource = self.cls()
+        action_func = getattr(resource, action)
 
         def endpoint(request: Request = None):
             resource._request = request
             self.check_permissions(resource)
-            return getattr(resource, action)()
+            return action_func()
+
+        async def async_endpoint(request: Request = None):
+            resource._request = request
+            self.check_permissions(resource)
+            return await action_func()
 
         def endpoint_detail(pk: int, request: Request = None):
             resource._request = request
             self.check_permissions(resource)
-            return getattr(resource, action)(pk)
+            return action_func(pk)
+
+        async def async_endpoint_detail(pk: int, request: Request = None):
+            resource._request = request
+            self.check_permissions(resource)
+            return await action_func(pk)
 
         def endpoint_schema(
             schema_in: BaseModel = None, request: Request = None, **kwargs
@@ -137,15 +148,28 @@ class RouterGenerator:
             self.check_permissions(resource)
             if 'get' in methods and schema_in_annotation:
                 schema_in = schema_in_annotation(**kwargs)
-            return getattr(resource, action)(schema_in)
+            return action_func(schema_in)
+
+        async def async_endpoint_schema(
+            schema_in: BaseModel = None, request: Request = None, **kwargs
+        ):
+            resource._request = request
+            self.check_permissions(resource)
+            if 'get' in methods and schema_in_annotation:
+                schema_in = schema_in_annotation(**kwargs)
+            return await action_func(schema_in)
 
         sig = inspect.signature(getattr(self.cls, action))
 
-        route = endpoint
+        route = pick_route(action_func, async_endpoint, endpoint)
         if detail:
-            route = endpoint_detail
+            route = pick_route(
+                action_func, async_endpoint_detail, endpoint_detail
+            )
         elif 'schema_in' in sig.parameters:
-            route = endpoint_schema
+            route = pick_route(
+                action_func, async_endpoint_schema, endpoint_schema
+            )
             params = list(sig.parameters.values())[1:]
             if 'get' in methods and schema_in_annotation:
                 # Destructor the `schema_in` to Query
