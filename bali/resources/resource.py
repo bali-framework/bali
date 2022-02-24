@@ -19,6 +19,7 @@ from pydantic import BaseModel
 from ..paginate import paginate
 from ..routing import APIRouter
 from ..schemas import ListRequest, ResultResponse
+from .generic_routes import *
 
 __all__ = ['Resource', 'GENERIC_ACTIONS']
 
@@ -61,7 +62,8 @@ class Resource:
         return RouterGenerator(cls)()
 
 
-# noinspection PyShadowingBuiltins,PyUnresolvedReferences,PyProtectedMember,PyShadowingNames,DuplicatedCode
+# noinspection PyShadowingBuiltins,PyUnresolvedReferences,PyProtectedMember
+# noinspection PyShadowingNames,DuplicatedCode
 class RouterGenerator:
     """
     Generator router from Resource class
@@ -75,7 +77,9 @@ class RouterGenerator:
 
         # To fixed generic get action `/item/{id}` conflict with custom action `/item/hello`,
         # must make sure get action `/item/{id}` is below custom action
-        actions = sorted(self.cls._actions.keys(), key=lambda x: x in GENERIC_ACTIONS)
+        actions = sorted(
+            self.cls._actions.keys(), key=lambda x: x in GENERIC_ACTIONS
+        )
 
         # noinspection PyProtectedMember
         for action in actions:
@@ -110,132 +114,67 @@ class RouterGenerator:
             filters[k] = v
         return filters
 
-    def _list(self) -> Callable:
-        """
-        list action default using fastapi-pagination to process paginate
-        """
-        resource = self.cls()
-
-        def route(request: Request = None):
-            resource._request = request
-            self.check_permissions(resource)
-            params = request.query_params._dict
-
-            # parse filters
-            filters = {}
-            for k, v in params.items():
-                if k not in self._ordered_filters:
-                    continue
-                # noinspection PyBroadException
-                try:
-                    # Convert param and retrieve param
-                    params_converter = self._ordered_filters.get(k)
-                    if isinstance(params_converter, typing._GenericAlias):
-                        params_converter = params_converter.__args__[0]
-                    filters[k] = params_converter(v)
-                except Exception as ex:
-                    logging.warning(
-                        'Query params `%s`(value: %s) type convert failed, exception: %s', k, v, ex
-                    )
-                    continue
-
-            schema_in = ListRequest(**params, filters=filters)
-
-            result = getattr(resource, 'list')(schema_in)
-            return paginate(result)
-
-        # update route's signatures
-        parameters = []
-        for k, v in self._ordered_filters.items():
-            default = inspect.Parameter.empty
-            if isinstance(v, typing._GenericAlias):
-                default = None if type(None) in v.__args__ else default
-            parameters.append(
-                inspect.Parameter(
-                    name=k,
-                    kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
-                    default=default,
-                    annotation=v,
-                )
-            )
-        sig = inspect.signature(route)
-        parameters.extend(sig.parameters.values())
-        route.__signature__ = sig.replace(parameters=parameters)
-
-        return route
-
-    def _get(self) -> Callable:
-        resource = self.cls()
-
-        def route(id: int, request: Request = None):
-            resource._request = request
-            self.check_permissions(resource)
-            return getattr(resource, 'get')(pk=id)
-
-        return route
-
-    def _create(self) -> Callable:
-        resource = self.cls()
-
-        def route(schema_in: resource.schema, request: Request = None):
-            resource._request = request
-            self.check_permissions(resource)
-            return getattr(resource, 'create')(schema_in)
-
-        return route
-
-    def _update(self) -> Callable:
-        resource = self.cls()
-
-        def route(schema_in: resource.schema, id: int, request: Request = None):
-            resource._request = request
-            self.check_permissions(resource)
-            return getattr(resource, 'update')(schema_in, pk=id)
-
-        return route
-
-    def _delete(self) -> Callable:
-        resource = self.cls()
-
-        def route(id: int, request: Request = None):
-            resource._request = request
-            self.check_permissions(resource)
-            return getattr(resource, 'delete')(pk=id)
-
-        return route
-
-    def get_endpoint(self, action, detail=False, methods=list, schema_in_annotation=None):
+    def get_endpoint(
+        self, action, detail=False, methods=list, schema_in_annotation=None
+    ):
         """Convert Resource instance method to FastAPI endpoint"""
         resource = self.cls()
+        action_func = getattr(resource, action)
 
         def endpoint(request: Request = None):
             resource._request = request
             self.check_permissions(resource)
-            return getattr(resource, action)()
+            return action_func()
+
+        async def async_endpoint(request: Request = None):
+            resource._request = request
+            self.check_permissions(resource)
+            return await action_func()
 
         def endpoint_detail(pk: int, request: Request = None):
             resource._request = request
             self.check_permissions(resource)
-            return getattr(resource, action)(pk)
+            return action_func(pk)
 
-        def endpoint_schema(schema_in: BaseModel = None, request: Request = None, **kwargs):
+        async def async_endpoint_detail(pk: int, request: Request = None):
+            resource._request = request
+            self.check_permissions(resource)
+            return await action_func(pk)
+
+        def endpoint_schema(
+            schema_in: BaseModel = None, request: Request = None, **kwargs
+        ):
             resource._request = request
             self.check_permissions(resource)
             if 'get' in methods and schema_in_annotation:
                 schema_in = schema_in_annotation(**kwargs)
-            return getattr(resource, action)(schema_in)
+            return action_func(schema_in)
+
+        async def async_endpoint_schema(
+            schema_in: BaseModel = None, request: Request = None, **kwargs
+        ):
+            resource._request = request
+            self.check_permissions(resource)
+            if 'get' in methods and schema_in_annotation:
+                schema_in = schema_in_annotation(**kwargs)
+            return await action_func(schema_in)
 
         sig = inspect.signature(getattr(self.cls, action))
 
-        route = endpoint
+        route = pick_route(action_func, async_endpoint, endpoint)
         if detail:
-            route = endpoint_detail
+            route = pick_route(
+                action_func, async_endpoint_detail, endpoint_detail
+            )
         elif 'schema_in' in sig.parameters:
-            route = endpoint_schema
+            route = pick_route(
+                action_func, async_endpoint_schema, endpoint_schema
+            )
             params = list(sig.parameters.values())[1:]
             if 'get' in methods and schema_in_annotation:
                 # Destructor the `schema_in` to Query
-                for field, annotation in schema_in_annotation.__fields__.items():
+                for field, annotation in schema_in_annotation.__fields__.items(
+                ):
                     params = params[1:]
                     params.append(
                         inspect.Parameter(
@@ -265,7 +204,7 @@ class RouterGenerator:
         if action == 'list':
             self.router.add_api_route(
                 '',
-                self._list(),
+                list_(self),
                 methods=['GET'],
                 response_model=LimitOffsetPage[self.cls.schema],
                 summary=f'List {self.resource_name}'
@@ -273,7 +212,7 @@ class RouterGenerator:
         elif action == 'create':
             self.router.add_api_route(
                 '',
-                self._create(),
+                create_(self),
                 methods=['POST'],
                 response_model=self.cls.schema and Optional[self.cls.schema],
                 summary=f'Create {self.resource_name}'
@@ -281,7 +220,7 @@ class RouterGenerator:
         elif action == 'get':
             self.router.add_api_route(
                 '/{%s}' % self.primary_key,
-                self._get(),
+                get_(self),
                 methods=['GET'],
                 response_model=self.cls.schema,
                 summary=f'Get {self.resource_name}'
@@ -289,7 +228,7 @@ class RouterGenerator:
         elif action == 'update':
             self.router.add_api_route(
                 '/{%s}' % self.primary_key,
-                self._update(),
+                update_(self),
                 methods=['PATCH'],
                 response_model=self.cls.schema,
                 summary=f'Update {self.resource_name}'
@@ -297,7 +236,7 @@ class RouterGenerator:
         elif action == 'delete':
             self.router.add_api_route(
                 '/{%s}' % self.primary_key,
-                self._delete(),
+                delete_(self),
                 methods=['DELETE'],
                 response_model=ResultResponse,
                 summary=f'Delete {self.resource_name}'
