@@ -13,6 +13,6 @@ pydantic-sqlalchemy>=0.0.7,<1
 python-jose[cryptography]==3.2.0
 pytz==2021.1
 redis==3.5.3
-sqla-wrapper>=5.0.0.dev5,<6
+sqla-wrapper>=5.0.0,<6
 typer>=0.3.2
 uvicorn>=0.12.3,<=0.15
