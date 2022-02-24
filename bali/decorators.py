@@ -126,7 +126,7 @@ def compatible_method(func):
             # Convert response data to gRPC response
             return ParseDict(response_data, self._response_message(), ignore_unknown_fields=True)
 
-        return func(self, *args, **kwargs)
+        return await func(self, *args, **kwargs)
 
     return wrapper_async if inspect.iscoroutinefunction(func) else wrapper
 

@@ -9,27 +9,27 @@ from permissions import IsAuthenticated
 GREETERS = [{'id': i, 'content': 'Hi, number %s' % i} for i in range(10)]
 
 
-class Greeter(BaseModel):
+class AsyncGreeter(BaseModel):
     id: int
     content: str
 
 
-class GreeterFilter(BaseModel):
+class AsyncGreeterFilter(BaseModel):
     ids: List[int]
 
 
-class GreeterResource(Resource):
+class AsyncGreeterResource(Resource):
 
-    schema = Greeter
+    schema = AsyncGreeter
     filters = [
         {'name': str},
         {'title': Optional[str]},
     ]
     permission_classes = [IsAuthenticated]
 
-    @action()
-    def get(self, pk=None):
-        print('greeter pk: %s' % pk)
+    @action(http_only=True)
+    async def get(self, pk=None):
+        print('async greeter pk: %s' % pk)
         return [g for g in GREETERS if g.get('id') == pk][0]
 
     @action()
@@ -60,6 +60,6 @@ class GreeterResource(Resource):
         return [g for g in GREETERS if g.get('id') == pk]
 
     @action(detail=False, methods=['post'])
-    def custom_create(self, schema_in: GreeterFilter):
+    def custom_create(self, schema_in: AsyncGreeterFilter):
         print('schema_in', schema_in)
         return GREETERS[0]
