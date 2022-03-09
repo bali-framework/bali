@@ -1,7 +1,7 @@
 import logging
+import warnings
 from functools import wraps
 
-from contextlib import asynccontextmanager
 from sqla_wrapper import SQLAlchemy
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,15 +10,8 @@ from sqlalchemy.orm import sessionmaker
 
 from .models import get_base_model
 
-# from core.config import settings
-
+# TODO: Removed logging according 12factor
 error_logger = logging.getLogger('error')
-
-database_schema_async_maps = [
-    ('sqlite://', 'sqlite+aiosqlite://'),
-    ('mysql+pymysql://', 'mysql+aiomysql://'),
-    ('postgres://', 'postgresql+asyncpg://'),
-]
 
 
 # noinspection PyPep8Naming
@@ -50,11 +43,7 @@ class DB:
             engine_options=engine_options,
             session_options=session_options,
         )
-        async_database_uri = database_uri
-        for sync_schema, async_schema in database_schema_async_maps:
-            async_database_uri = async_database_uri.replace(
-                sync_schema, async_schema
-            )
+        async_database_uri = get_async_database_uri(database_uri)
         self._async_engine = create_async_engine(async_database_uri)
 
         self.async_session = sessionmaker(
@@ -77,11 +66,36 @@ class DB:
 
 db = DB()
 
+
+def get_async_database_uri(database_uri):
+    """
+    Transform populate database schema to async format,
+    which is used by SQLA-Wrapper
+    """
+    uri = database_uri
+    database_schema_async_maps = [
+        ('sqlite://', 'sqlite+aiosqlite://'),
+        ('mysql+pymysql://', 'mysql+aiomysql://'),
+        ('postgres://', 'postgresql+asyncpg://'),
+    ]
+    for sync_schema, async_schema in database_schema_async_maps:
+        uri = uri.replace(sync_schema, async_schema)
+    return uri
+
+
 MAXIMUM_RETRY_ON_DEADLOCK: int = 3
 
 
 def retry_on_deadlock_decorator(func):
-    lock_messages_error = ['Deadlock found', 'Lock wait timeout exceeded']
+    warnings.warn(
+        'retry_on_deadlock_decorator will remove in 3.2',
+        DeprecationWarning,
+    )
+
+    lock_messages_error = [
+        'Deadlock found',
+        'Lock wait timeout exceeded',
+    ]
 
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -94,8 +108,8 @@ def retry_on_deadlock_decorator(func):
                 if any(msg in e.message for msg in lock_messages_error) \
                         and attempt_count <= MAXIMUM_RETRY_ON_DEADLOCK:
                     error_logger.error(
-                        'Deadlock detected. Trying sql transaction once more. Attempts count: %s'
-                        % (attempt_count + 1)
+                        'Deadlock detected. Trying sql transaction once more. '
+                        'Attempts count: %s' % (attempt_count + 1)
                     )
                 else:
                     raise
@@ -105,6 +119,11 @@ def retry_on_deadlock_decorator(func):
 
 
 def close_connection(func):
+    warnings.warn(
+        'retry_on_deadlock_decorator will remove in 3.2',
+        DeprecationWarning,
+    )
+
     def wrapper(*args, **kwargs):
         try:
             result = func(*args, **kwargs)
