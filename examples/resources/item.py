@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 from bali.db.operators import get_filters_expr
 from bali.decorators import action
-from bali.resource import Resource
+from bali.resources import Resource
 from bali.schemas import ListRequest
 from models import Item
 from permissions import IsAuthenticated

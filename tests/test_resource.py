@@ -6,7 +6,7 @@ from sqlalchemy import Column, Integer, String
 from bali.db import db
 from bali.db.operators import get_filters_expr
 from bali.decorators import action
-from bali.resource import Resource
+from bali.resources import Resource
 from bali.schemas import ListRequest
 from permissions import IsAuthenticated
 

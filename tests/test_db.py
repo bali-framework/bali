@@ -1,3 +1,6 @@
+from sqlalchemy.orm.decl_api import DeclarativeMeta
+DeclarativeMeta = None
+
 import pytest
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.future import select
@@ -29,6 +32,12 @@ class User(db.BaseModel):
     @classmethod
     def get_by_username_sync(cls, username):
         return User.first(username=username)
+
+
+class Book(db.BaseModel):
+    __tablename__ = "books"
+    id = Column(Integer, primary_key=True)
+    title = Column(String(20), index=True)
 
 
 db.create_all()
