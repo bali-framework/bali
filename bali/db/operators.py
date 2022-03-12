@@ -7,6 +7,7 @@ from sqlalchemy.sql.expression import extract
 from ..exceptions import OperatorModelError
 
 OPERATOR_SPLITTER = '__'
+REVERSER = "-"
 
 OPERATORS = {
     'isnull': lambda c, v: (c == None) if v else (c != None),  # noqa
@@ -68,3 +69,15 @@ def get_filters_expr(cls, **filters):
         expressions.append(op(column, value))
 
     return expressions
+
+
+def dj_lookup_to_sqla(expression: str) -> Tuple:
+    col_name, op_name = expression, "exact"
+    if OPERATOR_SPLITTER in col_name:
+        col_name, op_name = col_name.rsplit(OPERATOR_SPLITTER, 1)
+    return OPERATORS[op_name], col_name
+
+
+def dj_ordering_to_sqla(expression: str):
+    wrapper = desc if expression.startswith(REVERSER) else asc
+    return wrapper(expression.lstrip(REVERSER))

@@ -15,6 +15,11 @@ def test_db_operators_fetch_rows():
         username = Column(String(50), default='')
         age = Column(Integer)
 
+    class Book(db.BaseModel):
+        __tablename__ = "books"
+        id = Column(Integer, primary_key=True)
+        title = Column(String(20), index=True)
+
     db.create_all()
     lucy = User.create(**{
         'username': 'Lucy',
@@ -32,7 +37,9 @@ def test_db_operators_fetch_rows():
     assert lucy.id > 0
 
     users = User.query().filter(User.username.like('%c%'), User.age > 0).all()
-    assert len(users) == 2, 'Fetch users count in common way should work properly'
+    assert len(
+        users
+    ) == 2, 'Fetch users count in common way should work properly'
 
     filters = {
         'username__like': '%c%',

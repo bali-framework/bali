@@ -26,7 +26,7 @@ class APIRoute(GzipRoute):
                     return endpoint(*args, **{'request': kwargs.get('request')})
                 return endpoint(*args, **kwargs)
             finally:
-                db.remove()
+                db.s.remove()
 
         return injected_endpoint
 

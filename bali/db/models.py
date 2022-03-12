@@ -1,3 +1,16 @@
+"""Model included
+
+`db.BaseModel` is the most common model.
+If you don't use `db.BaseModel`, you can compose Mixins to `db.Model`
+
+Import Mixins in your project examples:
+
+    ```python
+    from bali.db.models import GenericModelMixin, AsyncModelMixin
+    ```
+
+"""
+
 from contextvars import ContextVar
 from datetime import datetime
 from typing import List, Dict
@@ -5,6 +18,10 @@ from typing import List, Dict
 import pytz
 from sqlalchemy import Column, DateTime, Boolean
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.future import select
+from sqlalchemy.inspection import inspect
+from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql.functions import func
 from sqlalchemy.types import TypeDecorator
@@ -36,12 +53,12 @@ context_auto_commit = ContextVar('context_auto_commit', default=True)
 
 
 def get_base_model(db):
-    class BaseModel(db.Model):
+    class BaseModel(db.Model, GenericModelMixin, AsyncModelMixin):
         __abstract__ = True
+        __asdict_include_hybrid_properties__ = False
 
-        created_time = Column(DateTime, default=datetime.utcnow)
-        updated_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-        is_active = Column(Boolean, default=True)
+        # Bind SQLA-wrapper database to model
+        _db = db
 
         @classmethod
         def exists(cls, **attrs):
@@ -51,7 +68,9 @@ def get_base_model(db):
 
         @classmethod
         def create(cls, **attrs):
-            """Create and persist a new record for the model, and returns it."""
+            """
+            Create and persist a new record for the model, and returns it.
+            """
             return cls(**attrs).save()
 
         @classmethod
@@ -95,11 +114,24 @@ def get_base_model(db):
             db.s.delete(self)
             db.s.commit() if context_auto_commit.get() else db.s.flush()
 
-        def to_dict(self):
-            return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+        def _asdict(self, **kwargs):
+            include_hybrid_properties = kwargs.setdefault(
+                "include_hybrid_properties",
+                self.__asdict_include_hybrid_properties__
+            )
 
-        def dict(self):
-            return self.to_dict()
+            output_fields = []
+            for i in inspect(type(self)).all_orm_descriptors:
+                if isinstance(i, InstrumentedAttribute):
+                    output_fields.append(i.key)
+                elif isinstance(
+                    i, hybrid_property
+                ) and include_hybrid_properties:
+                    output_fields.append(i.__name__)
+
+            return {i: getattr(self, i, None) for i in output_fields}
+
+        dict = to_dict = _asdict
 
         @classmethod
         def count(cls, **attrs) -> int:
@@ -130,11 +162,9 @@ def get_base_model(db):
             try:
                 try:
                     instance = (
-                        db.s.query(cls)
-                        .filter_by(**kwargs)
-                        .populate_existing()
-                        .with_for_update()
-                        .one()
+                        db.s.query(cls).filter_by(
+                            **kwargs
+                        ).populate_existing().with_for_update().one()
                     )
                 except NoResultFound:
                     instance = cls(**{**kwargs, **(defaults or {})})  # noqa
@@ -144,11 +174,9 @@ def get_base_model(db):
                     except SQLAlchemyError:
                         db.s.rollback()
                         instance = (
-                            db.s.query(cls)
-                            .filter_by(**kwargs)
-                            .populate_existing()
-                            .with_for_update()
-                            .one()
+                            db.s.query(cls).filter_by(
+                                **kwargs
+                            ).populate_existing().with_for_update().one()
                         )
                     else:
                         return instance, True
@@ -164,3 +192,79 @@ def get_base_model(db):
                 return instance, False
 
     return BaseModel
+
+
+class AsyncModelManager:
+    """Async model bind to aio"""
+
+    db = None
+    model = None
+
+    def __init__(self, instance):
+        self.instance = instance
+
+    @classmethod
+    async def exists(cls, **attrs):
+        async with cls.db.async_session() as async_session:
+            stmt = select(cls.model).filter_by(**attrs)
+            result = await async_session.execute(stmt)
+            return bool(result.scalars().first())
+
+    @classmethod
+    async def create(cls, **attrs):
+        await cls.model(**attrs).aio.save()
+
+    @classmethod
+    async def first(cls, **attrs):
+        async with cls.db.async_session() as async_session:
+            stmt = select(cls.model).filter_by(**attrs)
+            result = await async_session.execute(stmt)
+            return result.scalars().first()
+
+    async def save(self):
+        async with self.db.async_session() as async_session:
+            async_session.add(self.instance)
+            await async_session.commit()
+            return self.instance
+
+    async def delete(self):
+        async with self.db.async_session() as async_session:
+            async_session.delete(self.instance)
+            await async_session.commit()
+
+
+# expose the include models and model creator
+included_models = {
+    'BaseModel': get_base_model,
+}
+
+# --------------------  Models Mixins  -------------------- #
+
+
+class GenericModelMixin:
+    """Generic model include the following fields"""
+    created_time = Column(DateTime, default=datetime.utcnow)
+    updated_time = Column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
+    is_active = Column(Boolean, default=True)
+
+
+class AsyncModelMixin:
+    """Async models methods
+
+    All async method accessed by `aio`
+
+        ```python
+        # Model
+        async def get_first_user()
+            await User.aio.first()
+
+        # Instance
+        user = User()
+        user.aio.save()
+        ```
+
+    """
+
+    aio = AsyncModelManager

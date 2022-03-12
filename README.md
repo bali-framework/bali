@@ -2,6 +2,13 @@
 
 Simplify FastAPI integrate gRPC services development
 
+## Requirements
+
+    1. Python 3.8+
+    2. FastAPI 0.63
+    3. grpcio>=1.32.0,<1.42
+
+
 ## Install
 
 ```
@@ -145,7 +152,7 @@ Generic HTTP/RPC support actions:
 --- |--- | --- | --- | ---
 |get |/{id} |GET |Get{Resource} |Get an existing resource matching the given id |
 |list |/ |GET |List{Resource} |Get all the resources |
-|create |/ |GET |Create{Resource} |Create a new resource |
+|create |/ |POST |Create{Resource} |Create a new resource |
 |update |/{id} |PATCH |Update{Resource} |Update an existing resource matching the given id |
 |delete |/{id} |DELETE |Delete{Resource} |Delete an existing resource matching the given id |
 
@@ -154,9 +161,6 @@ Generic Actions examples:
 ```python
 
 # 1. import `Resource` base class
-## before 2.1
-from bali.resource import Resource  # deprecated in 3.0
-## New from 2.1
 from bali.resources import Resource
 
 
