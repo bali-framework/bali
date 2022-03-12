@@ -2,12 +2,12 @@ dateparser==1.0.0
 decamelize==0.1.2
 fastapi[all]==0.63.0
 fastapi-pagination==0.7.4
-grpcio>=1.32.0,<1.40
-grpcio-tools>=1.32.0,<1.40
+grpcio>=1.32.0,<1.42
+grpcio-tools>=1.32.0,<1.42
 grpc-interceptor==0.13.0
 PyMySQL<=0.9.3,>=0.9
 passlib[bcrypt]==1.7.2
-pillow>=7.2.0,<8.3
+pillow>=7.2.0,<8.4
 protobuf>=3.15,<3.18
 pydantic-sqlalchemy>=0.0.7,<1
 python-jose[cryptography]==3.2.0

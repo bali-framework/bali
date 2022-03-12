@@ -12,6 +12,11 @@
 ### Changed
 - Removed main.py default launch behavior
 
+## [2.1.3] 2021-11-19
+### Added
+- timezone added `localtime`/`localdate`
+
+## [2.1.0] 2021-10-14
 ### Changed
 - Adjusted version range dependency packages
 
