@@ -194,10 +194,6 @@ def get_base_model(db):
     return BaseModel
 
 
-def get_async_base_model(db=None):
-    return AsyncModelManager
-
-
 class AsyncModelManager:
     """Async model bind to aio"""
 
