@@ -2,13 +2,14 @@ import logging
 import warnings
 from functools import wraps
 
-from sqla_wrapper import SQLAlchemy
+from sqla_wrapper import SQLAlchemy, BaseModel
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.decl_api import DeclarativeMeta
 
-from .models import get_base_model
+from .models import included_models
 
 # TODO: Removed logging according 12factor
 error_logger = logging.getLogger('error')
@@ -43,11 +44,19 @@ class DB:
             engine_options=engine_options,
             session_options=session_options,
         )
+        self._db.Model = self._db.registry.generate_base(
+            cls=BaseModel,
+            name="Model",
+            metaclass=AsyncModelDeclarativeMeta,
+        )
+
         async_database_uri = get_async_database_uri(database_uri)
         self._async_engine = create_async_engine(async_database_uri)
 
         self.async_session = sessionmaker(
-            self._async_engine, class_=AsyncSession, expire_on_commit=False
+            self._async_engine,
+            class_=AsyncSession,
+            expire_on_commit=False,
         )
 
     def __getattribute__(self, attr, *args, **kwargs):
@@ -57,9 +66,9 @@ class DB:
             if not self._db:
                 raise Exception('Database session not initialized')
 
-            # BaseModel
-            if attr == 'BaseModel':
-                return get_base_model(self)
+            # BaseModels
+            if attr in included_models:
+                return included_models[attr](self)
 
             return getattr(self._db, attr)
 
@@ -133,3 +142,27 @@ def close_connection(func):
         return result
 
     return wrapper
+
+
+class AsyncModelDeclarativeMeta(DeclarativeMeta):
+    """Make db.BaseModel support async using this metaclass"""
+    def __getattribute__(self, attr):
+        if attr == 'aio':
+            aio = super().__getattribute__(attr)
+            if any([aio.db is None, aio.model is None]):
+                aio = type(
+                    f'Aio{aio.__qualname__}',
+                    aio.__bases__,
+                    dict(aio.__dict__),
+                )
+                setattr(aio, 'db', self._db)
+                setattr(aio, 'model', self)
+            return aio
+
+        return super().__getattribute__(attr)
+
+    # noinspection PyMethodParameters
+    def __call__(self, *args, **kwargs):
+        instance = super().__call__(*args, **kwargs)
+        instance.aio = self.aio(instance)
+        return instance
