@@ -262,7 +262,7 @@ class AsyncModelMixin:
 
         # Instance
         user = User()
-        user.aio.save()
+        await user.aio.save()
         ```
 
     """
