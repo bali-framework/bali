@@ -1,6 +1,8 @@
 -r requirements.txt
 aiomysql~=0.0.21
 aiosqlite
+mkdocs
+mkdocs-material
 pytest==6.1.2
 pytest-asyncio>=0.15.0
 pytest-cov==2.12.0
