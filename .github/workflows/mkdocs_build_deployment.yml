@@ -1,23 +1,20 @@
-name: mkdocs-build-deployment
+name: Deploy to Github Pages
 on:
   push:
     branches:
+      - master
       - main
 jobs:
-  build:
-    name: Deploy docs to GitHub Pages
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Build
-        uses: Tiryoh/actions-mkdocs@v0
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
         with:
-          mkdocs_version: 'latest' # option
-          requirements: 'docs/requirements.txt' # option
-          configfile: 'mkdocs.yml' # option
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+          python-version: 3.x
+      - uses: actions/cache@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./site
+          key: ${{ github.ref }}
+          path: .cache
+      - run: pip install mkdocs-material
+      - run: mkdocs gh-deploy --force
