@@ -1,4 +1,4 @@
-name: mkdocs-github-pages
+name: mkdocs
 on:
   push:
     branches:
