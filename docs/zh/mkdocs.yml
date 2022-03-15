@@ -1,6 +1,6 @@
 site_name: Bali
 site_description: Simplify Cloud Native Microservices development base on FastAPI and gRPC.
-site_url: https://bali-framework.github.io/bali/zh/
+site_url: https://bali-framework.github.io/bali/
 
 theme:
   name: material
