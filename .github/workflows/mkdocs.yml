@@ -14,5 +14,5 @@ jobs:
           python-version: 3.x
       - run: pip install mkdocs-material
       - run: cd docs/zh && mkdocs build
-      - run: cp -rf docs/zh/site/ docs/zh/
+      - run: cp -rf docs/zh/site/* docs/zh/
       - run: mkdocs gh-deploy --force
