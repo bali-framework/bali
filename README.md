@@ -16,17 +16,16 @@
 
 ---
 
-**Documentation**: [https://www.starlette.io/](https://www.starlette.io/)
+**Documentation**: [https://bali-framework.github.io/bali/](https://bali-framework.github.io/bali/)
+
+---
 
 
-# bali
-
-Simplify FastAPI integrate gRPC services development
 
 ## Requirements
 
     1. Python 3.8+
-    2. FastAPI 0.63
+    2. FastAPI 0.63+
     3. grpcio>=1.32.0,<1.42
 
 
