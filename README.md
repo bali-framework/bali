@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/bali-framework/bali/master/docs/img/bali.png" alt='bali framework'>
+  <img src="https://raw.githubusercontent.com/bali-framework/bali/master/docs/img/bali.png" alt='bali framework' />
 </p>
 <p align="center">
     <em>🏝 Simplify Cloud Native Microservices development base on FastAPI and gRPC.</em>
@@ -33,6 +33,11 @@ It gives you the following features:
 * GZipMiddleware included and GZip decompression enabled.
 * 🍻 **Resource** layer to write code once support both HTTP and RPC
 
+## Who's using bali framework
+
+<a href="https://www.360shuke.com/">
+    <img width="200" src="https://raw.githubusercontent.com/bali-framework/bali/master/docs/img/cases/qfin.png" />
+</a>
 
 ## Requirements
 
@@ -43,7 +48,7 @@ It gives you the following features:
 
 ## Install
 
-```
+```bash
 pip install bali-core
 ```
 
