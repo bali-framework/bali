@@ -1,3 +1,24 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/bali-framework/bali/master/docs/img/bali.png" alt='bali framework'>
+</p>
+<p align="center">
+    <em>🏝 Simplify Cloud Native Microservices development base on FastAPI and gRPC.</em>
+</p>
+
+<p align="center">
+    <a href="https://pepy.tech/project/bali-core">
+        <img src="https://pepy.tech/badge/bali-core" />
+    </a>
+    <a href="https://pypi.org/project/bali-core/">
+        <img src="https://img.shields.io/pypi/v/bali-core" />
+    </a>
+</p>
+
+---
+
+**Documentation**: [https://www.starlette.io/](https://www.starlette.io/)
+
+
 # bali
 
 Simplify FastAPI integrate gRPC services development
