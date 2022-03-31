@@ -32,6 +32,3 @@ It gives you the following features:
 * Utilities of transform models to Pydantic schemas.
 * GZipMiddleware included and GZip decompression enabled.
 * 🍻 **Resource** layer to write code once support both HTTP and RPC
-
-
-

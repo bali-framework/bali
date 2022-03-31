@@ -20,6 +20,18 @@
 
 ---
 
+# Bali
+
+Bali is a framework integrate FastAPI and gRPC. 
+If you want to provide both HTTP and RPC, it can improve development efficiency.
+
+It gives you the following features:
+
+* A simple layout of file structure rule.
+* Integrated `SQLAlchemy` ORM and provide generic model methods.
+* Utilities of transform models to Pydantic schemas.
+* GZipMiddleware included and GZip decompression enabled.
+* 🍻 **Resource** layer to write code once support both HTTP and RPC
 
 
 ## Requirements
