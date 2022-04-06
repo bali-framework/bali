@@ -6,7 +6,7 @@ from sqlalchemy import Column, Integer, String
 from bali.db import db
 from bali.db.operators import get_filters_expr
 from bali.decorators import action
-from bali.resources import Resource
+from bali.resources import ModelResource
 from bali.schemas import ListRequest
 from permissions import IsAuthenticated
 
@@ -44,8 +44,8 @@ class UserSchema(BaseModel):
     age: int
 
 
-class UserResource(Resource):
-
+class UserResource(ModelResource):
+    model = User
     schema = UserSchema
     filters = [
         {'username': str},
@@ -53,50 +53,24 @@ class UserResource(Resource):
     ]  # yapf: disable
     permission_classes = [IsAuthenticated]
 
-    @action()
-    def get(self, pk=None):
-        return User.first(id=pk)
-
-    @action()
-    def list(self, schema_in: ListRequest = None):
-        return User.query().filter(
-            *get_filters_expr(User, **schema_in.filters)
-        )
-
-    @action()
-    def create(self, schema_in: schema = None):
-        return User.create(**schema_in.dict())
-
-    @action()
-    def update(self, schema_in: schema = None, pk=None):
-        user = User.first(id=pk)
-        for k, v in schema_in.dict().items():
-            setattr(user, k, v)
-        return user.save()
-
-    @action()
-    def delete(self, pk=None):
-        User.delete(id=pk)
-        return {'result': True}
-
     @action(detail=False)
     def recents(self):
         return User.query().all()[:2]
 
 
-def test_resource_instance():
+def test_model_resource_instance():
     resource = UserResource()
     assert hasattr(resource, 'as_router')
     assert resource._is_http
     assert not resource._is_rpc
 
 
-def test_resource_generic_actions():
+def test_model_resource_generic_actions():
     resource = UserResource()
     get_result = resource.get(pk=1)
     assert get_result == User.first(id=1)
 
 
-def test_resource_custom_actions():
+def test_model_resource_custom_actions():
     resource = UserResource()
     assert len(resource.recents()) > 0

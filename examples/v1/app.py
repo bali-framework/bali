@@ -1,9 +1,13 @@
-from fastapi_pagination import LimitOffsetPage, LimitOffsetParams, paginate
-from fastapi import Query
+from fastapi_pagination import LimitOffsetPage, paginate
 
 from bali.core import APIRouter, cache_memoize
 from models import Item
-from resources import GreeterResource, ItemResource
+from resources import (
+    GreeterResource,
+    AsyncGreeterResource,
+    ItemResource,
+    ItemModelResource,
+)
 from schemas import ItemModel
 
 router = APIRouter()
@@ -28,5 +32,10 @@ def list_items():
 
 hello_greeter_router = GreeterResource.as_router()
 item_router = ItemResource.as_router()
-router.include_router(hello_greeter_router, prefix='/hello-greeters')
-router.include_router(item_router, prefix='/hello-items')
+item_model_resource_router = ItemModelResource.as_router()
+router.include_router(hello_greeter_router, prefix='/greeters')
+router.include_router(
+    AsyncGreeterResource.as_router(), prefix='/async-greeters'
+)
+router.include_router(item_router, prefix='/items')
+router.include_router(item_model_resource_router, prefix='/models-items')

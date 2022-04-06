@@ -1,14 +1,20 @@
+import asyncio
+import time
 from typing import Optional
+from bali.core import db
 
 from pydantic import BaseModel
 
 from bali.db.operators import get_filters_expr
 from bali.decorators import action
-from bali.resource import Resource
+from bali.resources import Resource
 from bali.schemas import ListRequest
 from models import Item
 from permissions import IsAuthenticated
 from schemas import ItemModel
+
+from sqlalchemy.future import select
+
 
 
 class QFilter(BaseModel):
@@ -31,7 +37,18 @@ class ItemResource(Resource):
 
     @action()
     def list(self, schema_in: ListRequest = None):
+        time.sleep(2)
         return Item.query().filter(*get_filters_expr(Item, **schema_in.filters))
+
+    @action()
+    async def list_async(self, schema_in: ListRequest = None):
+        async with db.async_session() as async_session:
+            stmt = select(Item).filter(
+                *get_filters_expr(Item, **schema_in.filters)
+            )
+            result = await async_session.execute(stmt)
+            await asyncio.sleep(2)
+            return []
 
     @action()
     def create(self, schema_in: schema = None):

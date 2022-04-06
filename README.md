@@ -1,12 +1,60 @@
-# bali
+<p align="center">
+  <img src="https://raw.githubusercontent.com/bali-framework/bali/master/docs/img/bali.png" alt='bali framework' />
+</p>
+<p align="center">
+    <em>🏝 Simplify Cloud Native Microservices development base on FastAPI and gRPC.</em>
+</p>
 
-Simplify FastAPI integrate gRPC services development
+<p align="center">
+    <a href="https://pepy.tech/project/bali-core">
+        <img src="https://pepy.tech/badge/bali-core" />
+    </a>
+    <a href="https://pypi.org/project/bali-core/">
+        <img src="https://img.shields.io/pypi/v/bali-core" />
+    </a>
+</p>
+
+---
+
+**Documentation**: [https://bali-framework.github.io/bali/](https://bali-framework.github.io/bali/)
+
+---
+
+# Bali
+
+Bali is a framework integrate FastAPI and gRPC. 
+If you want to provide both HTTP and RPC, it can improve development efficiency.
+
+It gives you the following features:
+
+* A simple layout of file structure rule.
+* Integrated `SQLAlchemy` ORM and provide generic model methods.
+* Utilities of transform models to Pydantic schemas.
+* GZipMiddleware included and GZip decompression enabled.
+* 🍻 **Resource** layer to write code once support both HTTP and RPC
+
+## Who's using bali framework
+
+<a href="https://www.360shuke.com/">
+    <img width="200" src="https://raw.githubusercontent.com/bali-framework/bali/master/docs/img/cases/qfin.png" />
+</a>
+
+## Requirements
+
+    1. Python 3.8+
+    2. FastAPI 0.63+
+    3. grpcio>=1.32.0,<1.42
+
 
 ## Install
 
-```
+```bash
 pip install bali-core
 ```
+
+## Project structure layout
+
+
 
 ## Application 
 
@@ -24,9 +72,6 @@ app.settings(base_settings={'title': 'Bali App'})
 Launch 
 
 ```bash
-# lauch RPC and HTTP service 
-python main.py
-
 # lauch RPC 
 python main.py --rpc
 
@@ -134,6 +179,8 @@ Resource’s design borrows several key concepts from the REST architectural sty
 
 Inspired by `ViewSet` in Django REST Framework.
 
+Actions' name according [`Standard methods` in Google API design guide](https://cloud.google.com/apis/design/standard_methods) 
+
 ### Generic HTTP/RPC Actions
 
 Generic HTTP/RPC support actions:
@@ -142,7 +189,7 @@ Generic HTTP/RPC support actions:
 --- |--- | --- | --- | ---
 |get |/{id} |GET |Get{Resource} |Get an existing resource matching the given id |
 |list |/ |GET |List{Resource} |Get all the resources |
-|create |/ |GET |Create{Resource} |Create a new resource |
+|create |/ |POST |Create{Resource} |Create a new resource |
 |update |/{id} |PATCH |Update{Resource} |Update an existing resource matching the given id |
 |delete |/{id} |DELETE |Delete{Resource} |Delete an existing resource matching the given id |
 
@@ -151,7 +198,7 @@ Generic Actions examples:
 ```python
 
 # 1. import `Resource` base class
-from bali.resource import Resource
+from bali.resources import Resource
 
 
 # 2. implementation actions inherited from Resource
@@ -178,7 +225,7 @@ class GreeterResource(Resource):
 
     @action()
     def delete(self, pk=None):
-        return {'result': True}
+        return {'id': pk, 'result': True}  # using `id` instand of `result`
 
 ```
 
@@ -214,6 +261,22 @@ def root():
 ```
 
 > More usage of `Resource`: [GreeterResource](examples/resources/greeter.py)
+
+
+### ModelResource
+
+<i>New in version 2.1.</i>
+
+```python
+class UserResource(ModelResource):
+    model = User
+    schema = UserSchema
+    filters = [
+        {'username': str},
+        {'age': Optional[str]},
+    ]  # yapf: disable
+    permission_classes = [IsAuthenticated]
+```
 
 
 ## Service Mixin
@@ -297,27 +360,3 @@ class TestDemoRPC(GRPCTestBase):
 
 [![bali-cli](https://github-readme-stats.vercel.app/api/pin/?username=JoshYuJump&repo=bali-cli)](https://github.com/JoshYuJump/bali-cli)
 [![cookiecutter-bali](https://github-readme-stats.vercel.app/api/pin/?username=Ed-XCF&repo=cookiecutter-bali)](https://github.com/Ed-XCF/cookiecutter-bali)
-
-
-## CONTRIBUTE
-
-**Developer Environment**
-
-```bash
-pip install -r requirements_dev.txt
-``` 
-
-
-**Tag a new release**
-
-tag a version:
-
-```bash
-git tag -a v0.1.0
-```
-
-push tags to remote:
-
-```bash
-git push --tags
-```

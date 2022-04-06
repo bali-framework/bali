@@ -1,4 +1,5 @@
 import functools
+import inspect
 
 from fastapi.dependencies.utils import get_typed_signature
 from fastapi_pagination import LimitOffsetParams, set_page
@@ -69,7 +70,65 @@ def compatible_method(func):
 
         return func(self, *args, **kwargs)
 
-    return wrapper
+    @functools.wraps(func)
+    async def wrapper_async(self, *args, **kwargs):
+
+        # Put args to inner function from request object
+        if self._is_rpc:
+            request_data = MessageToDict(
+                self._request,
+                including_default_value_fields=True,
+                preserving_proto_field_name=True,
+            )
+
+            if func.__name__ == 'get':
+                pk = self._request.id
+                result = await func(self, pk)
+                if not isinstance(result, dict):
+                    result = result.dict()
+                response_data = {'data': result}
+
+            elif func.__name__ == 'list':
+                schema_in = get_schema_in(func)
+                result = await func(self, schema_in(**request_data))
+                # Paginated the result queryset or iterable object
+                if isinstance(result, BaseModel):
+                    raise ReturnTypeError('Generic actions `list` should return a sequence')
+                else:
+                    set_page(Page)
+                    params = LimitOffsetParams(
+                        limit=request_data.get('limit') or 10,
+                        offset=request_data.get('offset'),
+                    )
+                    response_data = paginate(result, params=params, is_rpc=True)
+
+            elif func.__name__ in ['create', 'update']:
+                schema_in = get_schema_in(func)
+                data = request_data.get('data')
+                result = await func(self, schema_in(**data))
+                if not isinstance(result, dict):
+                    result = result.dict()
+                response_data = {'data': result}
+
+            elif func.__name__ == 'delete':
+                pk = self._request.id
+                result = await func(self, pk)
+                response_data = {'result': bool(result)}
+
+            else:
+                # custom action
+                schema_in = get_schema_in(func)
+                result = await func(self, schema_in(**request_data))
+                if not isinstance(result, dict):
+                    result = result.dict()
+                response_data = result
+
+            # Convert response data to gRPC response
+            return ParseDict(response_data, self._response_message(), ignore_unknown_fields=True)
+
+        return await func(self, *args, **kwargs)
+
+    return wrapper_async if inspect.iscoroutinefunction(func) else wrapper
 
 
 def action(methods=None, detail=None, **kwargs):
