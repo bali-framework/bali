@@ -1,3 +1,5 @@
+from typing import Dict
+
 from pydantic import BaseSettings
 
 # noinspection PyUnresolvedReferences
@@ -14,6 +16,8 @@ setattr(db, 'transaction', transaction)
 
 class Settings(BaseSettings):
     ENABLED_RPC_LOGGING: str = False
+    AMQP_CONFIGS: Dict[str, Dict[str, str]]
+
 
 _settings = Settings()
 
@@ -31,7 +35,8 @@ def initialize(settings):
     # can be disabled by `DISABLE_DB_CONNECTION` settings
     if not getattr(settings, 'DISABLE_DB_CONNECTION', False):
         if not hasattr(settings, 'SQLALCHEMY_DATABASE_URI'):
-            raise Exception('Initialized db connection without `SQLALCHEMY_DATABASE_URI` setting')
+            raise Exception(
+                'Initialized db connection without `SQLALCHEMY_DATABASE_URI` setting')
 
         db.connect(settings.SQLALCHEMY_DATABASE_URI)
 
@@ -40,13 +45,16 @@ def initialize(settings):
     # cache prefix can be custom by `CACHE_PREFIX`
     if not getattr(settings, 'DISABLE_CACHE_CONNECTION', False):
         if not hasattr(settings, 'CACHE_ADDRESS'):
-            raise Exception('Initialized cache connection without `CACHE_ADDRESS` setting')
+            raise Exception(
+                'Initialized cache connection without `CACHE_ADDRESS` setting')
 
         if not hasattr(settings, 'CACHE_PASSWORD'):
-            raise Exception('Initialized cache connection without `CACHE_PASSWORD` setting')
+            raise Exception(
+                'Initialized cache connection without `CACHE_PASSWORD` setting')
 
         cache.connect(
             settings.CACHE_ADDRESS,
             password=settings.CACHE_PASSWORD,
-            prefix=getattr(settings, 'CACHE_PREFIX', f'{settings.SERVER_NAME}_service')
+            prefix=getattr(settings, 'CACHE_PREFIX',
+                           f'{settings.SERVER_NAME}_service')
         )

@@ -6,18 +6,12 @@ from pydantic import BaseModel
 
 class Event(BaseModel):
     type: str
-    payload: Dict[str, Any]
-    exchange_type: str = 'direct'
-    queue_name: str
-    routing_key: str
+    payload: Dict[str, Any] = {}
 
-    def __init__(self, *args, **kwargs):
-        super(Event, self).__init__(*args, **kwargs)
-        self.exchange = Exchange(
-            self.type, self.exchange_type, durable=True
-        )
-        self.queue = Queue(
-            self.queue_name,
-            exchange=self.exchange,
-            routing_key=self.routing_key
-        )
+    def dict(self):
+        res = super().dict()
+        return {
+            'event_type': self.type,
+            **res['payload']
+        }
+

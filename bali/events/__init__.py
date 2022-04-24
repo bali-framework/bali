@@ -1,2 +1,2 @@
-from utils import *
+from dispatch import *
 from event import *
