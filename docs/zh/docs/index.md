@@ -22,7 +22,7 @@
 
 # Bali
 
-简化基于 FastAPI 和 gRPC 的云原生微服务开发。如果你想让你的项目同时支持 HTTP 和 gRpc ,那么 Bali 可以帮助你很轻松的完成。 
+简化基于 FastAPI 和 gRPC 的云原生微服务开发。如果你想让你的项目同时支持 HTTP 和 gRPC ,那么 Bali 可以帮助你很轻松的完成。 
 
 Bali 的特性：
 * 项目结构简单。
