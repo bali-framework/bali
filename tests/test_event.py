@@ -11,4 +11,4 @@ def test_event_dispatch():
             }
     }
     event = Event(type='test', payload={'hello': 'world'})
-    dispatch(event)
+    assert dispatch(event)
