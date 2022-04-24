@@ -29,4 +29,4 @@ Bali 的特性：
 * 融合了 `SQLAlchemy` 并提供了 model 生成的方法。
 * 提供了工具类转换 model 成为 Pydantic 模式.
 * 支持 GZip 解压缩.
-* 🍻 **Resource** 层处理对外服务即支持 HTTP 又支持 gRpc
+* 🍻 **Resource** 层处理对外服务即支持 HTTP 又支持 gRPC
