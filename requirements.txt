@@ -17,3 +17,4 @@ redis==3.5.3
 sqla-wrapper>=5.0.0,<6
 typer>=0.3.2
 uvicorn>=0.12.3,<=0.15
+kombu>=5.2.4 <6.0
