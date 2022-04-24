@@ -1,5 +1,4 @@
 import re
-import types
 from typing import Callable
 
 from grpc import Server
