@@ -1,6 +1,6 @@
 from kombu import Connection, Exchange, Queue
 
-from bali.events import Event
+from .event import Event
 from ..core import _settings
 
 
@@ -22,7 +22,7 @@ def dispatch(event: Event, app_name: str = 'default'):
     with Connection(amqp_config['AMQP_SERVER_ADDRESS']) as conn:
         # produce
         producer = conn.Producer(serializer='json')
-        producer.publish(
+        return producer.publish(
             event.dict(),
             exchange=exchange,
             routing_key=routing_key,

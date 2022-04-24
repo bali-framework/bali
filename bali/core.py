@@ -16,7 +16,15 @@ setattr(db, 'transaction', transaction)
 
 class Settings(BaseSettings):
     ENABLED_RPC_LOGGING: str = False
-    AMQP_CONFIGS: Dict[str, Dict[str, str]]
+    AMQP_CONFIGS: Dict[str, Dict[str, str]] = {
+        'default':
+            {
+                'AMQP_SERVER_ADDRESS': 'amqp://127.0.0.1:5672',
+                'EXCHANGE_NAME': 'test_exchange',
+                'QUEUE_NAME': 'test_queue',
+                'ROUTING_KEY': 'test_routing_key'
+            }
+    }
 
 
 _settings = Settings()
@@ -36,7 +44,8 @@ def initialize(settings):
     if not getattr(settings, 'DISABLE_DB_CONNECTION', False):
         if not hasattr(settings, 'SQLALCHEMY_DATABASE_URI'):
             raise Exception(
-                'Initialized db connection without `SQLALCHEMY_DATABASE_URI` setting')
+                'Initialized db connection without `SQLALCHEMY_DATABASE_URI` setting'
+            )
 
         db.connect(settings.SQLALCHEMY_DATABASE_URI)
 
@@ -46,15 +55,18 @@ def initialize(settings):
     if not getattr(settings, 'DISABLE_CACHE_CONNECTION', False):
         if not hasattr(settings, 'CACHE_ADDRESS'):
             raise Exception(
-                'Initialized cache connection without `CACHE_ADDRESS` setting')
+                'Initialized cache connection without `CACHE_ADDRESS` setting'
+            )
 
         if not hasattr(settings, 'CACHE_PASSWORD'):
             raise Exception(
-                'Initialized cache connection without `CACHE_PASSWORD` setting')
+                'Initialized cache connection without `CACHE_PASSWORD` setting'
+            )
 
         cache.connect(
             settings.CACHE_ADDRESS,
             password=settings.CACHE_PASSWORD,
-            prefix=getattr(settings, 'CACHE_PREFIX',
-                           f'{settings.SERVER_NAME}_service')
+            prefix=getattr(
+                settings, 'CACHE_PREFIX', f'{settings.SERVER_NAME}_service'
+            )
         )

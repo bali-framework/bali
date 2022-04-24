@@ -1,5 +1,4 @@
 -r requirements.txt
-aiomysql~=0.0.21
 aiosqlite
 mkdocs
 mkdocs-material

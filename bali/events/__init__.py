@@ -1,2 +1,2 @@
-from dispatch import *
-from event import *
+from .dispatch import *
+from .event import *
