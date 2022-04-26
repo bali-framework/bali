@@ -70,6 +70,10 @@ class DB:
             if attr in included_models:
                 return included_models[attr](self)
 
+            # Compatible legacy ``db.query``
+            if attr == 'query':
+                return self._db.s.query
+
             return getattr(self._db, attr)
 
 
