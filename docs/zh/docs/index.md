@@ -16,15 +16,12 @@
 
 ---
 
-**Documentation**: [https://bali-framework.github.io/bali/docs/zh](https://bali-framework.github.io/bali/docs/zh)
-
----
-
 # Bali
 
 简化基于 FastAPI 和 gRPC 的云原生微服务开发。如果你想让你的项目同时支持 HTTP 和 gRPC ,那么 Bali 可以帮助你很轻松的完成。 
 
 Bali 的特性：
+
 * 项目结构简单。
 * 融合了 `SQLAlchemy` 并提供了 model 生成的方法。
 * 提供了工具类转换 model 成为 Pydantic 模式.
