@@ -1,4 +1,5 @@
 aiomysql
+aiosqlite
 dateparser==1.0.0
 decamelize==0.1.2
 fastapi[all]==0.63.0
