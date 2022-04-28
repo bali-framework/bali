@@ -4,8 +4,10 @@ from .event import Event
 from ..core import _settings
 
 
-def dispatch(event: Event, app_name: str = 'default'):
-    amqp_config = _settings.AMQP_CONFIGS.get(app_name, {})
+def dispatch(event: Event, amqp_name: str = ''):
+    if not amqp_name:
+        amqp_name = event.amqp_name
+    amqp_config = _settings.AMQP_CONFIGS.get(amqp_name, {})
     if not amqp_config:
         raise Exception('Settings not set:sub config of AMQP_CONFIGS not set')
     if 'AMQP_SERVER_ADDRESS' not in amqp_config:
