@@ -1,5 +1,6 @@
 -r requirements.txt
 aiosqlite
+coverage==6.2
 mkdocs
 mkdocs-material
 pytest==6.1.2
