@@ -1,3 +1,4 @@
+import logging.config
 from typing import Dict
 
 from pydantic import BaseSettings
@@ -70,3 +71,5 @@ def initialize(settings):
                 settings, 'CACHE_PREFIX', f'{settings.SERVER_NAME}_service'
             )
         )
+    if hasattr(settings, 'LOGGING_CONFIG'):
+        logging.config.dictConfig(settings.LOGGING_CONFIG)
