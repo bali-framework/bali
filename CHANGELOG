@@ -3,7 +3,10 @@
 # This project adheres to [Semantic Versioning](http://semver.org/).
 # includes Added / Changed / Fixed
 
-## [3.0.0] UNRELEASED
+
+## [3.1.0] UNRELEASED
+
+## [3.0.0] 2022-04-24
 ### Added
 - Upgraded to sql-wrapper v5.0.0
 - Supported uvicorn 0.15

@@ -14,6 +14,33 @@ from .models import included_models
 # TODO: Removed logging according 12factor
 error_logger = logging.getLogger('error')
 
+# SQLA-Wrapper 4.x supported session proxy methods
+# https://github.com/jpsca/sqla-wrapper/blob/v4.200628/sqla_wrapper/session_proxy.py
+SQLA_WRAPPER_SESSION_PROXIES = (
+    'query',
+    'add',
+    'add_all',
+    'begin',
+    'begin_nested',
+    'commit',
+    'delete',
+    'execute',
+    'expire',
+    'expire_all',
+    'expunge',
+    'expunge_all',
+    'flush',
+    'invalidate',
+    'is_modified',
+    'merge',
+    'prepare',
+    'prune',
+    'refresh',
+    'remove',
+    'rollback',
+    'scalar',
+)
+
 
 # noinspection PyPep8Naming
 class DB:
@@ -69,6 +96,10 @@ class DB:
             # BaseModels
             if attr in included_models:
                 return included_models[attr](self)
+
+            # Compatible legacy SQLA-Wrapper SessionProxy
+            if attr in SQLA_WRAPPER_SESSION_PROXIES:
+                return getattr(self._db.s, attr)
 
             return getattr(self._db, attr)
 
