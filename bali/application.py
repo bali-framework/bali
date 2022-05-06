@@ -65,7 +65,13 @@ class Bali:
 
     def _launch_http(self):
         self._app = FastAPI(**self.base_settings)
-        uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, access_log=True)
+        uvicorn.run(
+            "main:app",
+            host="0.0.0.0",
+            port=8000,
+            reload=True,
+            access_log=True
+        )
 
     async def _launch_rpc(self):
         service = self.kwargs.get('rpc_service')
@@ -75,6 +81,11 @@ class Bali:
             await service.serve()
         else:
             service.serve()
+
+    def _launch_event(self):
+        from .events import handle
+        while True:
+            handle()
 
     def _start_all(self):
         process_http = Process(target=self._launch_http)
@@ -110,15 +121,22 @@ class Bali:
 
         add_pagination(self._app)
 
-    def launch(self, http: bool = False, rpc: bool = False):
-        if not http and not rpc:
-            typer.echo('Please provided launch service type: --http or --rpc')
+    def launch(
+        self, http: bool = False, rpc: bool = False, event: bool = False
+    ):
+        if not http and not rpc and not event:
+            typer.echo(
+                'Please provided launch service type: --http or --rpc or --event'
+            )
 
         if http:
             self._launch_http()
 
         if rpc:
             sync_exec(self._launch_rpc())
+
+        if event:
+            self._launch_event()
 
     def start(self):
         typer.run(self.launch)

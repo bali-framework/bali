@@ -6,6 +6,7 @@ from fastapi_pagination import LimitOffsetParams, set_page
 from fastapi_pagination.limit_offset import Page
 from pydantic import BaseModel
 
+from .events import register_callback
 from .exceptions import ReturnTypeError
 from .paginate import paginate
 from .utils import MessageToDict, ParseDict
@@ -196,3 +197,24 @@ def get_schema_in(func):
             return schema_in
     else:
         raise ValueError('Custom actions arguments error')
+
+
+def event_handler(event_type):
+    # find queue by event_type
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(body, message):
+            typed_signature = get_typed_signature(func)
+            signature_params = typed_signature.parameters
+            for param_name, param in signature_params.items():
+                if param_name in ['self', 'cls']:
+                    continue
+                if param.annotation is not inspect._empty:
+                    body = param.annotation(**body)
+                    break
+            res = func(body)
+            message.ack()
+            return res
+        register_callback(event_type, wrapper)
+        return wrapper
+    return decorator

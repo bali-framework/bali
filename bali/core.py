@@ -26,6 +26,9 @@ class Settings(BaseSettings):
                 'ROUTING_KEY': 'test_routing_key'
             }
     }
+    EVENT_TYPE_TO_AMQP: Dict[str, str] = {
+        'test': 'default'
+    }
 
 
 _settings = Settings()
