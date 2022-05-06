@@ -1,3 +1,5 @@
+import os
+
 from bali.core import _settings
 from bali.decorators import event_handler
 from bali.events import Event, dispatch, handle
@@ -38,14 +40,16 @@ def test_event_dispatch():
 @event_handler(event_type='test0')
 def call_test0(event):
     print('test0 received:', event)
+    print(os.path.basename('aaa.txt'))
 
 
 @event_handler(event_type='test1')
 def call_test1(event):
     print('test1 received:', event)
+    print(os.path.basename('aaa.txt'))
 
 
-def test_event_handler():
+def test_event_handler(mocker):
     _settings.AMQP_CONFIGS = {
         'default':
             {
@@ -59,4 +63,6 @@ def test_event_handler():
         'test0': 'default',
         'test1': 'default'
     }
-    assert handle()
+    mocker.patch('os.path.basename')
+    handle()
+    os.path.basename.assert_called_with('aaa.txt')
