@@ -11,7 +11,7 @@ _settings.AMQP_CONFIGS = {
             'ROUTING_KEY': 'test_routing_key'
         }
 }
-_settings.EVENT_TO_AMQP_MAP = {
+_settings.EVENT_TYPE_TO_AMQP = {
     'test0': 'default',
     'test1': 'default'
 }
@@ -55,8 +55,8 @@ def test_event_handler():
                 'ROUTING_KEY': 'test_routing_key'
             }
     }
-    _settings.EVENT_TO_AMQP_MAP = {
+    _settings.EVENT_TYPE_TO_AMQP = {
         'test0': 'default',
         'test1': 'default'
     }
-    handle()
+    assert handle()

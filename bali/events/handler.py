@@ -4,14 +4,14 @@ from kombu import Connection, Queue, connections
 
 from ..core import _settings
 
-REGISTER_EVENT_CALLBACKS = {}
+REGISTER_EVENT_CALLBACKS = []
 
 
 def register_callback(event_type, callback):
-    amqp_config_key = _settings.EVENT_TO_AMQP_MAP.get(event_type)
+    amqp_config_key = _settings.EVENT_TYPE_TO_AMQP.get(event_type)
     if not amqp_config_key:
         raise Exception(
-            'Can not find key:%s at EVENT_TO_AMQP_MAP' % amqp_config_key
+            'Can not find key:%s at EVENT_TYPE_TO_AMQP' % amqp_config_key
         )
     amqp_config = _settings.AMQP_CONFIGS.get(amqp_config_key)
     if not amqp_config:
@@ -24,8 +24,8 @@ def register_callback(event_type, callback):
         key=amqp_config['ROUTING_KEY']
     )
     global REGISTER_EVENT_CALLBACKS
-    REGISTER_EVENT_CALLBACKS[event_type] = (
-        queue, callback, amqp_config['AMQP_SERVER_ADDRESS']
+    REGISTER_EVENT_CALLBACKS.append(
+        (queue, callback, amqp_config['AMQP_SERVER_ADDRESS'],)
     )
 
 
@@ -35,7 +35,7 @@ def get_connection(amqp_address):
 
 
 def handle():
-    for queue, callback, amqp_address in REGISTER_EVENT_CALLBACKS.values():
+    for queue, callback, amqp_address in REGISTER_EVENT_CALLBACKS:
         with get_connection(amqp_address=amqp_address) as conn:
             with conn.Consumer(
                     queues=[queue], accept=['json'], callbacks=[callback]
@@ -46,3 +46,4 @@ def handle():
                     pass
                 except Exception as e:
                     raise e
+    return True
