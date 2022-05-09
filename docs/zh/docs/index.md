@@ -1,3 +1,6 @@
+# 
+
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/bali-framework/bali/master/docs/img/bali.png" alt='bali framework' />
 </p>
@@ -16,7 +19,7 @@
 
 ---
 
-# Bali
+# 简介
 
 简化基于 FastAPI 和 gRPC 的云原生微服务开发。如果你想让你的项目同时支持 HTTP 和 gRPC ,那么 Bali 可以帮助你很轻松的完成。 
 
@@ -27,3 +30,23 @@ Bali 的特性：
 * 提供了工具类转换 model 成为 Pydantic 模式.
 * 支持 GZip 解压缩.
 * 🍻 **Resource** 层处理对外服务即支持 HTTP 又支持 gRPC
+
+<br />
+
+## 依赖
+
+1. Python 3.8+
+2. FastAPI 0.63+
+3. grpcio>=1.32.0,<1.42
+
+<br />
+
+## 安装
+
+```shell
+# Bali framework
+pip install bali-core 
+
+# Bali command line tool 
+pip install bali-cli  
+```
