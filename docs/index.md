@@ -32,3 +32,23 @@ It gives you the following features:
 * Utilities of transform models to Pydantic schemas.
 * GZipMiddleware included and GZip decompression enabled.
 * 🍻 **Resource** layer to write code once support both HTTP and RPC
+
+<br />
+
+## Requirements
+
+1. Python 3.8+
+2. FastAPI 0.63+
+3. grpcio>=1.32.0,<1.42
+
+<br />
+
+## Installation
+
+```shell
+# Bali framework
+pip install bali-core 
+
+# Bali command line tool 
+pip install bali-cli  
+```

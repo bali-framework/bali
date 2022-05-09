@@ -24,6 +24,12 @@ edit_uri: ""
 nav:
 - Introduction: index.md
 
+markdown_extensions:
+  - mkautodoc
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences
+
 extra:
   alternate:
     - name: English
