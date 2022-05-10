@@ -22,14 +22,14 @@ repo_url: https://github.com/bali-framework/bali
 edit_uri: ""
 
 nav:
-- Introduction: index.md
-- Application: application.md
-- Database: database.md
-- Cache: cache.md
+- 简介: index.md
+- App: application.md
+- 数据库: database.md
+- 缓存: cache.md
 - Resource: resource.md
 - Schema: schema.md
 - Utility: utility.md
-- Testing: testing.md
+- 测试: testing.md
 
 markdown_extensions:
   - mkautodoc
