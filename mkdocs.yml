@@ -27,6 +27,7 @@ nav:
 - Database: database.md
 - Cache: cache.md
 - Resource: resource.md
+- Event: event.md
 - Schema: schema.md
 - Utility: utility.md
 - Testing: testing.md
