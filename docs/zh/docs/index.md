@@ -31,7 +31,7 @@ Bali 的特性：
 * 支持 GZip 解压缩.
 * 🍻 **Resource** 层处理对外服务即支持 HTTP 又支持 gRPC
 
-## Who's using bali framework
+## 谁在使用 Bali 框架
 
 <a href="https://www.360shuke.com/">
     <img width="200" src="https://raw.githubusercontent.com/bali-framework/bali/master/docs/img/cases/qfin.png" />
