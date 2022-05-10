@@ -20,7 +20,7 @@
 ---
 
 
-# Introduction
+## Introduction
 
 Bali is a framework integrate FastAPI and gRPC. 
 If you want to provide both HTTP and RPC, it can improve development efficiency.
