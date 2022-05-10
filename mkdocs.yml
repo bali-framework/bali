@@ -23,6 +23,7 @@ edit_uri: ""
 
 nav:
 - Introduction: index.md
+- Resource: resource.md
 
 markdown_extensions:
   - mkautodoc
