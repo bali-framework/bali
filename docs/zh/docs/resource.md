@@ -1,26 +1,26 @@
 ## Resource
 
-<i>New in version 2.0.</i>
+<i>在版本 2.0. 中加入</i>
 
-Resource’s design borrows several key concepts from the REST architectural style.
+Resource的设计借鉴了REST体系结构风格的几个关键概念。
 
-Inspired by `ViewSet` in Django REST Framework.
+灵感来自于Django REST框架中的' ViewSet '。
 
-Actions' name according [`Standard methods` in Google API design guide](https://cloud.google.com/apis/design/standard_methods) 
+Actions 命名依据 [`Standard methods` in Google API design guide](https://cloud.google.com/apis/design/standard_methods) 
 
-### Generic HTTP/RPC Actions
+### 通用 HTTP/RPC 支持操作
 
-Generic HTTP/RPC support actions:
+通用 HTTP/RPC 支持操作:
 
 |Action |Route |Method | RPC  | Description|
 --- |--- | --- | --- | ---
-|get |/{id} |GET |Get{Resource} |Get an existing resource matching the given id |
-|list |/ |GET |List{Resource} |Get all the resources |
-|create |/ |POST |Create{Resource} |Create a new resource |
-|update |/{id} |PATCH |Update{Resource} |Update an existing resource matching the given id |
-|delete |/{id} |DELETE |Delete{Resource} |Delete an existing resource matching the given id |
+|get |/{id} |GET |Get{Resource} |获取与给定id匹配的现有资源 |
+|list |/ |GET |List{Resource} |获取所有资源 |
+|create |/ |POST |Create{Resource} |创建一个新的资源 |
+|update |/{id} |PATCH |Update{Resource} |更新与给定 id 匹配的现有资源 |
+|delete |/{id} |DELETE |Delete{Resource} |删除与给定 id 匹配的现有资源 |
 
-Generic Actions examples:
+通用示例:
 
 ```python
 # 1. import `Resource` base class
@@ -45,10 +45,10 @@ class GreeterResource(Resource):
         return {'id': pk, 'result': True}  # using `id` instand of `result`
 ```
 
+### 用户自定义 HTTP/RPC Actions
 
-### Custom HTTP/RPC Actions
+用户自定义的 Action 还是需要使用 `@action`, 单是参数 `detail` 必须要设置.
 
-Custom actions also decorated by `@action`, but `detail` signature is required.
 
 ```python
 @action(detail=False)
@@ -56,14 +56,15 @@ def custom_action(self):
     pass
 ```
 
-`detail` has no default value.
-> `True` means action to single resource, url path is '/{resources}/{id}'.
+`detail` 没有默认值.
+> `True` 代表 action 对应的是单个资源, url 为 '/{resources}/{id}'.
 > 
-> `False` means action set of resources, url path is '/{resources}'.
-> 
-### Override HTTP Actions
+> `False` 代表 action 对应的是一个资源集, url 为 '/{resources}'.
 
-If the default HTTP action template is not satisfied your request, you can override HTTP actions.
+
+### 重写 HTTP Actions
+
+如果默认的HTTP动作模板不能满足您的请求，您可以覆盖HTTP动作。
 
 ```python
 # Get the origin router 
@@ -74,11 +75,11 @@ def root():
     return {"message": "Hello World"}
 ```
 
-> More usage of `Resource`: [GreeterResource](examples/resources/greeter.py)
+> 更多关于 `Resource`: [GreeterResource](examples/resources/greeter.py)
 
 ### ModelResource
 
-<i>New in version 2.1.</i>
+<i>在版本 2.1. 中新增</i>
 
 ```python
 class UserResource(ModelResource):

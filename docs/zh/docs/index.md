@@ -30,6 +30,8 @@ Bali 的特性：
 * 提供了工具类转换 model 成为 Pydantic 模式.
 * 支持 GZip 解压缩.
 * 🍻 **Resource** 层处理对外服务即支持 HTTP 又支持 gRPC
+* 支持 Event 发送及监听
+
 
 ## 谁在使用 Bali 框架
 
