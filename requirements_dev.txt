@@ -1,5 +1,7 @@
 -r requirements.txt
 aiosqlite
+coverage==6.2
+mkautodoc
 mkdocs
 mkdocs-material
 pytest==6.1.2

@@ -22,7 +22,20 @@ repo_url: https://github.com/bali-framework/bali
 edit_uri: ""
 
 nav:
-- Introduction: index.md
+- 简介: index.md
+- App: application.md
+- 数据库: database.md
+- 缓存: cache.md
+- Resource: resource.md
+- Schema: schema.md
+- Utility: utility.md
+- 测试: testing.md
+
+markdown_extensions:
+  - mkautodoc
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences
 
 extra:
   alternate:

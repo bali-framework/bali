@@ -20,7 +20,7 @@
 ---
 
 
-# Introduction
+## Introduction
 
 Bali is a framework integrate FastAPI and gRPC. 
 If you want to provide both HTTP and RPC, it can improve development efficiency.
@@ -32,3 +32,25 @@ It gives you the following features:
 * Utilities of transform models to Pydantic schemas.
 * GZipMiddleware included and GZip decompression enabled.
 * 🍻 **Resource** layer to write code once support both HTTP and RPC
+
+## Who's using bali framework
+
+<a href="https://www.360shuke.com/">
+    <img width="200" src="https://raw.githubusercontent.com/bali-framework/bali/master/docs/img/cases/qfin.png" />
+</a>
+
+## Requirements
+
+1. Python 3.8+
+2. FastAPI 0.63+
+3. grpcio>=1.32.0,<1.42
+
+## Installation
+
+```shell
+# Bali framework
+pip install bali-core 
+
+# Bali command line tool 
+pip install bali-cli  
+```

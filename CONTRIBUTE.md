@@ -20,3 +20,14 @@ push tags to remote:
 ```bash
 git push --tags
 ```
+
+
+### Maintenance documents
+
+```bash
+# English version (default)
+mkdocs serve
+# Chinese version
+cd docs/zh && mkdocs serve
+```
+
