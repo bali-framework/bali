@@ -31,15 +31,17 @@ Bali 的特性：
 * 支持 GZip 解压缩.
 * 🍻 **Resource** 层处理对外服务即支持 HTTP 又支持 gRPC
 
-<br />
+## Who's using bali framework
+
+<a href="https://www.360shuke.com/">
+    <img width="200" src="https://raw.githubusercontent.com/bali-framework/bali/master/docs/img/cases/qfin.png" />
+</a>
 
 ## 依赖
 
 1. Python 3.8+
 2. FastAPI 0.63+
 3. grpcio>=1.32.0,<1.42
-
-<br />
 
 ## 安装
 

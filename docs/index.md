@@ -33,15 +33,17 @@ It gives you the following features:
 * GZipMiddleware included and GZip decompression enabled.
 * 🍻 **Resource** layer to write code once support both HTTP and RPC
 
-<br />
+## Who's using bali framework
+
+<a href="https://www.360shuke.com/">
+    <img width="200" src="https://raw.githubusercontent.com/bali-framework/bali/master/docs/img/cases/qfin.png" />
+</a>
 
 ## Requirements
 
 1. Python 3.8+
 2. FastAPI 0.63+
 3. grpcio>=1.32.0,<1.42
-
-<br />
 
 ## Installation
 
