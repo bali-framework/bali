@@ -1,6 +1,7 @@
 ### Event
 
-消息依赖 AMQP 组件，所以需要进行相应配置，例如在你的项目中 settings.py 里面加入这段配置
+Messages rely on AMQP components, so they need to be configured accordingly, 
+such as adding this configuration settings.py in your project.
 
 ```
 class Settings:
@@ -18,29 +19,29 @@ settings = Settings()
 initialize(settings)
 ```
 
-定义 Event 
+Define events
 ```
 from bali.events import Event
 
 class HelloEvent(Event):
-    # 这里的 __amqp_name__ 默认就是 default，
-    # 代表使用的是 default 的 AMQP 配置
+    # The __amqp_name__ here defaults to default, 
+    # which means that the AMQP configuration using default is used
     __amqp_name__ = 'default' 
 
     def dict(self, *args, **kwargs):
-        # 重写 dict ，可以让 event 按照你定义的方式在 AMQP 组件中传输， 
-        # 如果不重写 dict，那么消息将是 {'type': self.type, 'payload': self.payload}
+        # Rewrite dict to allow events to be transferred in the AMQP component in the way you define. 
+        # If dict is not rewritten, the message will be {'type': self.type, 'payload': self.payload}
         return {'type': self.type, **self.payload}
 ```
 
-发送事件：
+Send events
 ```
 dispatch(HelloEvent(type='hello', payload={'aaa':'bbb'}))
 ```
 
-事件监听：
+Event listening
 
-首先需要定义事件的处理 **handle_event** 及监听事件的类型 **hello**
+First you need to define the processing of the event **handle_event** and the type of listening for the event **hello**
 
 ```
 class EventHandler:
@@ -49,7 +50,7 @@ class EventHandler:
         print(event)
 ```
 
-事件类型对应的 AMQP 配置：
+AMQP configuration for event type
 ```
 class Settings:
     AMQP_CONFIGS = {
@@ -69,7 +70,7 @@ settings = Settings()
 initialize(settings)
 ```
 
-开始监听事件：
+Start listening for events
 ```
 python main.py --event
 ```
