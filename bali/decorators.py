@@ -212,6 +212,8 @@ def event_handler(event_type):
                 if param.annotation is not inspect._empty:
                     body = param.annotation(**body)
                     break
+            if body.get('type') != event_type:
+                return
             res = func(body)
             message.ack()
             return res

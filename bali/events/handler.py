@@ -1,10 +1,33 @@
 import socket
+from itertools import groupby
 
 from kombu import Connection, Queue, connections, Exchange
 
 from ..core import _settings
 
 REGISTER_EVENT_CALLBACKS = []
+
+
+class CallbackInfo:
+    def __init__(self, queue, callback, connection):
+        self._queue = queue
+        self._callback = callback
+        self._connection = connection
+
+    def __str__(self):
+        return f'{self._connection}/{self._queue.name}'
+
+    @property
+    def connection(self):
+        return self._connection
+
+    @property
+    def queue(self):
+        return self._queue
+
+    @property
+    def callback(self):
+        return self._callback
 
 
 def register_callback(event_type, callback):
@@ -23,19 +46,16 @@ def register_callback(event_type, callback):
         type=amqp_config.get('EXCHANGE_TYPE')
     )
     queue = Queue(
-        f"{amqp_config.get('QUEUE_NAME', _settings.EVENT_DEFAULT_QUEUE)}_{event_type}",
+        amqp_config.get('QUEUE_NAME') or
+        f"{_settings.EVENT_DEFAULT_QUEUE}_{event_type}",
         exchange=exchange,
-        key=amqp_config.get(
-            'ROUTING_KEY', _settings.EVENT_DEFAULT_ROUTING_KEY
-        )
+        routing_key=amqp_config.get('ROUTING_KEY') or
+        f"""{_settings.EVENT_DEFAULT_ROUTING_KEY
+        }_{event_type}"""
     )
     global REGISTER_EVENT_CALLBACKS
     REGISTER_EVENT_CALLBACKS.append(
-        (
-            queue,
-            callback,
-            amqp_config['AMQP_SERVER_ADDRESS'],
-        )
+        CallbackInfo(queue, callback, amqp_config['AMQP_SERVER_ADDRESS'])
     )
 
 
@@ -45,13 +65,17 @@ def get_connection(amqp_address):
 
 
 def handle():
-    for queue, callback, amqp_address in REGISTER_EVENT_CALLBACKS:
-        with get_connection(amqp_address=amqp_address) as conn:
+    groups = groupby(REGISTER_EVENT_CALLBACKS, key=lambda x: str(x))
+    for k, items in groups:
+        items = list(items)
+        with get_connection(amqp_address=items[0].connection) as conn:
             with conn.Consumer(
-                queues=[queue], accept=['json'], callbacks=[callback]
+                queues=[items[0].queue],
+                accept=['json'],
+                callbacks=[i.callback for i in items]
             ) as consumer:
                 try:
-                    conn.drain_events(timeout=1)
+                    conn.drain_events(timeout=2)
                 except socket.timeout:
                     pass
                 except Exception as e:
