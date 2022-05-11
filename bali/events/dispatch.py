@@ -20,7 +20,7 @@ def dispatch(event: Event, amqp_name: str = ''):
         type=amqp_config.get('EXCHANGE_TYPE')
     )
     queue = Queue(
-        amqp_config.get('QUEUE_NAME', _settings.EVENT_DEFAULT_QUEUE),
+        f"{amqp_config.get('QUEUE_NAME', _settings.EVENT_DEFAULT_QUEUE)}_{event.type}",
         exchange,
         routing_key=routing_key
     )

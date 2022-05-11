@@ -23,7 +23,7 @@ def register_callback(event_type, callback):
         type=amqp_config.get('EXCHANGE_TYPE')
     )
     queue = Queue(
-        amqp_config.get('QUEUE_NAME', _settings.EVENT_DEFAULT_QUEUE),
+        f"{amqp_config.get('QUEUE_NAME', _settings.EVENT_DEFAULT_QUEUE)}_{event_type}",
         exchange=exchange,
         key=amqp_config.get(
             'ROUTING_KEY', _settings.EVENT_DEFAULT_ROUTING_KEY
