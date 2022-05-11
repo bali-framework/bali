@@ -18,17 +18,14 @@ setattr(db, 'transaction', transaction)
 class Settings(BaseSettings):
     ENABLED_RPC_LOGGING: str = False
     AMQP_CONFIGS: Dict[str, Dict[str, str]] = {
-        'default':
-            {
-                'AMQP_SERVER_ADDRESS': 'amqp://127.0.0.1:5672',
-                'EXCHANGE_NAME': 'test_exchange',
-                'QUEUE_NAME': 'test_queue',
-                'ROUTING_KEY': 'test_routing_key'
-            }
+        'default': {
+            'AMQP_SERVER_ADDRESS': 'amqp://127.0.0.1:5672',
+        }
     }
-    EVENT_TYPE_TO_AMQP: Dict[str, str] = {
-        'test': 'default'
-    }
+    EVENT_TYPE_TO_AMQP: Dict[str, str] = {}
+    EVENT_DEFAULT_QUEUE = 'event_default_queue'
+    EVENT_DEFAULT_EXCHANGE = 'event_default_exchange'
+    EVENT_DEFAULT_ROUTING_KEY = 'event_default_routing_key'
 
 
 _settings = Settings()
@@ -76,3 +73,16 @@ def initialize(settings):
         )
     if hasattr(settings, 'LOGGING_CONFIG'):
         logging.config.dictConfig(settings.LOGGING_CONFIG)
+
+    if not hasattr(settings, 'EVENT_DEFAULT_QUEUE'):
+        setattr(settings, 'EVENT_DEFAULT_QUEUE', 'event_default_queue')
+
+    if not hasattr(settings, 'EVENT_DEFAULT_EXCHANGE'):
+        setattr(settings, 'EVENT_DEFAULT_EXCHANGE', 'event_default_exchange')
+
+    if not hasattr(settings, 'EVENT_DEFAULT_ROUTING_KEY'):
+        setattr(
+            settings, 'EVENT_DEFAULT_ROUTING_KEY', 'event_default_routing_key'
+        )
+    if not hasattr(settings, 'EVENT_TYPE_TO_AMQP'):
+        setattr(settings, 'EVENT_TYPE_TO_AMQP', {})
