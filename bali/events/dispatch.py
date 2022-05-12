@@ -12,12 +12,16 @@ def dispatch(event: Event, amqp_name: str = ''):
         raise Exception('Settings not set:sub config of AMQP_CONFIGS not set')
     if 'AMQP_SERVER_ADDRESS' not in amqp_config:
         raise Exception('Settings not set: AMQP_SERVER_ADDRESS of sub config')
-    routing_key = amqp_config.get('ROUTING_KEY', 'default')
+    routing_key = amqp_config.get(
+        'ROUTING_KEY'
+    ) or f"{_settings.BALI_ROUTING_KEY}_{event.type}"
     exchange = Exchange(
-        amqp_config.get('EXCHANGE_NAME', 'default'), type='direct'
+        amqp_config.get('EXCHANGE_NAME', _settings.BALI_EXCHANGE),
+        type=amqp_config.get('EXCHANGE_TYPE')
     )
     queue = Queue(
-        amqp_config.get('QUEUE_NAME', 'default'),
+        amqp_config.get('QUEUE_NAME') or
+        f"{ _settings.BALI_QUEUE}_{event.type}",
         exchange,
         routing_key=routing_key
     )

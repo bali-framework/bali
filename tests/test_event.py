@@ -5,35 +5,21 @@ from bali.decorators import event_handler
 from bali.events import Event, dispatch, handle
 
 _settings.AMQP_CONFIGS = {
-    'default':
-        {
-            'AMQP_SERVER_ADDRESS': 'amqp://192.168.99.100:5672',
-            'EXCHANGE_NAME': 'test_exchange',
-            'QUEUE_NAME': 'test_queue',
-            'ROUTING_KEY': 'test_routing_key'
-        }
+    'default': {
+        'AMQP_SERVER_ADDRESS': 'amqp://192.168.99.100:5672',
+        # 'QUEUE_NAME': 'event_default_queue',
+        # 'ROUTING_KEY': 'event_default_queue'
+    }
 }
-_settings.EVENT_TYPE_TO_AMQP = {
-    'test0': 'default',
-    'test1': 'default'
-}
+_settings.EVENT_TYPE_TO_AMQP = {'test0': 'default', 'test1': 'default'}
 
 
 def test_event_dispatch():
-    _settings.AMQP_CONFIGS = {
-        'default':
-            {
-                'AMQP_SERVER_ADDRESS': 'amqp://192.168.99.100:5672',
-                'EXCHANGE_NAME': 'test_exchange',
-                'QUEUE_NAME': 'test_queue',
-                'ROUTING_KEY': 'test_routing_key'
-            }
-    }
-    for i in range(10):
-        event = Event(type='test0', payload={'hello': 'world'})
+    for i in range(100):
+        event = Event(type='test0', payload={'hello': 'world2222222'})
         assert dispatch(event)
     for i in range(100):
-        event = Event(type='test1', payload={'hello': 'world'})
+        event = Event(type='test1', payload={'hello': 'world1111111'})
         assert dispatch(event)
 
 
@@ -50,19 +36,6 @@ def call_test1(event):
 
 
 def test_event_handler(mocker):
-    _settings.AMQP_CONFIGS = {
-        'default':
-            {
-                'AMQP_SERVER_ADDRESS': 'amqp://192.168.99.100:5672',
-                'EXCHANGE_NAME': 'test_exchange',
-                'QUEUE_NAME': 'test_queue',
-                'ROUTING_KEY': 'test_routing_key'
-            }
-    }
-    _settings.EVENT_TYPE_TO_AMQP = {
-        'test0': 'default',
-        'test1': 'default'
-    }
     mocker.patch('os.path.basename')
     handle()
     os.path.basename.assert_called_with('aaa.txt')
