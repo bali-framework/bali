@@ -8,7 +8,7 @@ from ..core import _settings
 REGISTER_EVENT_CALLBACKS = []
 
 
-class CallbackInfo:
+class Callback:
     def __init__(self, queue, callback, connection):
         self._queue = queue
         self._callback = callback
@@ -44,20 +44,20 @@ def register_callback(event_type, callback):
                 'Can not find key:%s at AMQP_CONFIGS' % amqp_config_key
             )
         exchange = Exchange(
-            amqp_config.get('EXCHANGE_NAME', _settings.EVENT_DEFAULT_EXCHANGE),
+            amqp_config.get('EXCHANGE_NAME', _settings.BALI_EXCHANGE),
             type=amqp_config.get('EXCHANGE_TYPE')
         )
         queue = Queue(
             amqp_config.get('QUEUE_NAME') or
-            f"{_settings.EVENT_DEFAULT_QUEUE}_{event_type}",
+            f"{_settings.BALI_QUEUE}_{event_type}",
             exchange=exchange,
             routing_key=amqp_config.get('ROUTING_KEY') or
-            f"""{_settings.EVENT_DEFAULT_ROUTING_KEY
+            f"""{_settings.BALI_ROUTING_KEY
             }_{event_type}"""
         )
         global REGISTER_EVENT_CALLBACKS
         REGISTER_EVENT_CALLBACKS.append(
-            CallbackInfo(queue, callback, amqp_config['AMQP_SERVER_ADDRESS'])
+            Callback(queue, callback, amqp_config['AMQP_SERVER_ADDRESS'])
         )
 
 
