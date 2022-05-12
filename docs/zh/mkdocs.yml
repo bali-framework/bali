@@ -26,7 +26,8 @@ nav:
 - App: application.md
 - 数据库: database.md
 - 缓存: cache.md
-- Resource: resource.md
+- 资源: resource.md
+- 事件: event.md
 - Schema: schema.md
 - Utility: utility.md
 - 测试: testing.md

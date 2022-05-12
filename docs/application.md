@@ -19,4 +19,4 @@ python main.py --rpc
 python main.py --http
 ```
 
-More usage of `Application`: [example](examples/main.py)
+More usage of `Application`: [example](https://github.com/bali-framework/bali/tree/main/examples)
