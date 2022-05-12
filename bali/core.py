@@ -33,6 +33,8 @@ class Settings(BaseSettings):
         }
     }
     # You can map event_type to amqp, or it will be map to default amqp
+    # You can map event_type to more than one amqp split by ','
+    # EVENT_TYPE_TO_AMQP = {'test0': 'default', 'test1': 'default,others'}
     EVENT_TYPE_TO_AMQP: Dict[str, str] = {}
     EVENT_DEFAULT_QUEUE = 'event_default_queue'
     EVENT_DEFAULT_EXCHANGE = 'event_default_exchange'

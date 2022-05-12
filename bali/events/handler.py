@@ -31,32 +31,34 @@ class CallbackInfo:
 
 
 def register_callback(event_type, callback):
-    amqp_config_key = _settings.EVENT_TYPE_TO_AMQP.get(event_type, 'default')
-    if not amqp_config_key:
+    amqp_config_keys = _settings.EVENT_TYPE_TO_AMQP.get(event_type, 'default')
+    if not amqp_config_keys:
         raise Exception(
-            'Can not find key:%s at EVENT_TYPE_TO_AMQP' % amqp_config_key
+            'Can not find key:%s at EVENT_TYPE_TO_AMQP' % event_type
         )
-    amqp_config = _settings.AMQP_CONFIGS.get(amqp_config_key)
-    if not amqp_config:
-        raise Exception(
-            'Can not find key:%s at AMQP_CONFIGS' % amqp_config_key
+    arr = amqp_config_keys.split(',')
+    for amqp_config_key in arr:
+        amqp_config = _settings.AMQP_CONFIGS.get(amqp_config_key)
+        if not amqp_config:
+            raise Exception(
+                'Can not find key:%s at AMQP_CONFIGS' % amqp_config_key
+            )
+        exchange = Exchange(
+            amqp_config.get('EXCHANGE_NAME', _settings.EVENT_DEFAULT_EXCHANGE),
+            type=amqp_config.get('EXCHANGE_TYPE')
         )
-    exchange = Exchange(
-        amqp_config.get('EXCHANGE_NAME', _settings.EVENT_DEFAULT_EXCHANGE),
-        type=amqp_config.get('EXCHANGE_TYPE')
-    )
-    queue = Queue(
-        amqp_config.get('QUEUE_NAME') or
-        f"{_settings.EVENT_DEFAULT_QUEUE}_{event_type}",
-        exchange=exchange,
-        routing_key=amqp_config.get('ROUTING_KEY') or
-        f"""{_settings.EVENT_DEFAULT_ROUTING_KEY
-        }_{event_type}"""
-    )
-    global REGISTER_EVENT_CALLBACKS
-    REGISTER_EVENT_CALLBACKS.append(
-        CallbackInfo(queue, callback, amqp_config['AMQP_SERVER_ADDRESS'])
-    )
+        queue = Queue(
+            amqp_config.get('QUEUE_NAME') or
+            f"{_settings.EVENT_DEFAULT_QUEUE}_{event_type}",
+            exchange=exchange,
+            routing_key=amqp_config.get('ROUTING_KEY') or
+            f"""{_settings.EVENT_DEFAULT_ROUTING_KEY
+            }_{event_type}"""
+        )
+        global REGISTER_EVENT_CALLBACKS
+        REGISTER_EVENT_CALLBACKS.append(
+            CallbackInfo(queue, callback, amqp_config['AMQP_SERVER_ADDRESS'])
+        )
 
 
 def get_connection(amqp_address):
