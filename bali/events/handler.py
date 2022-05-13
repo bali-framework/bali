@@ -43,17 +43,19 @@ def register_callback(event_type, callback):
             raise Exception(
                 'Can not find key:%s at AMQP_CONFIGS' % amqp_config_key
             )
+        routing_key = None
+        exchange_type = amqp_config.get('EXCHANGE_TYPE')
+        if exchange_type != 'fanout':
+            routing_key = amqp_config.get('ROUTING_KEY') or f"{_settings.BALI_ROUTING_KEY}_{event_type}"
         exchange = Exchange(
             amqp_config.get('EXCHANGE_NAME', _settings.BALI_EXCHANGE),
-            type=amqp_config.get('EXCHANGE_TYPE')
+            type=exchange_type
         )
         queue = Queue(
             amqp_config.get('QUEUE_NAME') or
             f"{_settings.BALI_QUEUE}_{event_type}",
             exchange=exchange,
-            routing_key=amqp_config.get('ROUTING_KEY') or
-            f"""{_settings.BALI_ROUTING_KEY
-            }_{event_type}"""
+            routing_key=routing_key
         )
         global REGISTER_EVENT_CALLBACKS
         REGISTER_EVENT_CALLBACKS.append(
@@ -74,7 +76,8 @@ def handle():
             with conn.Consumer(
                 queues=[items[0].queue],
                 accept=['json'],
-                callbacks=[i.callback for i in items]
+                callbacks=[i.callback for i in items],
+                auto_declare=False
             ) as consumer:
                 try:
                     conn.drain_events(timeout=2)
