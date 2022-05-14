@@ -89,18 +89,12 @@ def initialize(settings):
         logging.config.dictConfig(settings.LOGGING_CONFIG)
 
     if not hasattr(settings, 'BALI_QUEUE'):
-        settings.Config.__setattr__(
-            settings, 'BALI_QUEUE', 'event_default_queue'
-        )
+        settings.Config.__setattr__(settings, 'BALI_QUEUE', '{}.events')
 
     if not hasattr(settings, 'BALI_EXCHANGE'):
-        settings.Config.__setattr__(
-            settings, 'BALI_EXCHANGE', 'event_default_exchange'
-        )
+        settings.Config.__setattr__(settings, 'BALI_EXCHANGE', 'ms.events')
 
     if not hasattr(settings, 'BALI_ROUTING_KEY'):
-        settings.Config.__setattr__(
-            settings, 'BALI_ROUTING_KEY', 'event_default_routing_key'
-        )
+        settings.Config.__setattr__(settings, 'BALI_ROUTING_KEY', '{}.routing')
     if not hasattr(settings, 'EVENT_TYPE_TO_AMQP'):
         settings.Config.__setattr__(settings, 'EVENT_TYPE_TO_AMQP', {})

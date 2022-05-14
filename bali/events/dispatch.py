@@ -23,7 +23,7 @@ def dispatch(event: Event, amqp_name: str = ''):
     if exchange_type != 'fanout':
         routing_key = amqp_config.get(
             'ROUTING_KEY'
-        ) or f"{_settings.BALI_ROUTING_KEY}_{event.type}"
+        ) or _settings.BALI_ROUTING_KEY.format(event.type)
     if amqp_config.get('QUEUE_NAME'):
         queue = Queue(
             amqp_config.get('QUEUE_NAME'),
@@ -31,8 +31,6 @@ def dispatch(event: Event, amqp_name: str = ''):
             routing_key=routing_key
         )
         declare.append(queue)
-    else:
-        queue = None
     with Connection(amqp_config['AMQP_SERVER_ADDRESS']) as conn:
         # produce
         producer = conn.Producer(serializer='json')
