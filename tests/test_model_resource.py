@@ -8,22 +8,11 @@ from bali.db.operators import get_filters_expr
 from bali.decorators import action
 from bali.resources import ModelResource
 from bali.schemas import ListRequest
-from bali.permissions import BasePermission
+from tests.main import IsAuthenticated
 
 DB_URI = 'sqlite:///:memory:'
 
 db.connect(DB_URI)
-
-
-class IsAuthenticated(BasePermission):
-    """
-    Allows access only to authenticated users.
-    """
-    def has_permission(self):
-        return True
-
-    def process_auth(self):
-        print(self.resource)
 
 
 class User(db.BaseModel):
