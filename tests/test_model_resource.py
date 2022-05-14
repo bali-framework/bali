@@ -8,7 +8,7 @@ from bali.db.operators import get_filters_expr
 from bali.decorators import action
 from bali.resources import ModelResource
 from bali.schemas import ListRequest
-from permissions import IsAuthenticated
+from tests.main import IsAuthenticated
 
 DB_URI = 'sqlite:///:memory:'
 
