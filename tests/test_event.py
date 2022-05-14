@@ -35,7 +35,7 @@ def test_event_dispatch():
 @event_handler(event_type='test0')
 def call_test0(event):
     print('test0 received:', event)
-    print(os.path.basename('aaa.txt'))
+    print(os.path.dirname('bbb.txt'))
 
 
 @event_handler(event_type='test1')
@@ -46,5 +46,7 @@ def call_test1(event):
 
 def test_event_handler(mocker):
     mocker.patch('os.path.basename')
+    mocker.patch('os.path.dirname')
     handle()
     os.path.basename.assert_called_with('aaa.txt')
+    os.path.dirname.assert_called_with('bbb.txt')
