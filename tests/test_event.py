@@ -5,11 +5,20 @@ from bali.decorators import event_handler
 from bali.events import Event, dispatch, handle
 
 _settings.AMQP_CONFIGS = {
-    'default': {
-        'AMQP_SERVER_ADDRESS': 'amqp://192.168.99.100:5672',
-        # 'QUEUE_NAME': 'event_default_queue',
-        # 'ROUTING_KEY': 'event_default_queue'
-    }
+    'default':
+        {
+            'AMQP_SERVER_ADDRESS':
+                os.getenv(
+                    'AMQP_SERVER_ADDRESS', default='amqp://127.0.0.1:5672'
+                ),
+            'EXCHANGE_NAME':
+                'HELLO_WORLD2',
+            'QUEUE_NAME':
+                'HELLO_QUEUE',
+            # 'ROUTING_KEY': 'QUEUE3',
+            'EXCHANGE_TYPE':
+                'fanout'
+        }
 }
 _settings.EVENT_TYPE_TO_AMQP = {'test0': 'default', 'test1': 'default'}
 
