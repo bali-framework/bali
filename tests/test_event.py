@@ -6,7 +6,7 @@ from bali.events import Event, dispatch, handle
 
 _settings.AMQP_CONFIGS = {
     'default': {
-        'AMQP_SERVER_ADDRESS': 'amqp://192.168.99.100:5672',
+        'AMQP_SERVER_ADDRESS': os.getenv('AMQP_SERVER_ADDRESS'),
         'EXCHANGE_NAME': 'HELLO_WORLD2',
         'QUEUE_NAME': 'HELLO_QUEUE',
         # 'ROUTING_KEY': 'QUEUE3',
