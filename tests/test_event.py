@@ -8,7 +8,9 @@ _settings.AMQP_CONFIGS = {
     'default':
         {
             'AMQP_SERVER_ADDRESS':
-                os.getenv('AMQP_SERVER_ADDRESS', default='127.0.0.1:5672'),
+                os.getenv(
+                    'AMQP_SERVER_ADDRESS', default='amqp://127.0.0.1:5672'
+                ),
             'EXCHANGE_NAME':
                 'HELLO_WORLD2',
             'QUEUE_NAME':
