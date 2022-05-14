@@ -1,13 +1,28 @@
 # CONTRIBUTE
 
-**Developer Environment**
+## Developer Environment
 
+
+1. Python requirements
 ```bash
+# Install python requirement in your environment.
 pip install -r requirements_dev.txt
 ``` 
 
 
-**Tag a new release**
+2. Redis 
+
+The test Redis host is 127.0.0.1, or setting by environment variable `CACHE_HOST`.   
+
+Its password is setting by environment variable `CACHE_PASSWORD`.
+
+
+3. RabbitMQ
+
+RabbitMQ for test is settings by environment variable `AMQP_SERVER_ADDRESS`.
+
+
+## Tag a new release
 
 tag a version:
 
@@ -22,7 +37,7 @@ git push --tags
 ```
 
 
-### Maintenance documents
+## Maintenance documents
 
 ```bash
 # English version (default)
