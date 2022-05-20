@@ -8,19 +8,15 @@ from bali.core import _settings
 from bali.decorators import event_handler
 from bali.events import Event, dispatch, handle
 
-_settings.AMQP_CONFIGS  = {
-    'default':
-        {
-            'AMQP_SERVER_ADDRESS':
-                os.getenv(
-                    'AMQP_SERVER_ADDRESS', default='amqp://127.0.0.1:5672'
-                ),
-            'EXCHANGE_NAME':
-                'HELLO_WORLD_TEST',
-            'EXCHANGE_TYPE': 'fanout',
-            'QUEUE_NAME':
-                'QUEQUE_C'
-        }
+amqp_uri = os.getenv('AMQP_SERVER_ADDRESS', default='amqp://127.0.0.1:5672')
+
+_settings.AMQP_CONFIGS = {
+    'default': {
+        'AMQP_SERVER_ADDRESS': amqp_uri,
+        'EXCHANGE_NAME': 'HELLO_WORLD_TEST',
+        'EXCHANGE_TYPE': 'fanout',
+        'QUEUE_NAME': 'QUEQUE_C'
+    }
 }
 _settings.EVENT_TYPE_TO_AMQP = {'test0': 'default', 'test1': 'default'}
 
@@ -39,17 +35,11 @@ def call_test1(event):
 
 def test_event_dispatch():
     _settings.AMQP_CONFIGS = {
-        'default':
-            {
-                'AMQP_SERVER_ADDRESS':
-                    os.getenv(
-                        'AMQP_SERVER_ADDRESS', default='amqp://127.0.0.1:5672'
-                    ),
-                'EXCHANGE_NAME':
-                    'HELLO_WORLD_TEST',
-                'EXCHANGE_TYPE':
-                    'fanout'
-            }
+        'default': {
+            'AMQP_SERVER_ADDRESS': amqp_uri,
+            'EXCHANGE_NAME': 'HELLO_WORLD_TEST',
+            'EXCHANGE_TYPE': 'fanout'
+        }
     }
     _settings.EVENT_TYPE_TO_AMQP = {'test0': 'default', 'test1': 'default'}
     for i in range(100):
@@ -74,10 +64,9 @@ def test_event_handler(mocker):
 def test_queue_declared_in_event_handler(mocker):
     # 1. Define a `Product` service
     service_abbr = 'product'
-    uri = os.getenv('AMQP_SERVER_ADDRESS', default='amqp://127.0.0.1:5672')
     _settings.AMQP_CONFIGS = {
         'default': {
-            'AMQP_SERVER_ADDRESS': uri,
+            'AMQP_SERVER_ADDRESS': amqp_uri,
             'EXCHANGE_NAME': 'ms.events',
             'EXCHANGE_TYPE': 'fanout',
             'QUEUE_NAME': f'{service_abbr}.events',
@@ -105,9 +94,6 @@ def test_queue_declared_in_event_handler(mocker):
     # 4. Assert `product.events` queue exists，and bind to exchange `ms.events`
     b = Queue(queue_name, exchange, queue_name, channel=channel)
     assert b.queue_declare(passive=True)
-    # assert 'exchange_declare' in channel
-    # assert 'queue_declare' in channel
-    # assert 'queue_bind' in channel
 
     # clean
     conn.close()
