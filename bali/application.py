@@ -77,6 +77,9 @@ class Bali:
 
     def _launch_event(self):
         from .events import handle
+        event_handler = self.kwargs.get('event_handler')
+        if not event_handler:
+            raise Exception('event_handler not provided')
         while True:
             handle()
 
@@ -85,8 +88,11 @@ class Bali:
         process_http.start()
         process_rpc = Process(target=self._launch_rpc)
         process_rpc.start()
+        process_event = Process(target=self._launch_event)
+        process_event.start()
         process_rpc.join()
         process_http.join()
+        process_event.join()
 
     def settings(self, **kwargs):
         self.base_settings.update(kwargs)
