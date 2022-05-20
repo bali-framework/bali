@@ -12,18 +12,30 @@ _settings.AMQP_CONFIGS = {
                     'AMQP_SERVER_ADDRESS', default='amqp://127.0.0.1:5672'
                 ),
             'EXCHANGE_NAME':
-                'HELLO_WORLD2',
+                'HELLO_WORLD_TEST',
+            'EXCHANGE_TYPE': 'fanout',
             'QUEUE_NAME':
-                'HELLO_QUEUE',
-            # 'ROUTING_KEY': 'QUEUE3',
-            'EXCHANGE_TYPE':
-                'fanout'
+                'QUEQUE_A'
         }
 }
 _settings.EVENT_TYPE_TO_AMQP = {'test0': 'default', 'test1': 'default'}
 
 
 def test_event_dispatch():
+    _settings.AMQP_CONFIGS = {
+        'default':
+            {
+                'AMQP_SERVER_ADDRESS':
+                    os.getenv(
+                        'AMQP_SERVER_ADDRESS', default='amqp://127.0.0.1:5672'
+                    ),
+                'EXCHANGE_NAME':
+                    'HELLO_WORLD_TEST',
+                'EXCHANGE_TYPE':
+                    'fanout'
+            }
+    }
+    _settings.EVENT_TYPE_TO_AMQP = {'test0': 'default', 'test1': 'default'}
     for i in range(100):
         event = Event(type='test0', payload={'hello': 'world2222222'})
         assert dispatch(event)
