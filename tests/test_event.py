@@ -15,7 +15,7 @@ _settings.AMQP_CONFIGS = {
                 'HELLO_WORLD_TEST',
             'EXCHANGE_TYPE': 'fanout',
             'QUEUE_NAME':
-                'QUEQUE_A'
+                'QUEQUE_C'
         }
 }
 _settings.EVENT_TYPE_TO_AMQP = {'test0': 'default', 'test1': 'default'}
@@ -54,6 +54,9 @@ def test_event_dispatch():
     for i in range(100):
         event = Event(type='test1', payload={'hello': 'world1111111'})
         assert dispatch(event)
+
+
+handle()
 
 
 def test_event_handler(mocker):
