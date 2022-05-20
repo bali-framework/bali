@@ -12,6 +12,9 @@
     <a href="https://pypi.org/project/bali-core/">
         <img src="https://img.shields.io/pypi/v/bali-core" />
     </a>
+    <a href="https://github.com/bali-framework/bali/actions/workflows/python-ci.yml">
+      <img src="https://github.com/bali-framework/bali/actions/workflows/python-ci.yml/badge.svg" />
+    </a>
 </p>
 
 ---
