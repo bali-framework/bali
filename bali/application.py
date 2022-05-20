@@ -1,8 +1,11 @@
 import gzip
 import inspect
+import logging
+import traceback
 from multiprocessing import Process
 from typing import Callable
 
+import logger as logger
 import typer
 import uvicorn
 from fastapi import FastAPI, Request, Response
@@ -14,6 +17,8 @@ from starlette.middleware.cors import CORSMiddleware
 from ._utils import singleton
 from .middlewares import process_middleware
 from .utils import sync_exec
+
+logger = logging.getLogger('bali')
 
 
 class GzipRequest(Request):
@@ -81,7 +86,10 @@ class Bali:
         if not event_handler:
             raise Exception('event_handler not provided')
         while True:
-            handle()
+            try:
+                handle()
+            except:
+                logger.error(traceback.format_exc())
 
     def _start_all(self):
         process_http = Process(target=self._launch_http)
