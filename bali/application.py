@@ -44,24 +44,17 @@ class Bali:
         self.kwargs = kwargs
         self._app = None
 
+        self.http()  # Create FastAPI instance ref to `self._app`
+
     def __getattribute__(self, attr, *args, **kwargs):
         try:
             return super().__getattribute__(attr)
         except AttributeError:
-            if not self._app:
-                print(f'attr: {attr}')
-                # uvicorn entry is __call__
-                if attr == '__call__' or attr == '__getstate__':
-                    self.http()
-                    return getattr(self._app, attr)
-
-                raise Exception('FastAPI App not initialized')
-
             return getattr(self._app, attr)
 
-    async def __call__(self, *args, **kwargs):
+    async def __call__(self, scope, receive, send) -> None:
         self.http()
-        await self._app.__call__(*args, **kwargs)
+        await self._app.__call__(scope, receive, send)  # pragma: no cover
 
     def _launch_http(self):
         self._app = FastAPI(**self.base_settings)
