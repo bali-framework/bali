@@ -21,6 +21,18 @@ _settings.AMQP_CONFIGS = {
 _settings.EVENT_TYPE_TO_AMQP = {'test0': 'default', 'test1': 'default'}
 
 
+@event_handler(event_type='test0')
+def call_test0(event):
+    print('test0 received:', event)
+    print(os.path.dirname('bbb.txt'))
+
+
+@event_handler(event_type='test1')
+def call_test1(event):
+    print('test1 received:', event)
+    print(os.path.basename('aaa.txt'))
+
+
 def test_event_dispatch():
     _settings.AMQP_CONFIGS = {
         'default':
@@ -42,18 +54,6 @@ def test_event_dispatch():
     for i in range(100):
         event = Event(type='test1', payload={'hello': 'world1111111'})
         assert dispatch(event)
-
-
-@event_handler(event_type='test0')
-def call_test0(event):
-    print('test0 received:', event)
-    print(os.path.dirname('bbb.txt'))
-
-
-@event_handler(event_type='test1')
-def call_test1(event):
-    print('test1 received:', event)
-    print(os.path.basename('aaa.txt'))
 
 
 def test_event_handler(mocker):
