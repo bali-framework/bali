@@ -8,20 +8,15 @@ from bali.core import _settings
 from bali.decorators import event_handler
 from bali.events import Event, dispatch, handle
 
+amqp_uri = os.getenv('AMQP_SERVER_ADDRESS', default='amqp://127.0.0.1:5672')
+
 _settings.AMQP_CONFIGS = {
-    'default':
-        {
-            'AMQP_SERVER_ADDRESS':
-                os.getenv(
-                    'AMQP_SERVER_ADDRESS', default='amqp://127.0.0.1:5672'
-                ),
-            'EXCHANGE_NAME':
-                'HELLO_WORLD_TEST',
-            'EXCHANGE_TYPE':
-                'fanout',
-            'QUEUE_NAME':
-                'QUEQUE_C'
-        }
+    'default': {
+        'AMQP_SERVER_ADDRESS': amqp_uri,
+        'EXCHANGE_NAME': 'HELLO_WORLD_TEST',
+        'EXCHANGE_TYPE': 'fanout',
+        'QUEUE_NAME': 'QUEQUE_C'
+    }
 }
 _settings.EVENT_TYPE_TO_AMQP = {'test0': 'default', 'test1': 'default'}
 
@@ -40,17 +35,11 @@ def call_test1(event):
 
 def test_event_dispatch():
     _settings.AMQP_CONFIGS = {
-        'default':
-            {
-                'AMQP_SERVER_ADDRESS':
-                    os.getenv(
-                        'AMQP_SERVER_ADDRESS', default='amqp://127.0.0.1:5672'
-                    ),
-                'EXCHANGE_NAME':
-                    'HELLO_WORLD_TEST',
-                'EXCHANGE_TYPE':
-                    'fanout'
-            }
+        'default': {
+            'AMQP_SERVER_ADDRESS': amqp_uri,
+            'EXCHANGE_NAME': 'HELLO_WORLD_TEST',
+            'EXCHANGE_TYPE': 'fanout'
+        }
     }
     _settings.EVENT_TYPE_TO_AMQP = {'test0': 'default', 'test1': 'default'}
     for i in range(100):
@@ -73,50 +62,37 @@ def test_event_handler(mocker):
 
 
 def test_queue_declared_in_event_handler(mocker):
-    _settings.AMQP_CONFIGS = {
-        'default':
-            {
-                'AMQP_SERVER_ADDRESS':
-                    os.getenv(
-                        'AMQP_SERVER_ADDRESS', default='amqp://127.0.0.1:5672'
-                    ),
-                'EXCHANGE_NAME':
-                    'HELLO_WORLD_A',
-                'EXCHANGE_TYPE':
-                    'fanout',
-                'QUEUE_NAME':
-                    'QUEQUE_E'
-            }
-    }
-
     # 1. Define a `Product` service
-    service_abbr = 'product22'
-
-    @event_handler(event_type=service_abbr)
-    def call_back(event):
-        print('test_a received:', event)
-
+    service_abbr = 'product'
+    _settings.AMQP_CONFIGS = {
+        'default': {
+            'AMQP_SERVER_ADDRESS': amqp_uri,
+            'EXCHANGE_NAME': 'ms.events',
+            'EXCHANGE_TYPE': 'fanout',
+            'QUEUE_NAME': f'{service_abbr}.events',
+        }
+    }
     # 2. Ensure RabbitMQ has no queue for `Product` service
-    amqp_config = _settings.AMQP_CONFIGS.get('default')
-    amqp_server_address = amqp_config.get('AMQP_SERVER_ADDRESS')
+    amqp_server_address = 'amqp://127.0.0.1:5672'
     conn = Connection(amqp_server_address)
     channel = conn.channel()
-    exchange = Exchange(
-        amqp_config.get('EXCHANGE_NAME'),
-        type=amqp_config.get('EXCHANGE_TYPE')
-    )
-    queue_name = amqp_config.get('QUEUE_NAME') or _settings.BALI_QUEUE.format(
-        service_abbr
-    )
+    exchange = Exchange('ms.events', type='fanout')
+    queue_name = f'{service_abbr}.events'
 
-    b = Queue(queue_name, exchange, channel=channel)
+    b = Queue(queue_name, exchange, queue_name, channel=channel)
     with pytest.raises(amqp.exceptions.NotFound):
         b.queue_declare(passive=True)
 
     # 3. Launch `Product` service's handle
+    from bali.decorators import event_handler
+
+    @event_handler('UserCreated')
+    def handle_product_created(event):
+        pass
+
     handle()
     # 4. Assert `product.events` queue exists，and bind to exchange `ms.events`
-    b = Queue(queue_name, exchange, channel=channel)
+    b = Queue(queue_name, exchange, queue_name, channel=channel)
     assert b.queue_declare(passive=True)
 
     # clean
