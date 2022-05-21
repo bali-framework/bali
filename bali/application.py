@@ -5,7 +5,6 @@ import traceback
 from multiprocessing import Process
 from typing import Callable
 
-import logger as logger
 import typer
 import uvicorn
 from fastapi import FastAPI, Request, Response

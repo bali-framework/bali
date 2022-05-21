@@ -23,13 +23,13 @@ _settings.EVENT_TYPE_TO_AMQP = {'test0': 'default', 'test1': 'default'}
 
 @event_handler(event_type='test0')
 def call_test0(event):
-    print('test0 received:', event)
+    print('test0 received:', event, type(event))
     print(os.path.dirname('bbb.txt'))
 
 
 @event_handler(event_type='test1')
 def call_test1(event):
-    print('test1 received:', event)
+    print('test1 received:', event, type(event))
     print(os.path.basename('aaa.txt'))
 
 
@@ -73,7 +73,7 @@ def test_queue_declared_in_event_handler(mocker):
         }
     }
     # 2. Ensure RabbitMQ has no queue for `Product` service
-    amqp_server_address = 'amqp://127.0.0.1:5672'
+    amqp_server_address = amqp_uri
     conn = Connection(amqp_server_address)
     channel = conn.channel()
     exchange = Exchange('ms.events', type='fanout')
