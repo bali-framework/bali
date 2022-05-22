@@ -1,3 +1,4 @@
+import json
 import os
 
 import amqp
@@ -21,16 +22,40 @@ _settings.AMQP_CONFIGS = {
 _settings.EVENT_TYPE_TO_AMQP = {'test0': 'default', 'test1': 'default'}
 
 
+class MockMessage:
+    def ack(self):
+        pass
+
+
 @event_handler(event_type='test0')
 def call_test0(event: Event):
     print('test0 received:', event, type(event))
     print(os.path.dirname('bbb.txt'))
+    return event
 
 
 @event_handler(event_type='test1')
 def call_test1(event):
     print('test1 received:', event, type(event))
     print(os.path.basename('aaa.txt'))
+
+
+def test_when_message_body_is_str():
+    body = '{"type":"hello", "payload":""}'
+    res = call_test0(body, message=MockMessage())
+    assert res is None
+    body = '{"type": "test0", "payload": ""}'
+    res = call_test0(body, message=MockMessage())
+    assert res == Event(**json.loads(body))
+
+
+def test_when_message_body_is_dict():
+    event = {"type": "hello", "payload": ""}
+    res = call_test0(event, message=MockMessage())
+    assert res is None
+    event = {"type": "test0", "payload": ""}
+    res = call_test0(event, message=MockMessage())
+    assert res == Event(**event)
 
 
 def teardown_function():

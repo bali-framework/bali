@@ -1,5 +1,6 @@
 import functools
 import inspect
+import json
 import logging
 import traceback
 
@@ -227,6 +228,8 @@ def event_handler(event_type):
         @functools.wraps(func)
         def wrapper(body, message):
             try:
+                if isinstance(body, str):
+                    body = json.loads(body)
                 if isinstance(body, dict) and body.get('type') != event_type:
                     return
                 typed_signature = get_typed_signature(func)
@@ -240,7 +243,7 @@ def event_handler(event_type):
                     ):
                         event = param.annotation(**body)
                         break
-                res = func(body or event)
+                res = func(event or body)
                 message.ack()
                 return res
             except:
