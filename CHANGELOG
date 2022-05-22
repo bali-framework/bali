@@ -4,7 +4,12 @@
 # includes Added / Changed / Fixed
 
 
-## [3.1.0] UNRELEASED
+## [3.1.0 ~ 3.1.5] 2020-04-30 ~ 2020-05-21
+### Added
+- `Event` supported
+- RabbitMQ fanout exchange support
+### Fixed
+- Compatible legacy SQLA-Wrapper SessionProxy
 
 ## [3.0.0] 2022-04-24
 ### Added
