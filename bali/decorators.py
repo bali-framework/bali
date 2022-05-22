@@ -231,15 +231,16 @@ def event_handler(event_type):
                     return
                 typed_signature = get_typed_signature(func)
                 signature_params = typed_signature.parameters
+                event = None
                 for param_name, param in signature_params.items():
                     if param_name in ['self', 'cls']:
                         continue
                     if param.annotation is not inspect._empty and isinstance(
                         body, dict
                     ):
-                        body = param.annotation(**body)
+                        event = param.annotation(**body)
                         break
-                res = func(body)
+                res = func(body or event)
                 message.ack()
                 return res
             except:
