@@ -1,5 +1,7 @@
 import functools
 import inspect
+import logging
+import traceback
 
 from fastapi.dependencies.utils import get_typed_signature
 from fastapi_pagination import LimitOffsetParams, set_page
@@ -11,7 +13,7 @@ from .exceptions import ReturnTypeError
 from .paginate import paginate
 from .utils import MessageToDict, ParseDict
 
-
+logger = logging.getLogger('bali')
 def compatible_method(func):
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
@@ -222,21 +224,24 @@ def event_handler(event_type):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(body, message):
-            typed_signature = get_typed_signature(func)
-            signature_params = typed_signature.parameters
-            for param_name, param in signature_params.items():
-                if param_name in ['self', 'cls']:
-                    continue
-                if param.annotation is not inspect._empty and isinstance(
-                    body, dict
-                ):
-                    body = param.annotation(**body)
-                    break
-            if body.get('type') != event_type:
-                return
-            res = func(body)
-            message.ack()
-            return res
+            try:
+                typed_signature = get_typed_signature(func)
+                signature_params = typed_signature.parameters
+                for param_name, param in signature_params.items():
+                    if param_name in ['self', 'cls']:
+                        continue
+                    if param.annotation is not inspect._empty and isinstance(
+                        body, dict
+                    ):
+                        body = param.annotation(**body)
+                        break
+                if body.get('type') != event_type:
+                    return
+                res = func(body)
+                message.ack()
+                return res
+            except:
+                logger.error(traceback.format_exc())
 
         register_callback(event_type, wrapper)
         return wrapper
