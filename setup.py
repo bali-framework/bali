@@ -15,7 +15,7 @@ setup(
     description='Simplify FastAPI integrate gRPC services development',
     long_description=read('README.md'),
     long_description_content_type='text/markdown',
-    url='https://github.com/JoshYuJump/bali',
+    url='https://github.com/bali-framework/bali',
     author='Josh.Yu',
     author_email='josh.yu_8@live.com',
     license='MIT',
