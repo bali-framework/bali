@@ -1,5 +1,7 @@
 import gzip
 import inspect
+import logging
+import traceback
 from multiprocessing import Process
 from typing import Callable
 
@@ -14,6 +16,8 @@ from starlette.middleware.cors import CORSMiddleware
 from ._utils import singleton
 from .middlewares import process_middleware
 from .utils import sync_exec
+
+logger = logging.getLogger('bali')
 
 
 class GzipRequest(Request):
@@ -77,16 +81,23 @@ class Bali:
 
     def _launch_event(self):
         from .events import handle
+        event_handler = self.kwargs.get('event_handler')
+        if not event_handler:
+            raise Exception('event_handler not provided')
         while True:
             handle()
+
 
     def _start_all(self):
         process_http = Process(target=self._launch_http)
         process_http.start()
         process_rpc = Process(target=self._launch_rpc)
         process_rpc.start()
+        process_event = Process(target=self._launch_event)
+        process_event.start()
         process_rpc.join()
         process_http.join()
+        process_event.join()
 
     def settings(self, **kwargs):
         self.base_settings.update(kwargs)

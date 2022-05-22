@@ -2,7 +2,7 @@ import os
 
 import amqp
 import pytest
-from kombu import Connection, Queue, Exchange
+from kombu import Connection, Exchange, Queue
 
 from bali.core import _settings
 from bali.decorators import event_handler
@@ -23,13 +23,13 @@ _settings.EVENT_TYPE_TO_AMQP = {'test0': 'default', 'test1': 'default'}
 
 @event_handler(event_type='test0')
 def call_test0(event):
-    print('test0 received:', event)
+    print('test0 received:', event, type(event))
     print(os.path.dirname('bbb.txt'))
 
 
 @event_handler(event_type='test1')
 def call_test1(event):
-    print('test1 received:', event)
+    print('test1 received:', event, type(event))
     print(os.path.basename('aaa.txt'))
 
 

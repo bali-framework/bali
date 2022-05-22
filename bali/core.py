@@ -37,9 +37,9 @@ class Settings(BaseSettings):
     # You can map event_type to more than one amqp split by ','
     # EVENT_TYPE_TO_AMQP = {'test0': 'default', 'test1': 'default,others'}
     EVENT_TYPE_TO_AMQP: Dict[str, str] = {}
-    BALI_QUEUE = 'event_default_queue'
-    BALI_EXCHANGE = 'event_default_exchange'
-    BALI_ROUTING_KEY = 'event_default_routing_key'
+    BALI_QUEUE = '{}.events'
+    BALI_EXCHANGE = 'ms.events'
+    BALI_ROUTING_KEY = '{}.routing'
 
 
 _settings = Settings()
