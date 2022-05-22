@@ -123,6 +123,8 @@ class TestEventDispatch:
         global basic_counts
         assert basic_counts == 1
 
+        conn.close()
+
     def test_dispatch_basic_event_multi_times(self):
         event_type = 'BasicOccurred'
         event = BasicEvent(type=event_type)
@@ -147,6 +149,8 @@ class TestEventDispatch:
 
         global basic_multi_counts
         assert basic_multi_counts == 3
+
+        conn.close()
 
     def test_dispatch_custom_event(self):
         event_type = 'Customized'
@@ -173,6 +177,8 @@ class TestEventDispatch:
 
         global custom_counts
         assert custom_counts == 1
+
+        conn.close()
 
     def test_dispatch_event_without_amqp_config(self):
         event = NoConfigEvent()
