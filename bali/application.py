@@ -85,10 +85,8 @@ class Bali:
         if not event_handler:
             raise Exception('event_handler not provided')
         while True:
-            try:
-                handle()
-            except:
-                logger.error(traceback.format_exc())
+            handle()
+
 
     def _start_all(self):
         process_http = Process(target=self._launch_http)
