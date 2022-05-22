@@ -14,6 +14,8 @@ from .paginate import paginate
 from .utils import MessageToDict, ParseDict
 
 logger = logging.getLogger('bali')
+
+
 def compatible_method(func):
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
