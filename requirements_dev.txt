@@ -1,6 +1,7 @@
 -r requirements.txt
 aiosqlite
 coverage==6.2
+greenlet==1.1.2
 mkautodoc
 mkdocs
 mkdocs-material

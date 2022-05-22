@@ -33,6 +33,20 @@ def call_test1(event):
     print(os.path.basename('aaa.txt'))
 
 
+def teardown_function():
+
+    # Removed test service's queues
+    service_abbr = 'product'
+    conn = Connection(amqp_uri)
+    channel = conn.channel()
+    exchange = Exchange('ms.events', type='fanout')
+    queue_name = f'{service_abbr}.events'
+
+    b = Queue(queue_name, exchange, queue_name, channel=channel)
+    b.delete()
+    conn.close()
+
+
 def test_event_dispatch():
     _settings.AMQP_CONFIGS = {
         'default': {
@@ -73,8 +87,7 @@ def test_queue_declared_in_event_handler(mocker):
         }
     }
     # 2. Ensure RabbitMQ has no queue for `Product` service
-    amqp_server_address = amqp_uri
-    conn = Connection(amqp_server_address)
+    conn = Connection(amqp_uri)
     channel = conn.channel()
     exchange = Exchange('ms.events', type='fanout')
     queue_name = f'{service_abbr}.events'
@@ -96,4 +109,5 @@ def test_queue_declared_in_event_handler(mocker):
     assert b.queue_declare(passive=True)
 
     # clean
+    b.delete()
     conn.close()
