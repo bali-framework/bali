@@ -22,7 +22,7 @@ _settings.EVENT_TYPE_TO_AMQP = {'test0': 'default', 'test1': 'default'}
 
 
 @event_handler(event_type='test0')
-def call_test0(event):
+def call_test0(event: Event):
     print('test0 received:', event, type(event))
     print(os.path.dirname('bbb.txt'))
 
