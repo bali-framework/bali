@@ -100,25 +100,34 @@ custom_counts = 0
 class TestEventDispatch:
     """Test event dispatch by AMQP"""
     def test_dispatch_basic_event(self):
-        event_type = 'BasicOccurred'
+        exchange_name = 'test_dispatch_basic_event.exchange'
+        queue_name = 'test_dispatch_basic_event.queue'
+        _settings.AMQP_CONFIGS = {
+            'default': {
+                'AMQP_SERVER_ADDRESS': amqp_uri,
+                'EXCHANGE_NAME': exchange_name,
+                'EXCHANGE_TYPE': 'fanout',
+                'QUEUE_NAME': queue_name,
+            }
+        }
+        event_type = 'test_dispatch_basic_event.event_type'
         event = BasicEvent(type=event_type)
-
+        dispatch(event)
         # Bind a queue to receive event message
         conn = Connection(amqp_uri)
         channel = conn.channel()
         exchange = Exchange(exchange_name, type='fanout')
-        b = Queue(queue_name, exchange, queue_name, channel=channel)
+        b = Queue(queue_name, exchange, channel=channel)
         b.declare()
-
-        dispatch(event)
 
         def callback(body, message):
             global basic_counts
             basic_counts += 1
+            message.ack()
             assert body == event.dict()
 
         with conn.Consumer(queues=[b], accept=['json'], callbacks=[callback]):
-            conn.drain_events(timeout=10)
+            conn.drain_events(timeout=1)
 
         global basic_counts
         assert basic_counts == 1
@@ -126,7 +135,17 @@ class TestEventDispatch:
         conn.close()
 
     def test_dispatch_basic_event_multi_times(self):
-        event_type = 'BasicOccurred'
+        exchange_name = 'test_dispatch_basic_event_multi_times.exchange'
+        queue_name = 'test_dispatch_basic_event_multi_times.queue'
+        _settings.AMQP_CONFIGS = {
+            'default': {
+                'AMQP_SERVER_ADDRESS': amqp_uri,
+                'EXCHANGE_NAME': exchange_name,
+                'EXCHANGE_TYPE': 'fanout',
+                'QUEUE_NAME': queue_name,
+            }
+        }
+        event_type = 'test_dispatch_basic_event_multi_times.event_type'
         event = BasicEvent(type=event_type)
 
         # Bind a queue to receive event message
@@ -142,6 +161,7 @@ class TestEventDispatch:
         def callback(body, message):
             global basic_multi_counts
             basic_multi_counts += 1
+            message.ack()
             assert body == event.dict()
 
         with conn.Consumer(queues=[b], accept=['json'], callbacks=[callback]):
@@ -153,7 +173,16 @@ class TestEventDispatch:
         conn.close()
 
     def test_dispatch_custom_event(self):
-        event_type = 'Customized'
+        exchange_name = 'test_dispatch_custom_event.exchange'
+        queue_name = 'test_dispatch_custom_event.queue'
+        _settings.AMQP_CONFIGS = {
+            'default': {
+                'AMQP_SERVER_ADDRESS': amqp_uri,
+                'EXCHANGE_NAME': exchange_name,
+                'EXCHANGE_TYPE': 'fanout',
+                'QUEUE_NAME': queue_name,
+            }
+        }
         role = 'designer'
         count = 5
         event = CustomEvent(role=role, count=count)
@@ -170,6 +199,7 @@ class TestEventDispatch:
         def callback(body, message):
             global custom_counts
             custom_counts += 1
+            message.ack()
             assert body == event.dict()
 
         with conn.Consumer(queues=[b], accept=['json'], callbacks=[callback]):
