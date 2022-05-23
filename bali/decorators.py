@@ -1,5 +1,6 @@
 import functools
 import inspect
+import json
 import logging
 import traceback
 
@@ -227,19 +228,22 @@ def event_handler(event_type):
         @functools.wraps(func)
         def wrapper(body, message):
             try:
+                if isinstance(body, str):
+                    body = json.loads(body)
+                if isinstance(body, dict) and body.get('type') != event_type:
+                    return
                 typed_signature = get_typed_signature(func)
                 signature_params = typed_signature.parameters
+                event = None
                 for param_name, param in signature_params.items():
                     if param_name in ['self', 'cls']:
                         continue
                     if param.annotation is not inspect._empty and isinstance(
                         body, dict
                     ):
-                        body = param.annotation(**body)
+                        event = param.annotation(**body)
                         break
-                if body.get('type') != event_type:
-                    return
-                res = func(body)
+                res = func(event or body)
                 message.ack()
                 return res
             except:
