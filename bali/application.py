@@ -67,7 +67,8 @@ class Bali:
             host="0.0.0.0",
             port=8000,
             reload=True,
-            access_log=True
+            access_log=True,
+            reload_excludes=['*.log'],
         )
 
     async def _launch_rpc(self):
@@ -86,18 +87,6 @@ class Bali:
             raise Exception('event_handler not provided')
         while True:
             handle()
-
-
-    def _start_all(self):
-        process_http = Process(target=self._launch_http)
-        process_http.start()
-        process_rpc = Process(target=self._launch_rpc)
-        process_rpc.start()
-        process_event = Process(target=self._launch_event)
-        process_event.start()
-        process_rpc.join()
-        process_http.join()
-        process_event.join()
 
     def settings(self, **kwargs):
         self.base_settings.update(kwargs)
