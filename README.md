@@ -361,5 +361,5 @@ class TestDemoRPC(GRPCTestBase):
 
 ## Related Projects
 
-[![bali-cli](https://github-readme-stats.vercel.app/api/pin/?username=JoshYuJump&repo=bali-cli)](https://github.com/JoshYuJump/bali-cli)
-[![cookiecutter-bali](https://github-readme-stats.vercel.app/api/pin/?username=Ed-XCF&repo=cookiecutter-bali)](https://github.com/Ed-XCF/cookiecutter-bali)
+[![bali-cli](https://github-readme-stats.vercel.app/api/pin/?username=bali-framework&repo=bali-cli)](https://github.com/bali-framework/bali-cli)
+[![cookiecutter-bali](https://github-readme-stats.vercel.app/api/pin/?username=bali-framework&repo=cookiecutter-bali)](https://github.com/bali-framework/cookiecutter-bali)
