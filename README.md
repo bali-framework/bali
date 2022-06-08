@@ -52,7 +52,11 @@ It gives you the following features:
 ## Install
 
 ```bash
-pip install bali-core
+# Bali framework
+pip install bali-core 
+
+# Bali command line tool 
+pip install bali-cli  
 ```
 
 ## Project structure layout
