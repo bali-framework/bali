@@ -19,13 +19,13 @@ import pytz
 from sqlalchemy import Column, DateTime, Boolean
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.future import select
 from sqlalchemy.inspection import inspect
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql.functions import func
 from sqlalchemy.types import TypeDecorator
 
+from .managers import AsyncManager
 from ..utils import timezone
 
 
@@ -50,6 +50,34 @@ class AwareDateTime(TypeDecorator):
 
 
 context_auto_commit = ContextVar('context_auto_commit', default=True)
+
+
+def get_base(db):
+    class Base(db.Model, AsyncModelMixin):
+        __abstract__ = True
+        __asdict_include_hybrid_properties__ = False
+
+        # Bind SQLA-wrapper database to model
+        _db = db
+
+        @classmethod
+        def query(cls):
+            return db.s.query(cls)
+
+        def save(self):
+            """Override default model's save"""
+            global context_auto_commit
+            db.s.add(self)
+            db.s.commit() if context_auto_commit.get() else db.s.flush()
+            return self
+
+        def delete(self):
+            """Override default model's delete"""
+            global context_auto_commit
+            db.s.delete(self)
+            db.s.commit() if context_auto_commit.get() else db.s.flush()
+
+    return Base
 
 
 def get_base_model(db):
@@ -194,47 +222,10 @@ def get_base_model(db):
     return BaseModel
 
 
-class AsyncModelManager:
-    """Async model bind to aio"""
-
-    db = None
-    model = None
-
-    def __init__(self, instance):
-        self.instance = instance
-
-    @classmethod
-    async def exists(cls, **attrs):
-        async with cls.db.async_session() as async_session:
-            stmt = select(cls.model).filter_by(**attrs)
-            result = await async_session.execute(stmt)
-            return bool(result.scalars().first())
-
-    @classmethod
-    async def create(cls, **attrs):
-        await cls.model(**attrs).aio.save()
-
-    @classmethod
-    async def first(cls, **attrs):
-        async with cls.db.async_session() as async_session:
-            stmt = select(cls.model).filter_by(**attrs)
-            result = await async_session.execute(stmt)
-            return result.scalars().first()
-
-    async def save(self):
-        async with self.db.async_session() as async_session:
-            async_session.add(self.instance)
-            await async_session.commit()
-            return self.instance
-
-    async def delete(self):
-        async with self.db.async_session() as async_session:
-            async_session.delete(self.instance)
-            await async_session.commit()
-
-
 # expose the include models and model creator
+# Out of the box base models
 included_models = {
+    'Base': get_base_model,
     'BaseModel': get_base_model,
 }
 
@@ -267,4 +258,4 @@ class AsyncModelMixin:
 
     """
 
-    aio = AsyncModelManager
+    aio = AsyncManager
