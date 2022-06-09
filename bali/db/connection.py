@@ -126,38 +126,6 @@ def get_async_database_uri(database_uri):
 MAXIMUM_RETRY_ON_DEADLOCK: int = 3
 
 
-def retry_on_deadlock_decorator(func):
-    warnings.warn(
-        'retry_on_deadlock_decorator will remove in 3.2',
-        DeprecationWarning,
-    )
-
-    lock_messages_error = [
-        'Deadlock found',
-        'Lock wait timeout exceeded',
-    ]
-
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        attempt_count = 0
-        while attempt_count < MAXIMUM_RETRY_ON_DEADLOCK:
-            try:
-                return func(*args, **kwargs)
-            except OperationalError as e:
-                # noinspection PyUnresolvedReferences
-                if any(msg in e.message for msg in lock_messages_error) \
-                        and attempt_count <= MAXIMUM_RETRY_ON_DEADLOCK:
-                    error_logger.error(
-                        'Deadlock detected. Trying sql transaction once more. '
-                        'Attempts count: %s' % (attempt_count + 1)
-                    )
-                else:
-                    raise
-            attempt_count += 1
-
-    return wrapper
-
-
 def close_connection(func):
     warnings.warn(
         'retry_on_deadlock_decorator will remove in 3.2',
