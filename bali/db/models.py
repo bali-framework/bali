@@ -56,11 +56,8 @@ context_auto_commit: ContextVar[bool] = ContextVar(
 )
 
 
-
-
 def async_method_generate(self, attr):
     """Generate generic async methods"""
-
     async def save():
         async with self._db.async_session() as session:
             session.add(self)
