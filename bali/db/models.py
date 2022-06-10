@@ -6,7 +6,7 @@ If you don't use `db.BaseModel`, you can compose Mixins to `db.Model`
 Import Mixins in your project examples:
 
     ```python
-    from bali.db.models import GenericModelMixin, AsyncModelMixin
+    from bali.db.models import GenericModelMixin, ManagerMixin
     ```
 
 """
@@ -20,12 +20,14 @@ from sqlalchemy import Column, DateTime, Boolean
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.inspection import inspect
+from sqlalchemy.orm import reconstructor
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql.functions import func
 from sqlalchemy.types import TypeDecorator
 
-from .managers import AsyncManager
+from .managers import Manager, AsyncManager
+from ..aio.sessions import session_is_async
 from ..utils import timezone
 
 
@@ -49,20 +51,46 @@ class AwareDateTime(TypeDecorator):
         return value
 
 
-context_auto_commit = ContextVar('context_auto_commit', default=True)
+context_auto_commit: ContextVar[bool] = ContextVar(
+    'context_auto_commit', default=True
+)
+
+
+
+
+def async_method_generate(self, attr):
+    """Generate generic async methods"""
+
+    async def save():
+        async with self._db.async_session() as session:
+            session.add(self)
+            await session.commit()
+            return self
+
+    async def delete():
+        async with self._db.async_session() as session:
+            session.delete(self)
+            await session.commit()
+
+    async def dummy():
+        raise NotImplementedError("Removed async methods' prefix `async_`")
+
+    methods = {
+        'save': save,
+        'delete': delete,
+        'dummy': dummy,
+    }
+
+    return methods.get(attr)
 
 
 def get_base(db):
-    class Base(db.Model, AsyncModelMixin):
+    class Base(db.Model, AsyncModelMixin, ManagerMixin):
         __abstract__ = True
         __asdict_include_hybrid_properties__ = False
 
         # Bind SQLA-wrapper database to model
         _db = db
-
-        @classmethod
-        def query(cls):
-            return db.s.query(cls)
 
         def save(self):
             """Override default model's save"""
@@ -81,7 +109,9 @@ def get_base(db):
 
 
 def get_base_model(db):
-    class BaseModel(db.Model, GenericModelMixin, AsyncModelMixin):
+    class BaseModel(
+        db.Model, AsyncModelMixin, GenericModelMixin, ManagerMixin
+    ):
         __abstract__ = True
         __asdict_include_hybrid_properties__ = False
 
@@ -225,11 +255,71 @@ def get_base_model(db):
 # expose the include models and model creator
 # Out of the box base models
 included_models = {
-    'Base': get_base_model,
+    'Base': get_base,
     'BaseModel': get_base_model,
 }
 
 # --------------------  Models Mixins  -------------------- #
+
+
+class AsyncModelMixin:
+    """
+    Given model async supported
+
+        ```python
+        # async instance
+        async_instance = Model(async=True)
+        ```
+
+    model method starts with prefix `async_`
+    will transform to replace a copy replace the prefix
+
+    for example, if you define a model with `async_foo`
+
+        ```python
+        class User(db.Base):
+            async def foo(self):
+                return 'sync result'
+
+            async def async_foo(self):
+                return 'async result'
+
+        # call the method of async instance
+        # it will return the "async result"
+        user = User(async=True):
+        assert user.foo() == 'async result'
+        ```
+
+    """
+    def __init__(self, *args, **kwargs):
+        is_async = kwargs.pop('aio', False)
+        super().__init__(*args, **kwargs)
+
+    @reconstructor
+    def init_on_load(self):
+        in_async_context = session_is_async.get()
+        return self._as_async() if in_async_context else self
+
+    def _as_async(self):
+        """Convert model instance to async model instance
+
+        Here are the things to do:
+        1. Bind async generic methods, like `save()`, `delete()`
+        2. Removed async methods' prefix `async_`
+        """
+        self._is_async = True
+
+        self.save = async_method_generate(self, 'save')
+        self.delete = async_method_generate(self, 'delete')
+
+        properties = dir(self)
+        for method in properties:
+            if method.startswith('async_'):
+                new_method = method.replace('async_', '', 1)
+                setattr(self, new_method, getattr(self, method))
+                setattr(self, method, async_method_generate(self, 'dummy'))
+
+        return self
 
 
 class GenericModelMixin:
@@ -241,21 +331,19 @@ class GenericModelMixin:
     is_active = Column(Boolean, default=True)
 
 
-class AsyncModelMixin:
-    """Async models methods
+class ManagerMixin:
+    """ManagerMixin
 
+    All sync method accessed by `io`
     All async method accessed by `aio`
 
+    Sync examples:
         ```python
-        # Model
-        async def get_first_user()
-            await User.aio.first()
-
-        # Instance
-        user = User()
-        await user.aio.save()
+        # Sync
+        User.io.first()
+        # Async
+        await User.aio.first()
         ```
-
     """
-
+    io = Manager
     aio = AsyncManager
