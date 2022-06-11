@@ -127,7 +127,7 @@ class TypeChecker:
 
     @property
     def is_sqlite(self):
-        return True
+        return self.database_uri.startswith('sqlite')
 
     @property
     def is_mysql(self):
