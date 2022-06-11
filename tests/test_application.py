@@ -8,7 +8,6 @@ class TestBaliApp:
     def test_initialize_default_values(self):
         app = Bali()
         assert app.base_settings == {}
-        assert app.routers == []
         assert app.kwargs == {}
         assert isinstance(app._app, FastAPI)
 
