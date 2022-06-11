@@ -1,5 +1,4 @@
 from bali import Bali
-
 from resources import TodoResource
 
 app = Bali()

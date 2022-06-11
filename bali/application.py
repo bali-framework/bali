@@ -137,5 +137,7 @@ class Bali:
                 prefix=resource_cls._http_endpoint,
             )
 
+        add_pagination(self._app)
+
     def start(self):
         typer.run(self.launch)
