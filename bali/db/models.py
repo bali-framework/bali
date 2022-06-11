@@ -66,7 +66,7 @@ def async_method_generate(self, attr):
 
     async def delete():
         async with self._db.async_session() as session:
-            session.delete(self)
+            await session.delete(self)
             await session.commit()
 
     async def dummy():
@@ -288,10 +288,6 @@ class AsyncModelMixin:
         ```
 
     """
-    def __init__(self, *args, **kwargs):
-        is_async = kwargs.pop('aio', False)
-        super().__init__(*args, **kwargs)
-
     @reconstructor
     def init_on_load(self):
         in_async_context = session_is_async.get()
