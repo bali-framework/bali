@@ -3,8 +3,16 @@
 # This project adheres to [Semantic Versioning](http://semver.org/).
 # includes Added / Changed / Fixed
 
+## [3.2.0] UNRELEASED
+### Added
+- The concept of `manager` is introduced
+- New elegant model API methods [PR#122](https://github.com/bali-framework/bali/pull/122)
+- Added `db.Base` declarative_base
 
-## [3.1.0 ~ 3.1.5] 2020-04-30 ~ 2020-05-21
+### Changed
+- Removed deprecated retry_on_deadlock_decorator
+
+## [3.1.0 ~ 3.1.6] 2020-04-30 ~ 2020-05-23
 ### Added
 - `Event` supported
 - RabbitMQ fanout exchange support
