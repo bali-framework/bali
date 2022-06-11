@@ -124,26 +124,6 @@ def get_async_database_uri(database_uri):
     return uri
 
 
-MAXIMUM_RETRY_ON_DEADLOCK: int = 3
-
-
-def close_connection(func):
-    warnings.warn(
-        'retry_on_deadlock_decorator will remove in 3.2',
-        DeprecationWarning,
-    )
-
-    def wrapper(*args, **kwargs):
-        try:
-            result = func(*args, **kwargs)
-        finally:
-            db.remove()
-
-        return result
-
-    return wrapper
-
-
 class AsyncModelDeclarativeMeta(DeclarativeMeta):
     """Make model support async using this metaclass"""
     def __getattribute__(self, attr):

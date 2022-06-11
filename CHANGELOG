@@ -10,7 +10,8 @@
 - Added `db.Base` declarative_base
 
 ### Changed
-- Removed deprecated retry_on_deadlock_decorator
+- Removed deprecated `connection.retry_on_deadlock_decorator`
+- Removed deprecated `connection.close_connection`
 
 ## [3.1.0 ~ 3.1.6] 2020-04-30 ~ 2020-05-23
 ### Added
