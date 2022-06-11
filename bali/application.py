@@ -1,8 +1,6 @@
 import gzip
 import inspect
 import logging
-import traceback
-from multiprocessing import Process
 from typing import Callable
 
 import typer
@@ -57,14 +55,12 @@ class Bali:
             return getattr(self._app, attr)
 
     async def __call__(self, scope, receive, send) -> None:
-        self.http()
         await self._app.__call__(scope, receive, send)  # pragma: no cover
 
-    def _launch_http(self):
-        self._app = FastAPI(**self.base_settings)
+    @staticmethod
+    def _launch_http():
         uvicorn.run(
             "main:app",
-            host="0.0.0.0",
             port=8000,
             reload=True,
             access_log=True,
@@ -93,7 +89,7 @@ class Bali:
 
     def http(self):
         """load FastAPI to instance"""
-        self._app = FastAPI(**self.base_settings)
+        self._app = FastAPI(title='Bali', **self.base_settings)
         self._app.router.route_class = GzipRoute
 
         # routers
@@ -119,7 +115,7 @@ class Bali:
     ):
         if not http and not rpc and not event:
             typer.echo(
-                'Please provided launch service type: --http or --rpc or --event'
+                'Please provided service type: --http / --rpc / --event'
             )
 
         if http:
@@ -130,6 +126,16 @@ class Bali:
 
         if event:
             self._launch_event()
+
+    def register(self, resources_cls):
+        if not isinstance(resources_cls, list):
+            resources_cls = [resources_cls]
+
+        for resource_cls in resources_cls:
+            self._app.include_router(
+                router=resource_cls.as_router(),
+                prefix=resource_cls._http_endpoint,
+            )
 
     def start(self):
         typer.run(self.launch)

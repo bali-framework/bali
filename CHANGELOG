@@ -14,6 +14,9 @@
 - Removed deprecated `connection.close_connection`
 - Updated related projects link comes from bali framework organization
 
+### Fixed
+- Fixed initialize http service every requests
+
 ## [3.1.0 ~ 3.1.6] 2020-04-30 ~ 2020-05-23
 ### Added
 - `Event` supported

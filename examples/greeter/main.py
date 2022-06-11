@@ -15,9 +15,8 @@ class GreeterResource(Resource):
         return {'content': f'hello, ID is {pk}'}
 
 
-app = Bali(routers=[{
-    'router': GreeterResource.as_router(),
-}])
+app = Bali()
+app.register(GreeterResource)
 
 if __name__ == "__main__":
     app.start()

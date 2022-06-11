@@ -23,3 +23,22 @@ def get_service_adder(module) -> Callable[[object, Server], None]:
     for i in dir(module):
         if ServiceAdderNamePattern.match(i):
             return namespace[i]
+
+
+def pluralize(noun):
+    """pluralize a given word
+
+    ref:
+    https://www.codespeedy.com/program-that-pluralize-a-given-word-in-python/
+
+    :param noun:
+    :return:
+    """
+    if re.search('[sxz]$', noun):
+        return re.sub('$', 'es', noun)
+    elif re.search('[^aeioudgkprt]h$', noun):
+        return re.sub('$', 'es', noun)
+    elif re.search('[aeiou]y$', noun):
+        return re.sub('y$', 'ies', noun)
+    else:
+        return noun + 's'
