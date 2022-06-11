@@ -140,9 +140,9 @@ class TypeChecker:
     @property
     def async_uri(self):
         """
-            Transform populate database schema to async format,
-            which is used by SQLA-Wrapper
-            """
+        Transform populate database schema to async format,
+        which is used by SQLA-Wrapper
+        """
         uri = self.database_uri
         database_schema_async_maps = [
             ('sqlite://', 'sqlite+aiosqlite://'),
