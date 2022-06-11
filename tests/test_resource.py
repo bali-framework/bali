@@ -24,18 +24,9 @@ class User(db.BaseModel):
 
 # generate records
 db.create_all()
-lucy = User.create(**{
-    'username': 'Lucy',
-    'age': 13,
-})
-jack = User.create(**{
-    'username': 'Jack',
-    'age': 20,
-})
-groot = User.create(**{
-    'username': 'Groot',
-    'age': 32,
-})
+lucy = User.create(**{'username': 'Lucy', 'age': 13})
+jack = User.create(**{'username': 'Jack', 'age': 20})
+groot = User.create(**{'username': 'Groot', 'age': 32})
 
 
 class UserSchema(BaseModel):

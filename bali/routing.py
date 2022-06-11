@@ -6,6 +6,7 @@ from fastapi import APIRouter as FastAPIRouter
 
 from bali.core import db
 from .application import GzipRoute
+from .exceptions import DBSetupException
 
 
 class APIRoute(GzipRoute):
@@ -26,7 +27,10 @@ class APIRoute(GzipRoute):
                     return endpoint(*args, **{'request': kwargs.get('request')})
                 return endpoint(*args, **kwargs)
             finally:
-                db.s.remove()
+                try:
+                    db.s.remove()
+                except DBSetupException:
+                    pass
 
         return injected_endpoint
 

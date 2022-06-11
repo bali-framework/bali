@@ -5,21 +5,19 @@ A Resource layer base class to handle FastAPI and gRPC requests and responses
 Resource's method input is Pydantic schema
 
 """
-import inspect
-import logging
-import typing
 from collections import OrderedDict
-from typing import Optional, Callable
+from typing import Optional
 
-from fastapi import Request, HTTPException, status
+import decamelize
+from fastapi import HTTPException, status
 from fastapi_pagination import LimitOffsetPage
 from google.protobuf import message
 from pydantic import BaseModel
 
-from ..paginate import paginate
-from ..routing import APIRouter
-from ..schemas import ListRequest, ResultResponse
 from .generic_routes import *
+from .._utils import pluralize
+from ..routing import APIRouter
+from ..schemas import ResultResponse
 
 __all__ = ['Resource', 'GENERIC_ACTIONS']
 
@@ -32,7 +30,25 @@ GENERIC_ACTIONS = [
 ]
 
 
-class Resource:
+# noinspection PyUnresolvedReferences
+class ResourceMeta(type):
+    @property
+    def _http_endpoint(self):
+        if self.http_endpoint:
+            endpoint = self.http_endpoint
+        else:
+            # Generate endpoint from resource name
+            name = self.__name__.replace('Resource', '')
+            words = decamelize.convert(name).split('_')
+            words[-1] = pluralize(words[-1])
+            endpoint = '-'.join(words)
+
+        if not endpoint.startswith('/'):
+            endpoint = f'/{endpoint}'
+        return endpoint
+
+
+class Resource(metaclass=ResourceMeta):
     """Base Resource
 
     Generic Actions is get, list, create, update, delete
@@ -40,6 +56,10 @@ class Resource:
 
     # Resource's name, should automatic recognition is not provided
     name = None
+    plural_name = None
+
+    # http_endpoint is `prefix` args for FastAPI include_router
+    http_endpoint = None
 
     schema = None
     filters = []

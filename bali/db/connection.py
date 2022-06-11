@@ -4,16 +4,14 @@ DB Connection
 Expose `db` instance, bind managers to model.
 """
 
-import warnings
-
 from sqla_wrapper import SQLAlchemy, BaseModel
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.decl_api import DeclarativeMeta
 
-from ..aio.sessions import AsyncSession
-
 from .models import included_models
+from ..aio.sessions import AsyncSession
+from ..exceptions import DBSetupException
 
 # SQLA-Wrapper 4.x supported session proxy methods
 # https://github.com/jpsca/sqla-wrapper/blob/v4.200628/sqla_wrapper/session_proxy.py
@@ -92,7 +90,7 @@ class DB:
             return super().__getattribute__(attr)
         except AttributeError:
             if not self._db:
-                raise Exception('Database session not initialized')
+                raise DBSetupException()
 
             # BaseModels
             if attr in included_models:

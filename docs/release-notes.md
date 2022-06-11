@@ -1,7 +1,13 @@
-# Change Log
-# All notable changes to this project will be documented in this file.
-# This project adheres to [Semantic Versioning](http://semver.org/).
-# includes Added / Changed / Fixed
+# Release Notes
+
+> Change Log
+> 
+> All notable changes to this project will be documented in this file.
+> 
+> This project adheres to [Semantic Versioning](http://semver.org/).
+> 
+> includes Added / Changed / Fixed
+> 
 
 ## [3.2.0] UNRELEASED
 ### Added
@@ -13,9 +19,6 @@
 - Removed deprecated `connection.retry_on_deadlock_decorator`
 - Removed deprecated `connection.close_connection`
 - Updated related projects link comes from bali framework organization
-
-### Fixed
-- Fixed initialize http service every requests
 
 ## [3.1.0 ~ 3.1.6] 2020-04-30 ~ 2020-05-23
 ### Added
