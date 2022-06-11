@@ -1,18 +1,19 @@
-import logging
+"""
+DB Connection
+
+Expose `db` instance, bind managers to model.
+"""
+
 import warnings
-from functools import wraps
 
 from sqla_wrapper import SQLAlchemy, BaseModel
-from sqlalchemy.exc import OperationalError
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.decl_api import DeclarativeMeta
 
-from .models import included_models
+from ..aio.sessions import AsyncSession
 
-# TODO: Removed logging according 12factor
-error_logger = logging.getLogger('error')
+from .models import included_models
 
 # SQLA-Wrapper 4.x supported session proxy methods
 # https://github.com/jpsca/sqla-wrapper/blob/v4.200628/sqla_wrapper/session_proxy.py
@@ -123,77 +124,59 @@ def get_async_database_uri(database_uri):
     return uri
 
 
-MAXIMUM_RETRY_ON_DEADLOCK: int = 3
-
-
-def retry_on_deadlock_decorator(func):
-    warnings.warn(
-        'retry_on_deadlock_decorator will remove in 3.2',
-        DeprecationWarning,
-    )
-
-    lock_messages_error = [
-        'Deadlock found',
-        'Lock wait timeout exceeded',
-    ]
-
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        attempt_count = 0
-        while attempt_count < MAXIMUM_RETRY_ON_DEADLOCK:
-            try:
-                return func(*args, **kwargs)
-            except OperationalError as e:
-                # noinspection PyUnresolvedReferences
-                if any(msg in e.message for msg in lock_messages_error) \
-                        and attempt_count <= MAXIMUM_RETRY_ON_DEADLOCK:
-                    error_logger.error(
-                        'Deadlock detected. Trying sql transaction once more. '
-                        'Attempts count: %s' % (attempt_count + 1)
-                    )
-                else:
-                    raise
-            attempt_count += 1
-
-    return wrapper
-
-
-def close_connection(func):
-    warnings.warn(
-        'retry_on_deadlock_decorator will remove in 3.2',
-        DeprecationWarning,
-    )
-
-    def wrapper(*args, **kwargs):
-        try:
-            result = func(*args, **kwargs)
-        finally:
-            db.remove()
-
-        return result
-
-    return wrapper
-
-
 class AsyncModelDeclarativeMeta(DeclarativeMeta):
-    """Make db.BaseModel support async using this metaclass"""
+    """Make model support async using this metaclass"""
     def __getattribute__(self, attr):
-        if attr == 'aio':
-            aio = super().__getattribute__(attr)
-            if any([aio.db is None, aio.model is None]):
-                aio = type(
-                    f'Aio{aio.__qualname__}',
-                    aio.__bases__,
-                    dict(aio.__dict__),
-                )
-                setattr(aio, 'db', self._db)
-                setattr(aio, 'model', self)
-            return aio
+        if attr in ('io', 'aio'):
+            manager = super().__getattribute__(attr)
+            return setup_manager(manager, self, prefix=attr)
 
         return super().__getattribute__(attr)
 
     # noinspection PyMethodParameters
     def __call__(self, *args, **kwargs):
+        """
+        Given model async supported
+
+            ```python
+            # async instance
+            async_instance = Model(async=True)
+            ```
+
+        model method starts with prefix `async_`
+        will transform to replace a copy replace the prefix
+
+        for example, if you define a model with `async_foo`
+
+            ```python
+            class User(db.Base):
+                async def foo(self):
+                    return 'sync result'
+
+                async def async_foo(self):
+                    return 'async result'
+
+            # call the method of async instance
+            # it will return the "async result"
+            user = User(async=True):
+            assert user.foo() == 'async result'
+            ```
+        """
+
         instance = super().__call__(*args, **kwargs)
+        # instance.aio is deprecated, will be removed in 3.5
         instance.aio = self.aio(instance)
-        return instance
+        aio = kwargs.pop('aio', False)
+        return instance._as_async() if aio else instance
+
+
+def setup_manager(manager, model, prefix=''):
+    if any([manager.db is None, manager.model is None]):
+        manager = type(
+            f'{prefix.upper()}{manager.__qualname__}',
+            manager.__bases__,
+            dict(manager.__dict__),
+        )
+        setattr(manager, 'db', model._db)
+        setattr(manager, 'model', model)
+    return manager
