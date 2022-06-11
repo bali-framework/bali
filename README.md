@@ -94,7 +94,7 @@ More usage of `Application`: [example](examples/main.py)
 ### connect
 
 ```python
-from bali.core import db
+from bali import db
 
 # connect to database when app started
 # db is a sqla-wrapper instance
@@ -301,7 +301,7 @@ class Hello(hello_pb2_grpc.HelloServiceServicer, ServiceMixin):
 ### Cache API
 
 ```python
-from bali.core import cache
+from bali import cache
 
 # Usage example (API)
 
@@ -316,7 +316,7 @@ cache.set(key, value, timeout=10)
 
 ```python
 # Import the cache_memoize from bali core 
-from bali.core import cache_memoize
+from bali import cache_memoize
 
 # Attach decorator to cacheable function with a timeout of 100 seconds.
 @cache_memoize(100)
