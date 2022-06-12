@@ -1,6 +1,7 @@
 import gzip
 import inspect
 import logging
+import sys
 from typing import Callable
 
 import typer
@@ -111,11 +112,16 @@ class Bali:
         add_pagination(self._app)
 
     def launch(
-        self, http: bool = False, rpc: bool = False, event: bool = False
+        self,
+        http: bool = False,
+        rpc: bool = False,
+        event: bool = False,
+        shell: bool = False,
     ):
-        if not http and not rpc and not event:
+        if not any([http, rpc, event, shell]):
             typer.echo(
-                'Please provided service type: --http / --rpc / --event'
+                'Please provided service type: '
+                '--http / --rpc / --event / --shell'
             )
 
         if http:
@@ -127,6 +133,16 @@ class Bali:
         if event:
             self._launch_event()
 
+        if shell:
+            import code
+            from bali import db, __version__
+            banner = (
+                f"Python {sys.version} on {sys.platform}\n"
+                f"App: {self.title} (Framework: Bali v{__version__})"
+            )
+            ctx: dict = {'db': db}
+            code.interact(banner=banner, local=ctx)
+
     def register(self, resources_cls):
         if not isinstance(resources_cls, list):
             resources_cls = [resources_cls]
@@ -136,6 +152,8 @@ class Bali:
                 router=resource_cls.as_router(),
                 prefix=resource_cls._http_endpoint,
             )
+
+        add_pagination(self._app)
 
     def start(self):
         typer.run(self.launch)

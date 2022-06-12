@@ -55,9 +55,13 @@ class DB:
         session_options=None,
         **kwargs
     ):
+
+        type_checker = TypeChecker(database_uri)
+
         engine_options = engine_options or {}
-        engine_options.setdefault("pool_size", 5)
-        engine_options.setdefault("pool_recycle", 2 * 60 * 60)
+        if not type_checker.is_sqlite:
+            engine_options.setdefault("pool_size", 5)
+            engine_options.setdefault("pool_recycle", 2 * 60 * 60)
 
         session_options = session_options or {}
         # developers need to know when the ORM object needs to reload
@@ -76,8 +80,7 @@ class DB:
             metaclass=AsyncModelDeclarativeMeta,
         )
 
-        async_database_uri = get_async_database_uri(database_uri)
-        self._async_engine = create_async_engine(async_database_uri)
+        self._async_engine = create_async_engine(type_checker.async_uri)
 
         self.async_session = sessionmaker(
             self._async_engine,
@@ -90,6 +93,14 @@ class DB:
             return super().__getattribute__(attr)
         except AttributeError:
             if not self._db:
+                try:
+                    from config import settings
+                    self.connect(settings.SQLALCHEMY_DATABASE_URI)
+                    if self._db:
+                        return self.__getattribute__(attr)
+                except ModuleNotFoundError:
+                    pass
+
                 raise DBSetupException()
 
             # BaseModels
@@ -106,20 +117,41 @@ class DB:
 db = DB()
 
 
-def get_async_database_uri(database_uri):
+class TypeChecker:
+    """Database URI checker
+
+    check database type and ensure async schema
     """
-    Transform populate database schema to async format,
-    which is used by SQLA-Wrapper
-    """
-    uri = database_uri
-    database_schema_async_maps = [
-        ('sqlite://', 'sqlite+aiosqlite://'),
-        ('mysql+pymysql://', 'mysql+aiomysql://'),
-        ('postgres://', 'postgresql+asyncpg://'),
-    ]
-    for sync_schema, async_schema in database_schema_async_maps:
-        uri = uri.replace(sync_schema, async_schema)
-    return uri
+    def __init__(self, database_uri):
+        self.database_uri = database_uri
+
+    @property
+    def is_sqlite(self):
+        return self.database_uri.startswith('sqlite')
+
+    @property
+    def is_mysql(self):
+        raise NotImplementedError
+
+    @property
+    def is_postgres(self):
+        raise NotImplementedError
+
+    @property
+    def async_uri(self):
+        """
+        Transform populate database schema to async format,
+        which is used by SQLA-Wrapper
+        """
+        uri = self.database_uri
+        database_schema_async_maps = [
+            ('sqlite://', 'sqlite+aiosqlite://'),
+            ('mysql+pymysql://', 'mysql+aiomysql://'),
+            ('postgres://', 'postgresql+asyncpg://'),
+        ]
+        for sync_schema, async_schema in database_schema_async_maps:
+            uri = uri.replace(sync_schema, async_schema)
+        return uri
 
 
 class AsyncModelDeclarativeMeta(DeclarativeMeta):
