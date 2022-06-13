@@ -2,6 +2,7 @@ import gzip
 import inspect
 import logging
 import sys
+from importlib import import_module
 from typing import Callable
 
 import typer
@@ -15,6 +16,7 @@ from starlette.middleware.cors import CORSMiddleware
 from ._utils import singleton
 from .middlewares import process_middleware
 from .utils import sync_exec
+from .servicer import get_servicer, make_grpc_serve
 
 logger = logging.getLogger('bali')
 
@@ -45,9 +47,19 @@ class Bali:
     def __init__(self, base_settings=None, **kwargs):
         self.base_settings = base_settings or {}
         self.kwargs = kwargs
+        self.title = kwargs.get('title', 'Bali')
+
         self._app = None
 
-        self.http()  # Create FastAPI instance ref to `self._app`
+        self._pb2 = None
+        self._pb2_grpc = None
+        self._rpc_servicer = None
+
+        # Create FastAPI instance ref to `self._app`
+        self.http()
+
+        # Construct a ServiceServicer class ref to `self._rpc_servicer`
+        self.rpc()
 
     def __getattribute__(self, attr, *args, **kwargs):
         try:
@@ -69,13 +81,53 @@ class Bali:
         )
 
     async def _launch_rpc(self):
+        """Launch RPC process
+
+        `rpc_service` is the module contains gRPC components
+            (a ServiceServicer class and a serve function,
+            both of them is optional).
+            can be a class or function, when it's a function,
+            it will be called directly.
+
+            ServiceServicer class example:
+
+            ```python
+            class FooService(pb2_grpc.FooServiceServicer):
+                def GetFoo(self, request, context):
+                    schema = FooResource().get(request, context)
+                    return json_format.ParseDict(schema.dict(), pb2.FooEntity())
+            ```
+
+            serve function example:
+
+            ```python
+            def serve():
+                port = 9080
+                server = grpc.server(
+                    futures.ThreadPoolExecutor(max_workers=10),
+                    interceptors=[ProcessInterceptor()],
+                )
+                pb2_grpc.add_FooServiceServicer_to_server(FooService(), server)
+                server.add_insecure_port(f'[::]:{port}')
+                server.start()
+                server.wait_for_termination()
+            ```
+
+            ServiceServicer will compose with registered resources
+
+        """
         service = self.kwargs.get('rpc_service')
-        if not service:
-            raise Exception('rpc_service not provided')
-        if inspect.iscoroutinefunction(service.serve):
-            await service.serve()
+        if service and service.serve:
+            serve = service.serve
         else:
-            service.serve()
+            serve = make_grpc_serve(self)
+
+        # Start rpc using user defined service module
+        # included sync and async mode
+        if inspect.iscoroutinefunction(serve):
+            await serve()
+        else:
+            serve()
 
     def _launch_event(self):
         from .events import handle
@@ -110,6 +162,17 @@ class Bali:
             self._app.middleware('http')(process_middleware)
 
         add_pagination(self._app)
+
+    def rpc(self):
+        # Add `protos` to python sys.path
+        sys.path.append('protos')
+
+        pb2_path = f'protos.{self.title}_pb2'
+        pb2_grpc_path = f'protos.{self.title}_pb2_grpc'
+        self._pb2 = import_module(pb2_path)
+        self._pb2_grpc = import_module(pb2_grpc_path)
+
+        self._rpc_servicer = get_servicer(self)
 
     def launch(
         self,
@@ -148,10 +211,13 @@ class Bali:
             resources_cls = [resources_cls]
 
         for resource_cls in resources_cls:
+            # Register HTTP service
             self._app.include_router(
                 router=resource_cls.as_router(),
                 prefix=resource_cls._http_endpoint,
             )
+            # Register RPC service
+            resource_cls.as_servicer(self)
 
         add_pagination(self._app)
 

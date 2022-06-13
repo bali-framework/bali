@@ -5,6 +5,7 @@ A Resource layer base class to handle FastAPI and gRPC requests and responses
 Resource's method input is Pydantic schema
 
 """
+
 from collections import OrderedDict
 from typing import Optional
 
@@ -17,9 +18,9 @@ from pydantic import BaseModel
 from .generic_routes import *
 from .._utils import pluralize
 from ..routing import APIRouter
-from ..schemas import ResultResponse
+from ..schemas import ResultResponse, model_to_schema
 
-__all__ = ['Resource', 'GENERIC_ACTIONS']
+__all__ = ['GENERIC_ACTIONS', 'Resource', 'Preprocessor']
 
 GENERIC_ACTIONS = [
     'list',
@@ -46,6 +47,14 @@ class ResourceMeta(type):
         if not endpoint.startswith('/'):
             endpoint = f'/{endpoint}'
         return endpoint
+
+    def _get_rpc_object(self, action):
+        """The object being manipulated"""
+        name = self.__name__.replace('Resource', '')
+        if action == 'list':
+            name = pluralize(name)
+
+        return name
 
 
 class Resource(metaclass=ResourceMeta):
@@ -77,16 +86,49 @@ class Resource(metaclass=ResourceMeta):
 
         self.auth = BaseModel()
 
+    # noinspection PyMethodFirstArgAssignment
     @classmethod
     def as_router(cls):
+        cls = Preprocessor(cls)
         return RouterGenerator(cls)()
+
+    # noinspection PyMethodFirstArgAssignment
+    @classmethod
+    def as_servicer(cls, app):
+        return ServicerGenerator(cls)(app)
+
+
+class Preprocessor:
+    """Preprocess Resource"""
+    def __new__(cls, resource_cls):
+
+        # Auto generate model schema
+        if resource_cls.schema is None:
+            if resource_cls.model is not None:
+                resource_cls.schema = model_to_schema(
+                    resource_cls.model,
+                    partial=True,
+                )
+
+        return resource_cls
+
+
+# noinspection PyUnresolvedReferences
+class Generator:
+    @property
+    def resource_name(self):
+        return self.cls.__name__.replace('Resource', '')
+
+    @property
+    def primary_key(self):
+        return 'id'
 
 
 # noinspection PyShadowingBuiltins,PyUnresolvedReferences,PyProtectedMember
 # noinspection PyShadowingNames,DuplicatedCode
-class RouterGenerator:
+class RouterGenerator(Generator):
     """
-    Generator router from Resource class
+    Generator FastAPI router from Resource class
     """
     def __init__(self, cls):
         self.cls = cls
@@ -108,14 +150,6 @@ class RouterGenerator:
                 continue
             self.add_route(action, extra)
         return self.router
-
-    @property
-    def resource_name(self):
-        return self.cls.__name__.replace('Resource', '')
-
-    @property
-    def primary_key(self):
-        return 'id'
 
     def check_permissions(self, resource):
         for permission_class in self.cls.permission_classes:
@@ -277,3 +311,57 @@ class RouterGenerator:
                 methods=methods,
                 summary=f"{action.replace('_', ' ')}"
             )
+
+
+# noinspection PyProtectedMember
+class ServicerGenerator(Generator):
+    """
+    Generator gRPC servicer from Resource class
+    """
+    def __init__(self, cls):
+        self.cls = cls
+
+    def __call__(self, app):
+
+        self.app = app
+
+        # To fixed generic get action `/item/{id}` conflict with custom action `/item/hello`,
+        # must make sure get action `/item/{id}` is below custom action
+        actions = sorted(
+            self.cls._actions.keys(), key=lambda x: x in GENERIC_ACTIONS
+        )
+
+        # noinspection PyProtectedMember
+        for action in actions:
+            extra = self.cls._actions.get(action)
+            if not hasattr(self.cls, action):
+                continue
+            self.add_servicer(action, extra)
+
+    def add_servicer(self, action, extra):
+
+        response_pb = None
+        method = f'{action.capitalize()}{self.cls._get_rpc_object(action)}'
+
+        if action == 'list':
+            response_pb = getattr(
+                self.app._pb2, f'{self.resource_name}ListResponse'
+            )
+        elif action == 'create':
+            response_pb = getattr(self.app._pb2, f'{self.resource_name}Entity')
+        elif action == 'get':
+            response_pb = getattr(self.app._pb2, f'{self.resource_name}Entity')
+        elif action == 'update':
+            response_pb = getattr(self.app._pb2, f'{self.resource_name}Entity')
+        elif action == 'delete':
+            response_pb = self.app._pb2.ResultResponse
+
+        def servicer(_, request, context):
+            resource = self.cls(
+                request,
+                context,
+                response_pb,
+            )
+            return getattr(resource, action)()
+
+        setattr(self.app._rpc_servicer, method, servicer)
