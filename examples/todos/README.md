@@ -73,3 +73,7 @@ curl -X 'GET' \
 ```
 
 ### Make rpc requests
+
+```bash
+python client.py
+```

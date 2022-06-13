@@ -12,6 +12,7 @@ from pydantic import BaseModel
 from .events import register_callback
 from .exceptions import ReturnTypeError
 from .paginate import paginate
+from .schemas import get_schema_in
 from .utils import MessageToDict, ParseDict
 
 logger = logging.getLogger('bali')
@@ -37,7 +38,7 @@ def compatible_method(func):
                 response_data = {'data': result}
 
             elif func.__name__ == 'list':
-                schema_in = get_schema_in(func)
+                schema_in = get_schema_in(func, default_by_action=True)
                 result = func(self, schema_in(**request_data))
                 # Paginated the result queryset or iterable object
                 if isinstance(result, BaseModel):
@@ -55,7 +56,7 @@ def compatible_method(func):
                     )
 
             elif func.__name__ in ['create', 'update']:
-                schema_in = get_schema_in(func)
+                schema_in = get_schema_in(func, default_by_action=True)
                 data = request_data.get('data')
                 result = func(self, schema_in(**data))
                 if not isinstance(result, dict):
@@ -199,27 +200,6 @@ def action(methods=None, detail=None, **kwargs):
             setattr(owner, '_actions', _actions)
 
     return Action
-
-
-def get_schema_in(func):
-    typed_signature = get_typed_signature(func)
-    signature_params = typed_signature.parameters
-
-    # 1st argument is self
-    # 2st argument is schema_in
-    index = 0
-    for param_name, param in signature_params.items():
-        index += 1
-        if index == 2 or param_name == 'schema_in':
-            schema_in = param.annotation
-            if not schema_in:
-                raise ValueError(
-                    'Custom actions must provide `schema_in` argument with annotation'
-                )
-
-            return schema_in
-    else:
-        raise ValueError('Custom actions arguments error')
 
 
 def event_handler(event_type):

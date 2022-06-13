@@ -2,47 +2,44 @@ syntax = "proto3";
 
 package todos;
 
+import "google/protobuf/struct.proto";
+
 service Todos {
-  rpc ListTodos (TodoListRequest) returns (TodoListResponse) {}
-  rpc CreateTodo (TodoEntity) returns (TodoEntity) {}
-  rpc GetTodo (GetRequest) returns (TodoEntity) {}
-  rpc UpdateTodo (TodoUpdateRequest) returns (TodoEntity) {}
+  rpc ListTodos (ListRequest) returns (ListResponse) {}
+  rpc CreateTodo (CreateRequest) returns (ItemResponse) {}
+  rpc GetTodo (GetRequest) returns (ItemResponse) {}
+  rpc UpdateTodo (UpdateRequest) returns (ItemResponse) {}
   rpc DeleteTodo (DeleteRequest) returns (ResultResponse) {}
 }
 
-message TodoEntity {
-  int32 id = 1;
-  string text = 2;
-  bool completed = 3;
-}
-
+// *** Generic RPC Messages <Start> version 1 ***
 message GetRequest {
   int32 id = 1;
 }
-
-message TodoListRequest {
-  TodoEntity todo = 1;
+message ListRequest {
+  google.protobuf.Struct filters = 1;
   int32 offset = 2;
   int32 limit = 3;
   repeated string ordering = 4;
 }
-
-message TodoUpdateRequest {
-  TodoEntity todo = 1;
-  int32 id = 2;
+message CreateRequest {
+  google.protobuf.Struct data = 1;
 }
-
+message UpdateRequest {
+  int32 id = 1;
+  google.protobuf.Struct data = 2;
+}
 message DeleteRequest {
   int32 id = 1;
 }
-
-message TodoListResponse {
-  repeated TodoEntity todo = 1;
-  int32 offset = 3;
-  int32 limit = 4;
-  int32 total = 5;
+message ItemResponse {
+  google.protobuf.Struct data = 1;
 }
-
+message ListResponse {
+  repeated google.protobuf.Struct data = 1;
+  int32 count = 2;
+}
 message ResultResponse {
   bool result = 1;
 }
+// *** Generic RPC Messages <End> ***

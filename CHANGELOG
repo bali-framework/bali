@@ -13,6 +13,7 @@
 - Removed deprecated `connection.retry_on_deadlock_decorator`
 - Removed deprecated `connection.close_connection`
 - Updated related projects link comes from bali framework organization
+- Removed deprecated `bali.schema`, use `bali.schemas` instead
 
 ### Fixed
 - Fixed initialize http service every requests

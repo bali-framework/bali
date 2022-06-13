@@ -344,15 +344,13 @@ class ServicerGenerator(Generator):
         method = f'{action.capitalize()}{self.cls._get_rpc_object(action)}'
 
         if action == 'list':
-            response_pb = getattr(
-                self.app._pb2, f'{self.resource_name}ListResponse'
-            )
+            response_pb = self.app._pb2.ListResponse
         elif action == 'create':
-            response_pb = getattr(self.app._pb2, f'{self.resource_name}Entity')
+            response_pb = self.app._pb2.ItemResponse
         elif action == 'get':
-            response_pb = getattr(self.app._pb2, f'{self.resource_name}Entity')
+            response_pb = self.app._pb2.ItemResponse
         elif action == 'update':
-            response_pb = getattr(self.app._pb2, f'{self.resource_name}Entity')
+            response_pb = self.app._pb2.ItemResponse
         elif action == 'delete':
             response_pb = self.app._pb2.ResultResponse
 
