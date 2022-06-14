@@ -104,7 +104,7 @@ class Preprocessor:
 
         # Auto generate model schema
         if resource_cls.schema is None:
-            if resource_cls.model is not None:
+            if getattr(resource_cls, 'model', None) is not None:
                 resource_cls.schema = model_to_schema(
                     resource_cls.model,
                     partial=True,
@@ -344,15 +344,15 @@ class ServicerGenerator(Generator):
         method = f'{action.capitalize()}{self.cls._get_rpc_object(action)}'
 
         if action == 'list':
-            response_pb = self.app._pb2.ListResponse
+            response_pb = self.app.pb2.ListResponse
         elif action == 'create':
-            response_pb = self.app._pb2.ItemResponse
+            response_pb = self.app.pb2.ItemResponse
         elif action == 'get':
-            response_pb = self.app._pb2.ItemResponse
+            response_pb = self.app.pb2.ItemResponse
         elif action == 'update':
-            response_pb = self.app._pb2.ItemResponse
+            response_pb = self.app.pb2.ItemResponse
         elif action == 'delete':
-            response_pb = self.app._pb2.ResultResponse
+            response_pb = self.app.pb2.ResultResponse
 
         def servicer(_, request, context):
             resource = self.cls(

@@ -70,6 +70,18 @@ class Bali:
     async def __call__(self, scope, receive, send) -> None:
         await self._app.__call__(scope, receive, send)  # pragma: no cover
 
+    @property
+    def pb2(self):
+        return self._pb2
+
+    @property
+    def pb2_grpc(self):
+        return self._pb2_grpc
+
+    @property
+    def rpc_servicer(self):
+        return self._rpc_servicer
+
     @staticmethod
     def _launch_http():
         uvicorn.run(
@@ -164,15 +176,31 @@ class Bali:
         add_pagination(self._app)
 
     def rpc(self):
-        # Add `protos` to python sys.path
-        sys.path.append('protos')
-
         pb2_path = f'protos.{self.title}_pb2'
         pb2_grpc_path = f'protos.{self.title}_pb2_grpc'
-        self._pb2 = import_module(pb2_path)
-        self._pb2_grpc = import_module(pb2_grpc_path)
 
-        self._rpc_servicer = get_servicer(self)
+        try:
+            self._pb2 = import_module(pb2_path)
+            self._pb2_grpc = import_module(pb2_grpc_path)
+
+            # TODO: Should support service module and service class
+            service = self.kwargs.get('rpc_service')
+            service_classes = [
+                f'{self.title.capitalize()}Service',
+                f'{self.title.capitalize()}Servicer',
+            ]
+            for service_class in service_classes:
+                if service and hasattr(service, service_class):
+                    self._rpc_servicer = getattr(service, service_class)
+                    break
+            else:
+                self._rpc_servicer = get_servicer(self)
+        except ModuleNotFoundError:
+            # No module named 'protos'
+            #
+            # No 'protos' won't launch gRPC service,
+            # but other services not affected.
+            pass
 
     def launch(
         self,
@@ -217,7 +245,8 @@ class Bali:
                 prefix=resource_cls._http_endpoint,
             )
             # Register RPC service
-            resource_cls.as_servicer(self)
+            if self._rpc_servicer:
+                resource_cls.as_servicer(self)
 
         add_pagination(self._app)
 

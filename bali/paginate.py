@@ -2,10 +2,11 @@ from pydantic import BaseModel
 from fastapi_pagination import paginate as default_paginate
 from fastapi_pagination.ext.sqlalchemy import paginate as sqlalchemy_paginate
 
+from ._utils import parse_dict
 from .exceptions import ReturnTypeError
 
 
-def paginate(sequence, params=None, is_rpc=False):
+def paginate(sequence, params=None, is_rpc=False, model_schema=None):
     if isinstance(sequence, BaseModel):
         raise ReturnTypeError('Paginate should return a sequence')
 
@@ -28,7 +29,7 @@ def paginate(sequence, params=None, is_rpc=False):
 
     # convert items to dict
     items = response_data.get('items', [])
-    items = [item if isinstance(item, dict) else item.dict() for item in items]
+    items = [parse_dict(item, schema=model_schema) for item in items]
 
     response_data.update(
         count=response_data.get('total'),

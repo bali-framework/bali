@@ -76,4 +76,11 @@ curl -X 'GET' \
 
 ```bash
 python client.py
+
+# Execute response
+List todos: {'data': [{'id': 0, 'text': 'string', 'completed': True}, {'id': 1, 'text': 'string', 'completed': True}], 'count': 26}
+Create todos: {'data': {'id': 26, 'text': 'Shopping', 'completed': False}}
+Get todos: {'data': {'id': 26, 'text': 'Shopping', 'completed': False}}
+Update todos: {'data': {'id': 26, 'text': 'Shopping Today', 'completed': True}}
+Delete todos: {'result': True}
 ```

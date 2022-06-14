@@ -1,3 +1,4 @@
+import warnings
 from concurrent import futures
 
 import grpc
@@ -7,6 +8,10 @@ from .interceptors import ProcessInterceptor
 
 
 class GRPCTestBase:
+    warnings.warn(
+        '`GRPCTestBase` is deprecated and will be removed in v3.5',
+        DeprecationWarning,
+    )
     server = None
     server_class = None  # must provided in inherit class
     port = 50001
