@@ -21,7 +21,14 @@ setup(
     license='MIT',
     install_requires=INSTALL_REQUIREMENTS,
     packages=find_packages(
-        exclude=['examples', 'examples.*', 'tests', 'docker', 'docs']
+        exclude=[
+            'examples',
+            'examples.*',
+            'tests',
+            'tests.*',
+            'docker',
+            'docs',
+        ]
     ),
     package_data={'bali': ['db/*.pyi']},
     include_package_data=True,

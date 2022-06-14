@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer
 
 from bali.db import db
-from bali.schema import model_to_schema
+from bali.schemas import model_to_schema
 
 DB_URI = 'sqlite:///:memory:'
 

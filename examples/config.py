@@ -9,7 +9,7 @@ class Settings(BaseSettings):
 
     DATABASE_SERVER: str = '127.0.0.1'
     DATABASE_USER: str = 'root'
-    DATABASE_PASSWORD: str = '123456'
+    DATABASE_PASSWORD: str = ''
     DATABASE_NAME: str = 'bali_test'
     SQLALCHEMY_DATABASE_URI: str = None
 

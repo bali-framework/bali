@@ -5,6 +5,10 @@ from bali.decorators import action
 
 
 class TestBaliApp:
+    def setup_class(self):
+        # clear Bali singleton
+        Bali.__clear__()
+
     def test_initialize_default_values(self):
         app = Bali()
         assert app.base_settings == {}

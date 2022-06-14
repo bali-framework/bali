@@ -12,7 +12,9 @@ from pydantic import BaseModel
 from .events import register_callback
 from .exceptions import ReturnTypeError
 from .paginate import paginate
+from .schemas import get_schema_in
 from .utils import MessageToDict, ParseDict
+from .resources.grpc_actions import process_rpc
 
 logger = logging.getLogger('bali')
 
@@ -23,64 +25,7 @@ def compatible_method(func):
 
         # Put args to inner function from request object
         if self._is_rpc:
-            request_data = MessageToDict(
-                self._request,
-                including_default_value_fields=True,
-                preserving_proto_field_name=True,
-            )
-
-            if func.__name__ == 'get':
-                pk = self._request.id
-                result = func(self, pk)
-                if not isinstance(result, dict):
-                    result = result.dict()
-                response_data = {'data': result}
-
-            elif func.__name__ == 'list':
-                schema_in = get_schema_in(func)
-                result = func(self, schema_in(**request_data))
-                # Paginated the result queryset or iterable object
-                if isinstance(result, BaseModel):
-                    raise ReturnTypeError(
-                        'Generic actions `list` should return a sequence'
-                    )
-                else:
-                    set_page(Page)
-                    params = LimitOffsetParams(
-                        limit=request_data.get('limit') or 10,
-                        offset=request_data.get('offset'),
-                    )
-                    response_data = paginate(
-                        result, params=params, is_rpc=True
-                    )
-
-            elif func.__name__ in ['create', 'update']:
-                schema_in = get_schema_in(func)
-                data = request_data.get('data')
-                result = func(self, schema_in(**data))
-                if not isinstance(result, dict):
-                    result = result.dict()
-                response_data = {'data': result}
-
-            elif func.__name__ == 'delete':
-                pk = self._request.id
-                result = func(self, pk)
-                response_data = {'result': bool(result)}
-
-            else:
-                # custom action
-                schema_in = get_schema_in(func)
-                result = func(self, schema_in(**request_data))
-                if not isinstance(result, dict):
-                    result = result.dict()
-                response_data = result
-
-            # Convert response data to gRPC response
-            return ParseDict(
-                response_data,
-                self._response_message(),
-                ignore_unknown_fields=True
-            )
+            return process_rpc(self, func)
 
         return func(self, *args, **kwargs)
 
@@ -199,27 +144,6 @@ def action(methods=None, detail=None, **kwargs):
             setattr(owner, '_actions', _actions)
 
     return Action
-
-
-def get_schema_in(func):
-    typed_signature = get_typed_signature(func)
-    signature_params = typed_signature.parameters
-
-    # 1st argument is self
-    # 2st argument is schema_in
-    index = 0
-    for param_name, param in signature_params.items():
-        index += 1
-        if index == 2 or param_name == 'schema_in':
-            schema_in = param.annotation
-            if not schema_in:
-                raise ValueError(
-                    'Custom actions must provide `schema_in` argument with annotation'
-                )
-
-            return schema_in
-    else:
-        raise ValueError('Custom actions arguments error')
 
 
 def event_handler(event_type):
