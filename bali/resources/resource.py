@@ -322,11 +322,7 @@ class ServicerGenerator(Generator):
         self.cls = cls
 
     def __call__(self, app):
-
         self.app = app
-
-        # To fixed generic get action `/item/{id}` conflict with custom action `/item/hello`,
-        # must make sure get action `/item/{id}` is below custom action
         actions = sorted(
             self.cls._actions.keys(), key=lambda x: x in GENERIC_ACTIONS
         )
