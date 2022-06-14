@@ -12,9 +12,6 @@
 - Generated gRPC servicer for register resources 🍕 [PR#125](https://github.com/bali-framework/bali/pull/125)
 - Introduce `pytest-grpc` for RPC service testing
 
-### Fixed
-- Optimized and fixed ModelResource in resource register style
-
 ### Changed
 - Removed deprecated `connection.retry_on_deadlock_decorator`
 - Removed deprecated `connection.close_connection`
@@ -25,6 +22,7 @@
 
 ### Fixed
 - Fixed initialize http service every requests
+- Optimized and fixed ModelResource in resource register style
 
 ## [3.1.0 ~ 3.1.6] 2020-04-30 ~ 2020-05-23
 ### Added

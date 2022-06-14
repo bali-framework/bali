@@ -20,7 +20,7 @@ from .._utils import pluralize
 from ..routing import APIRouter
 from ..schemas import ResultResponse, model_to_schema
 
-__all__ = ['GENERIC_ACTIONS', 'Resource', 'Preprocessor']
+__all__ = ['GENERIC_ACTIONS', 'Resource', 'pre_process']
 
 GENERIC_ACTIONS = [
     'list',
@@ -89,7 +89,7 @@ class Resource(metaclass=ResourceMeta):
     # noinspection PyMethodFirstArgAssignment
     @classmethod
     def as_router(cls):
-        cls = Preprocessor(cls)
+        cls = pre_process(cls)
         return RouterGenerator(cls)()
 
     # noinspection PyMethodFirstArgAssignment
@@ -98,19 +98,18 @@ class Resource(metaclass=ResourceMeta):
         return ServicerGenerator(cls)(app)
 
 
-class Preprocessor:
+def pre_process(resource_cls):
     """Preprocess Resource"""
-    def __new__(cls, resource_cls):
 
-        # Auto generate model schema
-        if resource_cls.schema is None:
-            if getattr(resource_cls, 'model', None) is not None:
-                resource_cls.schema = model_to_schema(
-                    resource_cls.model,
-                    partial=True,
-                )
+    # Auto generate model schema
+    if resource_cls.schema is None:
+        if getattr(resource_cls, 'model', None) is not None:
+            resource_cls.schema = model_to_schema(
+                resource_cls.model,
+                partial=True,
+            )
 
-        return resource_cls
+    return resource_cls
 
 
 # noinspection PyUnresolvedReferences

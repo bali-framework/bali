@@ -6,7 +6,7 @@ from sqlalchemy import Column, Integer, String
 from bali.db import db
 from bali.db.operators import get_filters_expr
 from bali.decorators import action
-from bali.resources import Resource, Preprocessor
+from bali.resources import Resource, pre_process
 from bali.schemas import ListRequest
 from tests.main import IsAuthenticated
 
@@ -93,10 +93,10 @@ def test_resource_custom_actions():
     assert len(resource.recents()) > 0
 
 
-class TestResourcePreprocessor:
+class TestResourcePreProcess:
     def test_processed_object_not_change(self):
         class TestResource(Resource):
             pass
 
-        result = Preprocessor(TestResource)
+        result = pre_process(TestResource)
         assert result is TestResource
