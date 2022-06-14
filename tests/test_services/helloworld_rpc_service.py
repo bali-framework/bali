@@ -1,3 +1,8 @@
+import sys
+
+
+print('sys.path[0]: ', sys.path[0])
+
 from .protos import helloworld_pb2 as pb2
 from .protos import helloworld_pb2_grpc as pb2_grpc
 
