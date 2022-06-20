@@ -15,8 +15,7 @@ _settings.AMQP_CONFIGS = {
     'default': {
         'AMQP_SERVER_ADDRESS': amqp_uri,
         'EXCHANGE_NAME': 'HELLO_WORLD_TEST',
-        'EXCHANGE_TYPE': 'fanout',
-        'QUEUE_NAME': 'QUEQUE_C'
+        'EXCHANGE_TYPE': 'fanout'
     }
 }
 _settings.EVENT_TYPE_TO_AMQP = {'test0': 'default', 'test1': 'default'}

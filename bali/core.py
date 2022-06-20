@@ -87,7 +87,6 @@ def initialize(settings):
         )
     if hasattr(settings, 'LOGGING_CONFIG'):
         logging.config.dictConfig(settings.LOGGING_CONFIG)
-
     if not hasattr(settings, 'BALI_QUEUE'):
         settings.Config.__setattr__(settings, 'BALI_QUEUE', '{}.events')
 

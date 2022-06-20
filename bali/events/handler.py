@@ -53,9 +53,15 @@ def register_callback(event_type, callback):
             amqp_config.get('EXCHANGE_NAME', _settings.BALI_EXCHANGE),
             type=exchange_type
         )
+        queue_name = amqp_config.get('QUEUE_NAME')
+        if not queue_name:
+            if exchange_type == 'fanout':
+                queue_name = _settings.BALI_QUEUE.format('')
+            else:
+                queue_name = _settings.BALI_QUEUE.format(event_type)
+
         queue = Queue(
-            amqp_config.get('QUEUE_NAME') or
-            _settings.BALI_QUEUE.format(event_type),
+            queue_name,
             exchange=exchange,
             routing_key=routing_key
         )
