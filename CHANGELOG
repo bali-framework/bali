@@ -3,7 +3,9 @@
 # This project adheres to [Semantic Versioning](http://semver.org/).
 # includes Added / Changed / Fixed
 
-## [3.2.0] UNRELEASED
+## [3.3.0] UNRELEASED
+
+## [3.2.0] 2022-06-16
 ### Added
 - The concept of `manager` is introduced 🥂
 - New elegant model API methods 🥂 [PR#122](https://github.com/bali-framework/bali/pull/122)
