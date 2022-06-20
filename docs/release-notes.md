@@ -1,30 +1,24 @@
-# Change Log
-# All notable changes to this project will be documented in this file.
-# This project adheres to [Semantic Versioning](http://semver.org/).
-# includes Added / Changed / Fixed
+# Release Notes
 
-## [3.3.0] UNRELEASED
+> Change Log
+> 
+> All notable changes to this project will be documented in this file.
+> 
+> This project adheres to [Semantic Versioning](http://semver.org/).
+> 
+> includes Added / Changed / Fixed
+> 
 
-## [3.2.0] 2022-06-16
+## [3.2.0] UNRELEASED
 ### Added
-- The concept of `manager` is introduced 🥂
-- New elegant model API methods 🥂 [PR#122](https://github.com/bali-framework/bali/pull/122)
+- The concept of `manager` is introduced
+- New elegant model API methods [PR#122](https://github.com/bali-framework/bali/pull/122)
 - Added `db.Base` declarative_base
-- Application add `__clear__` for the convenience of unit testing
-- Generated gRPC servicer for register resources 🍕 [PR#125](https://github.com/bali-framework/bali/pull/125)
-- Introduce `pytest-grpc` for RPC service testing
 
 ### Changed
 - Removed deprecated `connection.retry_on_deadlock_decorator`
 - Removed deprecated `connection.close_connection`
 - Updated related projects link comes from bali framework organization
-- Removed deprecated `bali.schema`, use `bali.schemas` instead
-- Marked `GRPCTestBase` as deprecated, will removed in v3.5
-- Add more unit tests to ensure project quality 🏄‍
-
-### Fixed
-- Fixed initialize http service every requests
-- Optimized and fixed ModelResource in resource register style
 
 ## [3.1.0 ~ 3.1.6] 2020-04-30 ~ 2020-05-23
 ### Added

@@ -4,61 +4,62 @@ from typing import List, Optional
 from bali.decorators import action
 from bali.resources import Resource
 from bali.schemas import GetRequest, ListRequest
-from permissions import IsAuthenticated
+from ..permissions import IsAuthenticated
 
 GREETERS = [{'id': i, 'content': 'Hi, number %s' % i} for i in range(10)]
 
 
-class AsyncGreeter(BaseModel):
+class Greeter(BaseModel):
     id: int
     content: str
 
 
-class AsyncGreeterFilter(BaseModel):
+class GreeterFilter(BaseModel):
     ids: List[int]
 
 
-class AsyncGreeterResource(Resource):
+class GreeterResource(Resource):
 
-    schema = AsyncGreeter
+    schema = Greeter
     filters = [
         {'name': str},
         {'title': Optional[str]},
     ]
     permission_classes = [IsAuthenticated]
 
-    @action(http_only=True)
-    async def get(self, pk=None):
+    @action()
+    def get(self, pk=None):
+        print('greeter pk: %s' % pk)
         return [g for g in GREETERS if g.get('id') == pk][0]
 
     @action()
-    async def list(self, schema_in: ListRequest = None):
+    def list(self, schema_in: ListRequest = None):
         # `list` NOT FULL SUPPORT HTTP REQUEST
         # return GREETERS[:schema_in.limit]
         print(schema_in.filters.get('name'))
         return GREETERS
 
     @action()
-    async def create(self, schema_in: schema = None):
+    def create(self, schema_in: schema = None):
         return {'id': schema_in.id, 'content': schema_in.content}
 
     @action()
-    async def update(self, schema_in: schema = None, pk=None):
+    def update(self, schema_in: schema = None, pk=None):
         return {'id': pk, 'content': schema_in.content}
 
     @action()
-    async def delete(self, pk=None):
+    def delete(self, pk=None):
         return {'result': True}
 
     @action(detail=False)
-    async def recents(self):
+    def recents(self):
         return GREETERS[:2]
 
     @action(detail=True)
-    async def items_recents(self, pk=None):
+    def items_recents(self, pk=None):
         return [g for g in GREETERS if g.get('id') == pk]
 
     @action(detail=False, methods=['post'])
-    async def custom_create(self, schema_in: AsyncGreeterFilter):
+    def custom_create(self, schema_in: GreeterFilter):
         print('schema_in', schema_in)
         return GREETERS[0]

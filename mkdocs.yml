@@ -31,6 +31,7 @@ nav:
 - Schema: schema.md
 - Utility: utility.md
 - Testing: testing.md
+- Release Notes: release-notes.md
 
 markdown_extensions:
   - mkautodoc

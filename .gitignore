@@ -131,3 +131,7 @@ dmypy.json
 
 # PyCharm settings
 .idea/
+
+# test and example sqlite db file
+tests/test.db
+examples/**/*.sqlite
