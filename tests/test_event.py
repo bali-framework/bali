@@ -157,8 +157,8 @@ class TestBaliAppEvent:
         channel.exchange_delete(self.exchange)
 
     def test_amqp_infrastructure_ready(self):
-        app = Bali(title='product', event_handler=event_handlers)
-
+        app = Bali(title='product', event_handler=event_handlers.EventHandler)
+        handle()
         # 4. Assert `product.events` queue exists，and bind to exchange `ms.events`
         conn = Connection(amqp_uri)
         channel = conn.channel()

@@ -44,27 +44,26 @@ def register_callback(event_type, callback):
                 'Can not find key:%s at AMQP_CONFIGS' % amqp_config_key
             )
         routing_key = None
-        exchange_type = amqp_config.get('EXCHANGE_TYPE')
+        exchange_type = amqp_config.get('EXCHANGE_TYPE') or 'direct'
         if exchange_type != 'fanout':
             routing_key = amqp_config.get(
                 'ROUTING_KEY'
             ) or _settings.BALI_ROUTING_KEY.format(event_type)
+        # Fails when exchange type is different and exchange name is same
         exchange = Exchange(
-            amqp_config.get('EXCHANGE_NAME', _settings.BALI_EXCHANGE),
+            amqp_config.get(
+                'EXCHANGE_NAME', f'{_settings.BALI_EXCHANGE}_{exchange_type}'
+            ),
             type=exchange_type
         )
         queue_name = amqp_config.get('QUEUE_NAME')
         if not queue_name:
             if exchange_type == 'fanout':
-                queue_name = _settings.BALI_QUEUE.format('')
+                queue_name = _settings.BALI_QUEUE.format('ms')
             else:
                 queue_name = _settings.BALI_QUEUE.format(event_type)
 
-        queue = Queue(
-            queue_name,
-            exchange=exchange,
-            routing_key=routing_key
-        )
+        queue = Queue(queue_name, exchange=exchange, routing_key=routing_key)
         global REGISTER_EVENT_CALLBACKS
         REGISTER_EVENT_CALLBACKS.append(
             Callback(queue, callback, amqp_config['AMQP_SERVER_ADDRESS'])
