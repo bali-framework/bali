@@ -14,7 +14,6 @@ from .exceptions import ReturnTypeError
 from .paginate import paginate
 from .schemas import get_schema_in
 from .utils import MessageToDict, ParseDict
-from .resources.grpc_actions import process_rpc
 
 logger = logging.getLogger('bali')
 
@@ -25,6 +24,7 @@ def compatible_method(func):
 
         # Put args to inner function from request object
         if self._is_rpc:
+            from .resources.grpc_actions import process_rpc
             return process_rpc(self, func)
 
         return func(self, *args, **kwargs)
@@ -146,11 +146,19 @@ def action(methods=None, detail=None, **kwargs):
     return Action
 
 
+HANDLER = None
+
+
+def init_handler(handler_cls):
+    global HANDLER
+    HANDLER = handler_cls()
+
+
 def event_handler(event_type):
     # find queue by event_type
     def decorator(func):
         @functools.wraps(func)
-        def wrapper(body, message):
+        def wrapper(self, body, message):
             try:
                 if isinstance(body, str):
                     body = json.loads(body)
@@ -167,13 +175,13 @@ def event_handler(event_type):
                     ):
                         event = param.annotation(**body)
                         break
-                res = func(event or body)
+                res = func(self, event or body)
                 message.ack()
                 return res
             except:
                 logger.error(traceback.format_exc())
-
-        register_callback(event_type, wrapper)
+        callback = functools.partial(wrapper, HANDLER)
+        register_callback(event_type, callback)
         return wrapper
 
     return decorator

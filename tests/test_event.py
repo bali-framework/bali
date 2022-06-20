@@ -17,8 +17,7 @@ _settings.AMQP_CONFIGS = {
     'default': {
         'AMQP_SERVER_ADDRESS': amqp_uri,
         'EXCHANGE_NAME': 'HELLO_WORLD_TEST',
-        'EXCHANGE_TYPE': 'fanout',
-        'QUEUE_NAME': 'QUEQUE_C'
+        'EXCHANGE_TYPE': 'fanout'
     }
 }
 _settings.EVENT_TYPE_TO_AMQP = {'test0': 'default', 'test1': 'default'}
@@ -158,8 +157,8 @@ class TestBaliAppEvent:
         channel.exchange_delete(self.exchange)
 
     def test_amqp_infrastructure_ready(self):
-        app = Bali(title='product', event_handler=event_handlers)
-
+        app = Bali(title='product', event_handler=event_handlers.EventHandler)
+        handle()
         # 4. Assert `product.events` queue exists，and bind to exchange `ms.events`
         conn = Connection(amqp_uri)
         channel = conn.channel()
