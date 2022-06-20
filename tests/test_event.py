@@ -142,9 +142,9 @@ def test_queue_declared_in_event_handler(mocker):
 class TestBaliAppEvent:
     """Test event infrastructure ready when event handle provided"""
 
-    title = 'product'
+    title = 'app_product'
     exchange = 'ms.events'
-    queue = 'product.events'
+    queue = 'app_product.events'
 
     def setup_class(self):
         # clear Bali singleton
@@ -157,7 +157,12 @@ class TestBaliAppEvent:
         channel.exchange_delete(self.exchange)
 
     def test_amqp_infrastructure_ready(self):
-        app = Bali(title='product', event_handler=event_handlers.EventHandler)
+        _settings.Config.__setattr__(_settings, 'SERVER_NAME', 'app_product')
+        _settings.Config.__setattr__(_settings, 'BALI_QUEUE', 'app_product.events')
+        app = Bali(
+            title='app_product',
+            event_handler=event_handlers.EventHandler
+        )
         handle()
         # 4. Assert `product.events` queue exists，and bind to exchange `ms.events`
         conn = Connection(amqp_uri)
