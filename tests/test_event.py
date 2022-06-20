@@ -5,9 +5,11 @@ import amqp
 import pytest
 from kombu import Connection, Exchange, Queue
 
+from bali import Bali
 from bali.core import _settings
 from bali.decorators import event_handler
 from bali.events import Event, dispatch, handle
+from . import event_handlers
 
 amqp_uri = os.getenv('AMQP_SERVER_ADDRESS', default='amqp://127.0.0.1:5672')
 
@@ -27,34 +29,34 @@ class MockMessage:
         pass
 
 
-@event_handler(event_type='test0')
-def call_test0(event: Event):
-    print('test0 received:', event, type(event))
-    print(os.path.dirname('bbb.txt'))
-    return event
+class TestHandle:
+    @event_handler(event_type='test0')
+    def call_test0(self, event: Event):
+        print('test0 received:', event, type(event))
+        print(os.path.dirname('bbb.txt'))
+        return event
 
-
-@event_handler(event_type='test1')
-def call_test1(event):
-    print('test1 received:', event, type(event))
-    print(os.path.basename('aaa.txt'))
+    @event_handler(event_type='test1')
+    def call_test1(self, event):
+        print('test1 received:', event, type(event))
+        print(os.path.basename('aaa.txt'))
 
 
 def test_when_message_body_is_str():
     body = '{"type":"hello", "payload":""}'
-    res = call_test0(body, message=MockMessage())
+    res = TestHandle().call_test0(body, message=MockMessage())
     assert res is None
     body = '{"type": "test0", "payload": ""}'
-    res = call_test0(body, message=MockMessage())
+    res = TestHandle().call_test0(body, message=MockMessage())
     assert res == Event(**json.loads(body))
 
 
 def test_when_message_body_is_dict():
     event = {"type": "hello", "payload": ""}
-    res = call_test0(event, message=MockMessage())
+    res = TestHandle().call_test0(event, message=MockMessage())
     assert res is None
     event = {"type": "test0", "payload": ""}
-    res = call_test0(event, message=MockMessage())
+    res = TestHandle().call_test0(event, message=MockMessage())
     assert res == Event(**event)
 
 
@@ -136,3 +138,32 @@ def test_queue_declared_in_event_handler(mocker):
     # clean
     b.delete()
     conn.close()
+
+
+class TestBaliAppEvent:
+    """Test event infrastructure ready when event handle provided"""
+
+    title = 'product'
+    exchange = 'ms.events'
+    queue = 'product.events'
+
+    def setup_class(self):
+        # clear Bali singleton
+        Bali.__clear__()
+
+        # Delete RabbitMQ's ms.events exchange
+        conn = Connection(amqp_uri)
+        channel = conn.channel()
+        channel.queue_delete(self.queue)
+        channel.exchange_delete(self.exchange)
+
+    def test_amqp_infrastructure_ready(self):
+        app = Bali(title='product', event_handler=event_handlers)
+
+        # 4. Assert `product.events` queue exists，and bind to exchange `ms.events`
+        conn = Connection(amqp_uri)
+        channel = conn.channel()
+        b = Queue(self.queue, self.exchange, self.queue, channel=channel)
+        assert b.queue_declare(passive=True)
+
+        conn.close()
