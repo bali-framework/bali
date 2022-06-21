@@ -26,17 +26,23 @@ class MockMessage:
         pass
 
 
+def handle_test_handler_test0(event):
+    pass
+
+
+def handle_test_handler_test1(event: dict):
+    pass
+
+
 class TestHandle:
     @event_handler(event_type='test0')
     def call_test0(self, event: Event):
-        print('test0 received:', event, type(event))
-        print(os.path.dirname('bbb.txt'))
+        handle_test_handler_test0(event)
         return event
 
     @event_handler(event_type='test1')
     def call_test1(self, event):
-        print('test1 received:', event, type(event))
-        print(os.path.basename('aaa.txt'))
+        handle_test_handler_test1(event)
 
 
 def test_when_message_body_is_str():
@@ -92,11 +98,13 @@ handle()
 
 
 def test_event_handler(mocker):
-    mocker.patch('os.path.basename')
-    mocker.patch('os.path.dirname')
+    mocker.patch(f'{__name__}.handle_test_handler_test0')
+    mocker.patch(f'{__name__}.handle_test_handler_test1')
     handle()
-    os.path.basename.assert_called_with('aaa.txt')
-    os.path.dirname.assert_called_with('bbb.txt')
+    event0 = Event(type='test0', payload={'hello': 'world2222222'})
+    event1 = Event(type='test1', payload={'hello': 'world1111111'})
+    handle_test_handler_test0.assert_called_with(event0)
+    handle_test_handler_test1.assert_called_with(event1.dict())
 
 
 def test_queue_declared_in_event_handler(mocker):
