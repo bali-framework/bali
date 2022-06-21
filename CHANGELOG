@@ -5,6 +5,13 @@
 
 ## [3.3.0] UNRELEASED
 
+## [3.2.1] UNRELEASED
+### Added
+- Event handler support class style
+
+### Fixed
+- Fixed event handler message queue message stacking
+
 ## [3.2.0] 2022-06-16
 ### Added
 - The concept of `manager` is introduced 🥂
