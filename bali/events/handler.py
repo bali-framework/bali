@@ -3,8 +3,6 @@ from itertools import groupby
 
 from kombu import Connection, Queue, connections, Exchange
 
-from ..core import _settings
-
 REGISTER_EVENT_CALLBACKS = []
 
 
@@ -31,6 +29,7 @@ class Callback:
 
 
 def register_callback(event_type, callback):
+    from ..core import _settings
     amqp_config_keys = _settings.EVENT_TYPE_TO_AMQP.get(event_type, 'default')
     if not amqp_config_keys:
         raise Exception(
