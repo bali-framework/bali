@@ -3,8 +3,6 @@ from itertools import groupby
 
 from kombu import Connection, Queue, connections, Exchange
 
-from ..core import _settings
-
 REGISTER_EVENT_CALLBACKS = []
 
 
@@ -31,6 +29,7 @@ class Callback:
 
 
 def register_callback(event_type, callback):
+    from ..core import _settings
     amqp_config_keys = _settings.EVENT_TYPE_TO_AMQP.get(event_type, 'default')
     if not amqp_config_keys:
         raise Exception(
@@ -81,10 +80,10 @@ def handle():
         items = list(items)
         with get_connection(amqp_address=items[0].connection) as conn:
             with conn.Consumer(
-                queues=[items[0].queue],
-                accept=['json'],
-                callbacks=[i.callback for i in items],
-                auto_declare=True
+                    queues=[items[0].queue],
+                    accept=['json'],
+                    callbacks=[i.callback for i in items],
+                    auto_declare=True
             ) as consumer:
                 try:
                     conn.drain_events(timeout=2)
