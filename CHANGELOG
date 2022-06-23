@@ -9,8 +9,12 @@
 ### Added
 - Event handler support class style
 
+### Changed
+- Removed dependency python-jose[cryptography]==3.2.0
+
 ### Fixed
 - Fixed event handler message queue message stacking
+- Fixed generic rpc schema find issue when it been override
 
 ## [3.2.0] 2022-06-16
 ### Added
