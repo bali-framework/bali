@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from .._utils import parse_dict
 from ..exceptions import ReturnTypeError
 from ..paginate import paginate
-from ..schemas import get_schema_in, UpdateRequest
+from ..schemas import get_schema_in, UpdateRequest, CreateRequest
 from ..utils import MessageToDict, ParseDict
 
 
@@ -51,17 +51,30 @@ def process_rpc(resource, func):
             )
 
     elif func.__name__ in ['create', 'update']:
-        generic_schema_in = get_schema_in(func, default_by_action=True)
-        generic_schema = generic_schema_in(**request_data)
+        schema_in = get_schema_in(func, default_by_action=True)
 
-        if isinstance(generic_schema, UpdateRequest):
+        # if schema_in is not generic schema and has `data` key
+        # parse data from `data`
+        # eg : {'data': {'name': 'bali'}}
+        if schema_in not in [CreateRequest, UpdateRequest]:
+            request_data = request_data.get('data')
+
+        schema = schema_in(**request_data)
+
+        if isinstance(schema, CreateRequest):
             result = func(
                 resource,
-                resource.schema(**generic_schema.data),
-                pk=generic_schema.id,
+                resource.schema(**schema.data),
+            )
+        elif isinstance(schema, UpdateRequest):
+            result = func(
+                resource,
+                resource.schema(**schema.data),
+                pk=schema.id,
             )
         else:
-            result = func(resource, resource.schema(**generic_schema.data))
+            # Not generic `create` or `update` or been override
+            result = func(resource, schema)
 
         result = parse_dict(result, schema=resource.schema)
         response_data = {'data': result}
