@@ -80,10 +80,10 @@ def handle():
         items = list(items)
         with get_connection(amqp_address=items[0].connection) as conn:
             with conn.Consumer(
-                    queues=[items[0].queue],
-                    accept=['json'],
-                    callbacks=[i.callback for i in items],
-                    auto_declare=True
+                queues=[items[0].queue],
+                accept=['json'],
+                callbacks=[i.callback for i in items],
+                auto_declare=True
             ) as consumer:
                 try:
                     conn.drain_events(timeout=2)
