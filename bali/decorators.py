@@ -158,7 +158,7 @@ def event_handler(event_type):
     # find queue by event_type
     def decorator(func):
         @functools.wraps(func)
-        def wrapper(self, body, message):
+        def wrapper(body, message):
             try:
                 if isinstance(body, str):
                     body = json.loads(body)
@@ -175,13 +175,13 @@ def event_handler(event_type):
                     ):
                         event = param.annotation(**body)
                         break
-                res = func(self, event or body)
+                res = func(HANDLER, event or body)
                 message.ack()
                 return res
             except:
                 logger.error(traceback.format_exc())
-        callback = functools.partial(wrapper, HANDLER)
-        register_callback(event_type, callback)
+
+        register_callback(event_type, wrapper)
         return wrapper
 
     return decorator
