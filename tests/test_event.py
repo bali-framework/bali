@@ -6,7 +6,7 @@ import pytest
 from kombu import Connection, Exchange, Queue
 
 from bali.core import _settings
-from bali.decorators import event_handler
+from bali.decorators import event_handler, init_handler
 from bali.events import Event, dispatch, handle
 
 amqp_uri = os.getenv('AMQP_SERVER_ADDRESS', default='amqp://127.0.0.1:5672')
@@ -38,11 +38,19 @@ class TestHandle:
     @event_handler(event_type='test0')
     def call_test0(self, event: Event):
         handle_test_handler_test0(event)
+        self.instance_fun()
         return event
 
     @event_handler(event_type='test1')
     def call_test1(self, event):
         handle_test_handler_test1(event)
+
+    @staticmethod
+    def instance_fun():
+        print('instance_fun')
+
+
+init_handler(TestHandle)
 
 
 def test_when_message_body_is_str():
