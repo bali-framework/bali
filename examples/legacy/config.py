@@ -5,7 +5,7 @@ from bali.core import initialize
 
 
 class Settings(BaseSettings):
-    SERVER_NAME: str = 'bali-test'
+    SERVER_NAME: str = 'legacy'
 
     DATABASE_SERVER: str = '127.0.0.1'
     DATABASE_USER: str = 'root'
@@ -24,6 +24,15 @@ class Settings(BaseSettings):
 
     CACHE_ADDRESS: str = '127.0.0.1'
     CACHE_PASSWORD: str = '123456'
+
+    AMQP_SERVER_ADDRESS: str = 'amqp://127.0.0.1:5672'
+
+    AMQP_CONFIGS = {
+        'default': {
+            'AMQP_SERVER_ADDRESS': AMQP_SERVER_ADDRESS,
+            'EXCHANGE_TYPE': 'fanout',
+        }
+    }
 
 
 settings = Settings()
