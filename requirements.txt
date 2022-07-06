@@ -2,7 +2,7 @@ aiomysql
 aiosqlite
 dateparser>=1.1.0
 decamelize==0.1.2
-fastapi[all]>=0.63.0,<0.70
+fastapi[all]>=0.63.0,<0.76
 fastapi-pagination~=0.9.0
 greenlet~=1.0
 grpcio>=1.32.0,<1.42
