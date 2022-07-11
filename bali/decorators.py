@@ -162,8 +162,13 @@ def event_handler(event_type):
             try:
                 if isinstance(body, str):
                     body = json.loads(body)
-                if isinstance(body, dict) and body.get('type') != event_type:
-                    return
+                if isinstance(body, dict):
+                    from bali.events import REGISTER_EVENT_TYPES
+                    if body.get('type') not in REGISTER_EVENT_TYPES:
+                        message.ack()
+                        return
+                    if body.get('type') != event_type:
+                        return
                 typed_signature = get_typed_signature(func)
                 signature_params = typed_signature.parameters
                 event = None
