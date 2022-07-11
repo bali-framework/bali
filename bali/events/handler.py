@@ -4,6 +4,7 @@ from itertools import groupby
 from kombu import Connection, Queue, connections, Exchange
 
 REGISTER_EVENT_CALLBACKS = []
+REGISTER_EVENT_TYPES = []
 
 
 class Callback:
@@ -64,9 +65,11 @@ def register_callback(event_type, callback):
 
         queue = Queue(queue_name, exchange=exchange, routing_key=routing_key)
         global REGISTER_EVENT_CALLBACKS
+        global REGISTER_EVENT_TYPES
         REGISTER_EVENT_CALLBACKS.append(
             Callback(queue, callback, amqp_config['AMQP_SERVER_ADDRESS'])
         )
+        REGISTER_EVENT_TYPES.append(event_type)
 
 
 def get_connection(amqp_address):
