@@ -5,9 +5,14 @@
 
 ## [3.3.0] UNRELEASED
 
-## [3.2.1] UNRELEASED
+## [3.2.2] 2022-07-11
+### Fixed
+- Fixed event stacking when no handler matched [PR#139](https://github.com/bali-framework/bali/pull/139)
+
+## [3.2.1] 2022-07-05
 ### Added
 - Event handler support class style
+- Added bali.Environments
 
 ### Changed
 - Removed dependency python-jose[cryptography]==3.2.0

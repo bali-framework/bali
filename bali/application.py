@@ -143,11 +143,13 @@ class Bali:
 
     def _launch_event(self):
         from .events import handle
-        from bali import init_handler
+        from bali import init_handler, __version__
+
         event_handler = self.kwargs.get('event_handler')
         if not event_handler:
             raise Exception('event_handler not provided')
         init_handler(event_handler)
+        logger.info('Bali v%s Event started.', __version__)
         while True:
             handle()
 
