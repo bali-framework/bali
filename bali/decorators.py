@@ -165,7 +165,8 @@ def event_handler(event_type):
                 if isinstance(body, dict):
                     from bali.events import REGISTER_EVENT_TYPES
                     if body.get('type') not in REGISTER_EVENT_TYPES:
-                        message.ack()
+                        if not message.acknowledged:
+                            message.ack()
                         return
                     if body.get('type') != event_type:
                         return
