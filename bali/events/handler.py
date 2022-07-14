@@ -1,10 +1,14 @@
+import logging
 import socket
+import traceback
 from itertools import groupby
 
 from kombu import Connection, Queue, connections, Exchange
 
 REGISTER_EVENT_CALLBACKS = []
 REGISTER_EVENT_TYPES = []
+
+logger = logging.getLogger('bali')
 
 
 class Callback:
@@ -92,6 +96,6 @@ def handle():
                     conn.drain_events(timeout=2)
                 except socket.timeout:
                     pass
-                except Exception as e:
-                    raise e
+                except:
+                    logger.error(traceback.format_exc())
     return True
