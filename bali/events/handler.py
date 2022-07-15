@@ -1,5 +1,6 @@
 import logging
 import socket
+import time
 import traceback
 from itertools import groupby
 
@@ -98,4 +99,5 @@ def handle():
                     pass
                 except:
                     logger.error(traceback.format_exc())
+                    time.sleep(2)
     return True
