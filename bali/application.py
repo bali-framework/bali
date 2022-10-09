@@ -61,6 +61,8 @@ class Bali:
         # Construct a ServiceServicer class ref to `self._rpc_servicer`
         self.rpc()
 
+        self.resolve_declarative()
+
     def __getattribute__(self, attr, *args, **kwargs):
         try:
             return super().__getattribute__(attr)
@@ -253,6 +255,15 @@ class Bali:
                 resource_cls.as_servicer(self)
 
         add_pagination(self._app)
+
+    def resolve_declarative(self):
+        """Resolve declarative APIs"""
+
+        # Auto find API and load
+
+        # Resolved declarative APIs to resource
+        from bali.declarative import API
+        self.register([factory() for factory in API.resources_factories])
 
     def start(self):
         typer.run(self.launch)
