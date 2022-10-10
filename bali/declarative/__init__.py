@@ -32,39 +32,67 @@ class ResourceFactory:
         self._dict_response_values = {}
 
     def __call__(self, *args, **kwargs):
-
         @action()
         def list(self, *args, **kwargs):
-            if 'list' in self._factory._dict_response_values:
-                return self._factory._dict_response_values['list']
+            if "list" in self._factory._dict_response_values:
+                return self._factory._dict_response_values["list"]
 
             return self._factory._schema.find()
 
         @action()
+        def create(self, *args, **kwargs):
+            if "create" in self._factory._dict_response_values:
+                return self._factory._dict_response_values["create"]
+
+            raise NotImplementedError
+
+        @action()
         def get(self, pk):
-            if 'get' in self._factory._dict_response_values:
-                return self._factory._dict_response_values['get']
+            if "get" in self._factory._dict_response_values:
+                return self._factory._dict_response_values["get"]
 
             return self._factory._schema.find(pk)
+
+        @action()
+        def update(self, *args, **kwargs):
+            if "update" in self._factory._dict_response_values:
+                return self._factory._dict_response_values["update"]
+
+            raise NotImplementedError
+
+        @action()
+        def delete(self, *args, **kwargs):
+            if "delete" in self._factory._dict_response_values:
+                return self._factory._dict_response_values["delete"]
+
+            raise NotImplementedError
+
+        type_dict = self._get_resource_type_dict(locals())
 
         # noinspection PyUnresolvedReferences
         return type(
             f"{humps.pascalize(self.resource_name)}Resource",
             (Resource, ),
-            {
-                "_factory": self,
-                "schema": self._schema,
-                "list": list,
-                "get": get,
-            },
+            type_dict,
         )
 
     def _push_action(self, actions):
         if not isinstance(actions, list):
             actions = [actions]
-        for action in actions:
-            if action not in self._actions:
-                self._actions.append(action)
+        for action_name in actions:
+            if action_name not in self._actions:
+                self._actions.append(action_name)
+
+    def _get_resource_type_dict(self, contexts):
+        # defined resource class members
+        type_dict = {
+            "_factory": self,
+            "schema": self._schema,
+        }
+        for action_name in self._actions:
+            type_dict[action_name] = contexts[action_name]
+
+        return type_dict
 
     def schema(self, *args, **kwargs):
         """Declare schema
@@ -135,6 +163,7 @@ class ModelSchema(BaseModel):
     Expected support in-memory/SQLAlchemy/Mongo backends
 
     """
+
     _storage = collections.OrderedDict()  # in-memory storage
 
     @classmethod
@@ -176,6 +205,10 @@ class DeclarativeAPI:
         resource_factory = ResourceFactory(resource_name)
         self.resources_factories.append(resource_factory)
         return resource_factory
+
+    def _clear(self):
+        """Reset API values, most used in unittests"""
+        self.__init__()
 
 
 API = DeclarativeAPI()

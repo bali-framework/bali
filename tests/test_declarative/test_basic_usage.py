@@ -9,20 +9,26 @@ class GreeterInMemorySchema(API.schema):
 
 
 class TestDeclarativeBasicUsage:
-    def test_greeter(self):
+    # noinspection PyMethodMayBeStatic
+    def setup_method(self):
         Bali.__clear__()
+
+    def test_greeter(self):
         response = {"Hello": "World"}
         API("Greeter").get(response)
 
         app = Bali()
         client = TestClient(app)
         endpoint = "/greeters"
+
+        response = client.get(f"{endpoint}")
+        assert response.status_code == 404
+
         response = client.get(f"{endpoint}/1")
         assert response.status_code == 200
         assert response.json() == {"Hello": "World"}
 
     def test_greeter_multi_actions(self):
-        Bali.__clear__()
         response = {"Hello": "World"}
         API("GreeterMultiAction").list([response, response]).get(response)
 
@@ -42,12 +48,11 @@ class TestDeclarativeBasicUsage:
             "total": 2,
         }
 
-        response = client.get("/greeters/1")
+        response = client.get(f"{endpoint}/1")
         assert response.status_code == 200
         assert response.json() == {"Hello": "World"}
 
     def test_greeter_in_memory_storage(self):
-        Bali.__clear__()
         API("GreeterMemoryStorage").schema(GreeterInMemorySchema).all()
 
         app = Bali()
@@ -67,4 +72,3 @@ class TestDeclarativeBasicUsage:
         response = client.get(f"{endpoint}/1")
         assert response.status_code == 200
         assert response.json() == {'content': 'test', 'id': 1}
-
