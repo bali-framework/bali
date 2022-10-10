@@ -16,6 +16,10 @@ def singleton(cls):
     def __clear__():
         _instance.clear()
 
+        from bali.declarative import API
+        # noinspection PyProtectedMember
+        API._clear()
+
     inner.__clear__ = __clear__
 
     return inner

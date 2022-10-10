@@ -15,6 +15,7 @@ passlib[bcrypt]==1.7.2
 pillow>=7.2.0,<8.4
 protobuf>=3.15,<=3.20
 pydantic-sqlalchemy>=0.0.7,<1
+pyhumps
 pytz==2021.1
 redis>=3.5.3,<4.3
 regex==2022.1.18
