@@ -3,7 +3,15 @@
 # This project adheres to [Semantic Versioning](http://semver.org/).
 # includes Added / Changed / Fixed
 
+## [3.4.0] UNRELEASED
+
 ## [3.3.0] UNRELEASED
+### Added
+- Integrated database migrate by `FastAPI-Migrate`
+- Declarative API simple resource version (Major feature in 4.0)
+
+### Fixed
+- Fixed importlib-metadata 5.0 conflict with kombu
 
 ## [3.2.2] 2022-07-11
 ### Fixed

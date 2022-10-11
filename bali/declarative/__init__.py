@@ -1,12 +1,11 @@
 import collections
-import uuid
 
 import humps
 import pydantic
-
 from pydantic import BaseModel, create_model
-from ..resources import Resource, ModelResource, GENERIC_ACTIONS
+
 from ..decorators import action
+from ..resources import Resource, GENERIC_ACTIONS
 
 __all__ = ["API"]
 

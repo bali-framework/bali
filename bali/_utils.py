@@ -3,6 +3,7 @@ from typing import Callable, Any
 
 from grpc import Server
 from pydantic import BaseModel
+from typer import Typer
 
 
 def singleton(cls):
@@ -68,3 +69,9 @@ def parse_dict(item: Any, schema: BaseModel = None):
         return schema.from_orm(item).dict()
 
     return item.dict()
+
+
+def run(function: Callable[..., Any]) -> Any:
+    app = Typer()
+    app.command()(function)
+    app()
