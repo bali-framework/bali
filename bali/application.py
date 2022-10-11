@@ -10,13 +10,15 @@ import uvicorn
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.routing import APIRoute
+from fastapi_migrate import Migrate
 from fastapi_pagination import add_pagination
 from starlette.middleware.cors import CORSMiddleware
 
 from ._utils import singleton
+from .cli import entry
 from .middlewares import process_middleware
-from .utils import sync_exec
 from .servicer import get_servicer, make_grpc_serve
+from .utils import sync_exec
 
 logger = logging.getLogger('bali')
 
@@ -215,6 +217,7 @@ class Bali:
         event: bool = False,
         shell: bool = False,
     ):
+        """Bali App entry for version < 4.0"""
         if not any([http, rpc, event, shell]):
             typer.echo(
                 'Please provided service type: '
@@ -266,4 +269,16 @@ class Bali:
         self.register([factory() for factory in API.resources_factories])
 
     def start(self):
-        typer.run(self.launch)
+        # Integrated FastAPI-Migrate
+        try:
+            from bali import db
+            from config import settings
+            Migrate(
+                self,
+                model=db.Model,
+                db_uri=settings.SQLALCHEMY_DATABASE_URI,
+            )
+        except ImportError:
+            logger.debug("No `config.py` provide settings")
+
+        entry(self)  # cli entry

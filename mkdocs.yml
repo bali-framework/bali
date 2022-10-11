@@ -22,8 +22,11 @@ repo_url: https://github.com/bali-framework/bali
 edit_uri: ""
 
 nav:
-- Introduction: index.md
+- Getting Started:
+  - Introduction: index.md
+  - Quick Start: quick-start.md
 - Application: application.md
+- Config: config.md
 - Database: database.md
 - Cache: cache.md
 - Resource: resource.md
