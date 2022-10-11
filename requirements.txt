@@ -9,6 +9,7 @@ greenlet~=1.0
 grpcio>=1.32.0,<=1.48
 grpcio-tools>=1.32.0,<=1.48
 grpc-interceptor==0.15.0
+importlib-metadata<5.0.0
 kombu>=5.2.4,<6.0
 MarkupSafe==2.0.1
 PyMySQL<=0.9.3,>=0.9
