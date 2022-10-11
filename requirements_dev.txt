@@ -2,7 +2,6 @@
 aiosqlite
 coverage==6.2
 greenlet==1.1.2
-importlib-metadata<5.0.0
 mkautodoc
 mkdocs
 mkdocs-material
