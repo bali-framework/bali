@@ -10,6 +10,9 @@
 - Integrated database migrate by `FastAPI-Migrate`
 - Declarative API simple resource version (Major feature in 4.0)
 
+### Changed
+- upgrade grpc plugin versions
+
 ### Fixed
 - Fixed importlib-metadata 5.0 conflict with kombu
 
