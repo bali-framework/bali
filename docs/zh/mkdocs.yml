@@ -22,7 +22,9 @@ repo_url: https://github.com/bali-framework/bali
 edit_uri: ""
 
 nav:
-- 简介: index.md
+- 开始:
+  - 简介: index.md
+  - 快速上手: quick-start.md
 - App: application.md
 - 数据库: database.md
 - 缓存: cache.md

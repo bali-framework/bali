@@ -67,3 +67,43 @@ from bali.db.operators import get_filters_expr
 from models import User
 users = User.query().filter(*get_filters_expr(User, **filters)).all()
 ```
+
+## Migrate
+
+#### Migrate Config
+
+In <4.0 versions, you should enable migrate first.
+
+`ENABLE_MIGRATE` default value is `False` in <4.0, and will be `True` after 4.0 release. 
+
+```python
+class Settings(BaseSettings):
+    SQLALCHEMY_DATABASE_URI: str = 'sqlite:///todo.sqlite'
+    ENABLE_MIGRATE: bool = True
+```
+
+#### Migrate commands
+
+```bash
+python main.py db init
+```
+This will add a migrations folder to your application. 
+The contents of this folder need to be added to version control along with your other source files.
+
+
+```bash
+python main.py db migrate
+```
+Generate migration, the migration script needs to be reviewed and edited, as Alembic currently does not detect every change you make to your models.
+
+
+```bash
+python main.py db upgrade
+```
+Apply the migration to the database
+
+
+```bash
+python main.py db --help
+```
+To see all the commands that are available run this command
