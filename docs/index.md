@@ -39,6 +39,10 @@ It gives you the following features:
     <img width="200" src="https://raw.githubusercontent.com/bali-framework/bali/master/docs/img/cases/qfin.png" />
 </a>
 
+<a href="https://www.xinfei.cn/">
+    <img width="200" src="https://raw.githubusercontent.com/bali-framework/bali/master/docs/img/cases/xinfei.png" />
+</a>
+
 ## Requirements
 
 1. Python 3.7+
