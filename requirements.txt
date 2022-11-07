@@ -4,7 +4,7 @@ dateparser>=1.1.0
 fastapi[all]>=0.63.0,<=0.86
 fastapi-migrate==0.1.1
 fastapi-pagination>=0.9.0,<=0.10
-greenlet~=1.0
+greenlet>1.0,<=2.0.1
 grpcio>=1.32.0,<=1.50
 grpcio-tools>=1.32.0,<=1.48
 grpc-interceptor==0.15.0
