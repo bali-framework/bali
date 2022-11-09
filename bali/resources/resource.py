@@ -9,7 +9,7 @@ Resource's method input is Pydantic schema
 from collections import OrderedDict
 from typing import Optional
 
-import decamelize
+import humps
 from fastapi import HTTPException, status
 from fastapi_pagination import LimitOffsetPage
 from google.protobuf import message
@@ -40,7 +40,7 @@ class ResourceMeta(type):
         else:
             # Generate endpoint from resource name
             name = self.__name__.replace('Resource', '')
-            words = decamelize.convert(name).split('_')
+            words = humps.decamelize(name).split('_')
             words[-1] = pluralize(words[-1])
             endpoint = '-'.join(words)
 
