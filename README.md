@@ -50,21 +50,17 @@ It gives you the following features:
 
     1. Python 3.7+
     2. FastAPI 0.63+
-    3. grpcio>=1.32.0,<1.42
+    3. grpcio>=1.32,<1.50
 
 
 ## Install
 
 ```bash
-# Bali framework
-pip install bali-core 
-
-# Bali command line tool 
-pip install bali-cli  
+pip install bali-core # Bali framework 
+pip install bali-cli # Bali command line tool 
 ```
 
 ## Project structure layout
-
 
 
 ## Application 
@@ -72,22 +68,15 @@ pip install bali-cli
 Create Application
 
 ```python
-import greeter_server
-
-# Initialized App 
-app = Bali()
-# Updated settings
-app.settings(base_settings={'title': 'Bali App'})
+app = Bali() # Initialized App
 ```
 
 Launch 
 
 ```bash
-# lauch RPC 
-python main.py --rpc
-
-# lauch HTTP
-python main.py --http
+python main.py --http  # launch HTTP in development mode 
+python main.py --rpc  # launch RPC 
+python main.py --event  # launch Event 
 ```
 
 More usage of `Application`: [example](examples/main.py)
