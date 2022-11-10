@@ -3,9 +3,22 @@
 # This project adheres to [Semantic Versioning](http://semver.org/).
 # includes Added / Changed / Fixed
 
-## [3.4.0] UNRELEASED
+## [3.5.0] UNRELEASED
 
-## [3.3.0] UNRELEASED
+## [3.4.0] 2022-11-10
+### Added
+- Multi ENV Configuration [PR#153](https://github.com/bali-framework/bali/pull/153)
+- Added Python 3.11 to the officially supported versions
+
+### Changed
+- Upgraded requirements and removed `decamelize` dependency
+- Updated docs about using cases
+
+### Breaking changes
+
+If your project uses an outdated protobuf you may need to rebuild because all dependencies have been updated
+
+## [3.3.0] 2022-10-11
 ### Added
 - Integrated database migrate by `FastAPI-Migrate`
 - Declarative API simple resource version (Major feature in 4.0)
