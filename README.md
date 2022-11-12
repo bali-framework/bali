@@ -74,9 +74,15 @@ app = Bali() # Initialized App
 Launch 
 
 ```bash
-python main.py --http  # launch HTTP in development mode 
-python main.py --rpc  # launch RPC 
-python main.py --event  # launch Event 
+
+# With bali-cli 
+bali run http
+bali run rpc
+bali run event
+
+python main.py run --http  # launch HTTP in development mode 
+python main.py run --rpc  # launch RPC 
+python main.py run --event  # launch Event 
 ```
 
 More usage of `Application`: [example](examples/main.py)

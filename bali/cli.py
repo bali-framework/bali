@@ -28,7 +28,7 @@ def entry(application):
         enable_migrate = False
 
     if enable_migrate:
-        typer_app.command()(application.launch)
+        typer_app.command(name='run')(application.launch)
         typer_app.callback()(callback)
 
         from fastapi_migrate.cli import db
