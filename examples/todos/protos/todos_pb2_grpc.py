@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import todos_pb2 as todos__pb2
+from protos import todos_pb2 as protos_dot_todos__pb2
 
 
 class TodosStub(object):
@@ -16,28 +16,28 @@ class TodosStub(object):
         """
         self.ListTodos = channel.unary_unary(
                 '/todos.Todos/ListTodos',
-                request_serializer=todos__pb2.ListRequest.SerializeToString,
-                response_deserializer=todos__pb2.ListResponse.FromString,
+                request_serializer=protos_dot_todos__pb2.ListRequest.SerializeToString,
+                response_deserializer=protos_dot_todos__pb2.ListResponse.FromString,
                 )
         self.CreateTodo = channel.unary_unary(
                 '/todos.Todos/CreateTodo',
-                request_serializer=todos__pb2.CreateRequest.SerializeToString,
-                response_deserializer=todos__pb2.ItemResponse.FromString,
+                request_serializer=protos_dot_todos__pb2.CreateRequest.SerializeToString,
+                response_deserializer=protos_dot_todos__pb2.ItemResponse.FromString,
                 )
         self.GetTodo = channel.unary_unary(
                 '/todos.Todos/GetTodo',
-                request_serializer=todos__pb2.GetRequest.SerializeToString,
-                response_deserializer=todos__pb2.ItemResponse.FromString,
+                request_serializer=protos_dot_todos__pb2.GetRequest.SerializeToString,
+                response_deserializer=protos_dot_todos__pb2.ItemResponse.FromString,
                 )
         self.UpdateTodo = channel.unary_unary(
                 '/todos.Todos/UpdateTodo',
-                request_serializer=todos__pb2.UpdateRequest.SerializeToString,
-                response_deserializer=todos__pb2.ItemResponse.FromString,
+                request_serializer=protos_dot_todos__pb2.UpdateRequest.SerializeToString,
+                response_deserializer=protos_dot_todos__pb2.ItemResponse.FromString,
                 )
         self.DeleteTodo = channel.unary_unary(
                 '/todos.Todos/DeleteTodo',
-                request_serializer=todos__pb2.DeleteRequest.SerializeToString,
-                response_deserializer=todos__pb2.ResultResponse.FromString,
+                request_serializer=protos_dot_todos__pb2.DeleteRequest.SerializeToString,
+                response_deserializer=protos_dot_todos__pb2.ResultResponse.FromString,
                 )
 
 
@@ -79,28 +79,28 @@ def add_TodosServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'ListTodos': grpc.unary_unary_rpc_method_handler(
                     servicer.ListTodos,
-                    request_deserializer=todos__pb2.ListRequest.FromString,
-                    response_serializer=todos__pb2.ListResponse.SerializeToString,
+                    request_deserializer=protos_dot_todos__pb2.ListRequest.FromString,
+                    response_serializer=protos_dot_todos__pb2.ListResponse.SerializeToString,
             ),
             'CreateTodo': grpc.unary_unary_rpc_method_handler(
                     servicer.CreateTodo,
-                    request_deserializer=todos__pb2.CreateRequest.FromString,
-                    response_serializer=todos__pb2.ItemResponse.SerializeToString,
+                    request_deserializer=protos_dot_todos__pb2.CreateRequest.FromString,
+                    response_serializer=protos_dot_todos__pb2.ItemResponse.SerializeToString,
             ),
             'GetTodo': grpc.unary_unary_rpc_method_handler(
                     servicer.GetTodo,
-                    request_deserializer=todos__pb2.GetRequest.FromString,
-                    response_serializer=todos__pb2.ItemResponse.SerializeToString,
+                    request_deserializer=protos_dot_todos__pb2.GetRequest.FromString,
+                    response_serializer=protos_dot_todos__pb2.ItemResponse.SerializeToString,
             ),
             'UpdateTodo': grpc.unary_unary_rpc_method_handler(
                     servicer.UpdateTodo,
-                    request_deserializer=todos__pb2.UpdateRequest.FromString,
-                    response_serializer=todos__pb2.ItemResponse.SerializeToString,
+                    request_deserializer=protos_dot_todos__pb2.UpdateRequest.FromString,
+                    response_serializer=protos_dot_todos__pb2.ItemResponse.SerializeToString,
             ),
             'DeleteTodo': grpc.unary_unary_rpc_method_handler(
                     servicer.DeleteTodo,
-                    request_deserializer=todos__pb2.DeleteRequest.FromString,
-                    response_serializer=todos__pb2.ResultResponse.SerializeToString,
+                    request_deserializer=protos_dot_todos__pb2.DeleteRequest.FromString,
+                    response_serializer=protos_dot_todos__pb2.ResultResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -124,8 +124,8 @@ class Todos(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/todos.Todos/ListTodos',
-            todos__pb2.ListRequest.SerializeToString,
-            todos__pb2.ListResponse.FromString,
+            protos_dot_todos__pb2.ListRequest.SerializeToString,
+            protos_dot_todos__pb2.ListResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -141,8 +141,8 @@ class Todos(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/todos.Todos/CreateTodo',
-            todos__pb2.CreateRequest.SerializeToString,
-            todos__pb2.ItemResponse.FromString,
+            protos_dot_todos__pb2.CreateRequest.SerializeToString,
+            protos_dot_todos__pb2.ItemResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -158,8 +158,8 @@ class Todos(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/todos.Todos/GetTodo',
-            todos__pb2.GetRequest.SerializeToString,
-            todos__pb2.ItemResponse.FromString,
+            protos_dot_todos__pb2.GetRequest.SerializeToString,
+            protos_dot_todos__pb2.ItemResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -175,8 +175,8 @@ class Todos(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/todos.Todos/UpdateTodo',
-            todos__pb2.UpdateRequest.SerializeToString,
-            todos__pb2.ItemResponse.FromString,
+            protos_dot_todos__pb2.UpdateRequest.SerializeToString,
+            protos_dot_todos__pb2.ItemResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -192,7 +192,7 @@ class Todos(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/todos.Todos/DeleteTodo',
-            todos__pb2.DeleteRequest.SerializeToString,
-            todos__pb2.ResultResponse.FromString,
+            protos_dot_todos__pb2.DeleteRequest.SerializeToString,
+            protos_dot_todos__pb2.ResultResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

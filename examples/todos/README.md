@@ -10,12 +10,18 @@
 ```bash
 # Create database schema in shell
 # `db` is in shell context 
-python main.py --shell
+python main.py run --shell  # or `bali shell` with bali-cli
+python main.py --shell # (bali < 3.4)
 >>> db.create_all()
 
-# launch http & rpc 
+# launch http & rpc (bali < 3.4) 
 python main.py --http 
 python main.py --rpc
+# launch http & rpc (bali >= 3.4, bali-cli >= 2.5)
+python main.py run --http 
+python main.py run --rpc
+bali run http  # Short command with bali-cli
+bali run rpc  # Short command with bali-cli 
 ```
 
 ## Interact with OpenAPI 
