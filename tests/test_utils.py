@@ -1,6 +1,26 @@
 from datetime import datetime
 
-from bali.utils import timezone, dateparser, get_beginning_datetime
+from bali.utils import (
+    ParseDict,
+    MessageToDict,
+    timezone,
+    dateparser,
+    get_beginning_datetime,
+)
+from tests.test_services.protos import helloworld_pb2 as pb2
+
+
+class TestProtobufConverter:
+    def test_parse_dict(self):
+        d = {'name': 'protobuf'}
+        message = ParseDict(d, pb2.HelloRequest())
+        assert message
+
+    def test_message_to_dict(self):
+        message = pb2.HelloRequest(name='protobuf')
+        d = MessageToDict(message)
+        assert 'name' in d
+        assert d['name'] == 'protobuf'
 
 
 def test_parse_dmy_date():
