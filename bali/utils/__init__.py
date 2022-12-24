@@ -1,7 +1,7 @@
 import asyncio
-from enum import Enum
 from datetime import datetime, date
 from decimal import Decimal
+from enum import Enum
 
 import pytz
 from google.protobuf import json_format
@@ -11,17 +11,25 @@ from .timezone import StrTzInfoType, make_aware, is_aware
 
 
 class ProtobufParser(json_format._Parser):  # noqa
-    def _ConvertValueMessage(self, value, message):
+    def _ConvertValueMessage(self, value, message, path=''):
         """Convert a JSON representation into Value message."""
         if isinstance(value, dict):
-            self._ConvertStructMessage(value, message.struct_value)
+            try:
+                self._ConvertStructMessage(value, message.struct_value, path)
+            except TypeError:
+                # Compatible protobuf < 3.20
+                self._ConvertStructMessage(value, message.struct_value)
         elif isinstance(value, list):
-            self._ConvertListValueMessage(value, message.list_value)
+            try:
+                self._ConvertListValueMessage(value, message.list_value, path)
+            except TypeError:
+                # Compatible protobuf < 3.20
+                self._ConvertListValueMessage(value, message.list_value)
         elif value is None:
             message.null_value = 0
         elif isinstance(value, bool):
             message.bool_value = value
-        elif isinstance(value, json_format.six.string_types):
+        elif isinstance(value, str):
             message.string_value = value
         elif isinstance(value, json_format._INT_OR_FLOAT):  # noqa
             message.number_value = value
@@ -37,7 +45,9 @@ class ProtobufParser(json_format._Parser):  # noqa
             message.string_value = str(value)
         else:
             raise json_format.ParseError(
-                'Value {0} has unexpected type {1}.'.format(value, type(value))
+                'Value {0} has unexpected type {1}.'.format(
+                    value, type(value)
+                )
             )
 
 
@@ -119,8 +129,18 @@ def ParseDict(  # noqa
     ignore_unknown_fields=False,
     descriptor_pool=None,
 ):
-    parser = ProtobufParser(ignore_unknown_fields, descriptor_pool)
-    parser.ConvertMessage(js_dict, message)
+    # json_format._Parser introduced `max_recursion_depth` args
+    # from `protobuf 3.20`
+    try:
+        parser = ProtobufParser(
+            ignore_unknown_fields, descriptor_pool, max_recursion_depth=100
+        )
+        parser.ConvertMessage(js_dict, message, '')
+    except TypeError:
+        # Compatible protobuf < 3.20
+        parser = ProtobufParser(ignore_unknown_fields, descriptor_pool)
+        parser.ConvertMessage(js_dict, message)
+
     return message
 
 
