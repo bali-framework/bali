@@ -136,7 +136,8 @@ class RouterGenerator(Generator):
 
     def __call__(self):
 
-        # To fixed generic get action `/item/{id}` conflict with custom action `/item/hello`,
+        # To fixed generic get action `/item/{id}` conflict with
+        # custom action `/item/hello`,
         # must make sure get action `/item/{id}` is below custom action
         actions = sorted(
             self.cls._actions.keys(), key=lambda x: x in GENERIC_ACTIONS
@@ -268,7 +269,8 @@ class RouterGenerator(Generator):
                 create_(self),
                 methods=['POST'],
                 response_model=self.cls.schema and Optional[self.cls.schema],
-                summary=f'Create {self.resource_name}'
+                summary=f'Create {self.resource_name}',
+                status_code=status.HTTP_201_CREATED,
             )
         elif action == 'get':
             self.router.add_api_route(
@@ -276,7 +278,7 @@ class RouterGenerator(Generator):
                 get_(self),
                 methods=['GET'],
                 response_model=self.cls.schema,
-                summary=f'Get {self.resource_name}'
+                summary=f'Get {self.resource_name}',
             )
         elif action == 'update':
             self.router.add_api_route(

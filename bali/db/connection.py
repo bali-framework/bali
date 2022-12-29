@@ -10,6 +10,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.decl_api import DeclarativeMeta
 
 from .models import included_models
+from .. import typing
 from ..aio.sessions import AsyncSession
 from ..exceptions import DBSetupException
 
@@ -114,7 +115,7 @@ class DB:
             return getattr(self._db, attr)
 
 
-db = DB()
+db: typing.DB = DB()
 
 
 class TypeChecker:

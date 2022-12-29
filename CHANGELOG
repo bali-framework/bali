@@ -4,6 +4,13 @@
 # includes Added / Changed / Fixed
 
 ## [3.5.0] UNRELEASED
+### Changed
+- Created a typing.py file dedicated to storing type annotations
+- Make response code more appropriate for Resource create route
+
+## [3.4.1] 2022-12-24
+### Fixed
+- Fixed ParseDict/MessageToDict utils compatible in protobuf>=3.20
 
 ## [3.4.0] 2022-11-10
 ### Added
