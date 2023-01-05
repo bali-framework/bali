@@ -95,8 +95,8 @@ class DB:
         except AttributeError:
             if not self._db:
                 try:
-                    from config import settings
-                    self.connect(settings.SQLALCHEMY_DATABASE_URI)
+                    from conf import settings
+                    self.connect(settings.DATABASE)
                     if self._db:
                         return self.__getattribute__(attr)
                 except ModuleNotFoundError:
