@@ -1,9 +1,10 @@
 import calendar
 import os
-from datetime import datetime, date, timedelta
-from typing import Union
+from datetime import datetime, date, timedelta, time
+from typing import Union, Literal
 
 import pytz
+from dateutil.relativedelta import relativedelta
 
 TzInfoType = Union[type(pytz.utc), pytz.tzinfo.DstTzInfo]
 StrTzInfoType = Union[TzInfoType, str]
@@ -80,22 +81,50 @@ def localdate(value: datetime = None, timezone: StrTzInfoType = None) -> date:
     return localtime(value, timezone).date()
 
 
+GRANULARITY = Literal["year", "month", "week", "day"]
+
+
 def start_of(
-        granularity: str,
-        value: datetime = None,
-        *,
-        timezone: StrTzInfoType = None,
+    granularity: GRANULARITY,
+    value: datetime = None,
+    *,
+    timezone: StrTzInfoType = None,
 ) -> datetime:
-    value = localtime(value, timezone)
+    value = localtime(value, timezone=timezone)
     if granularity == "year":
-        value = value.replace(month=1, day=1)
+        result = value.replace(month=1, day=1)
     elif granularity == "month":
-        value = value.replace(day=1)
+        result = value.replace(day=1)
     elif granularity == "week":
-        value = value - timedelta(days=calendar.weekday(value.year, value.month, value.day))
+        result = value - timedelta(
+            days=calendar.weekday(value.year, value.month, value.day)
+        )
     elif granularity == "day":
-        pass
+        result = value
     else:
         raise ValueError("Granularity must be year, month, week or day")
 
-    return value.replace(hour=0, minute=0, second=0, microsecond=0)
+    return make_aware(datetime.combine(result, time.min))
+
+
+def end_of(
+    granularity: GRANULARITY,
+    value: datetime = None,
+    *,
+    timezone: StrTzInfoType = None,
+) -> datetime:
+    value = localtime(value, timezone=timezone)
+    if granularity == "year":
+        result = value.replace(month=12, day=31)
+    elif granularity == "month":
+        result = value + relativedelta(day=1, months=1, days=-1)
+    elif granularity == "week":
+        result = value + timedelta(
+            days=6 - calendar.weekday(value.year, value.month, value.day)
+        )
+    elif granularity == "day":
+        result = value
+    else:
+        raise ValueError("Granularity must be year, month, week or day")
+
+    return make_aware(datetime.combine(result, time.max))
