@@ -1,7 +1,8 @@
 import calendar
 import os
 from datetime import datetime, date, timedelta, time
-from typing import Union, Literal
+from typing import Union
+from typing_extensions import Literal
 
 import pytz
 from dateutil.relativedelta import relativedelta
