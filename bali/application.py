@@ -46,7 +46,13 @@ class GzipRoute(APIRoute):
 
 @singleton
 class Bali:
-    def __init__(self, base_settings=None, **kwargs):
+    def __init__(self, base_settings=None, proto_dir="protos", **kwargs):
+        """
+        :param base_settings: base settings
+        :param proto_dir: protobuf definition directory,
+                            eg: protos='proto.api.v1'
+        :param kwargs: other settings
+        """
         self.base_settings = base_settings or {}
         self.kwargs = kwargs
         self.title = kwargs.get('title', 'Bali')
@@ -56,6 +62,7 @@ class Bali:
         self._pb2 = None
         self._pb2_grpc = None
         self._rpc_servicer = None
+        self._proto_dir = proto_dir  # default protobuf definition directory
 
         # Create FastAPI instance ref to `self._app`
         self.http()
@@ -184,8 +191,8 @@ class Bali:
         add_pagination(self._app)
 
     def rpc(self):
-        pb2_path = f'protos.{self.title}_pb2'
-        pb2_grpc_path = f'protos.{self.title}_pb2_grpc'
+        pb2_path = f'{self._proto_dir}.{self.title}_pb2'
+        pb2_grpc_path = f'{self._proto_dir}.{self.title}_pb2_grpc'
 
         try:
             self._pb2 = import_module(pb2_path)
@@ -211,11 +218,11 @@ class Bali:
             pass
 
     def launch(
-        self,
-        http: bool = False,
-        rpc: bool = False,
-        event: bool = False,
-        shell: bool = False,
+            self,
+            http: bool = False,
+            rpc: bool = False,
+            event: bool = False,
+            shell: bool = False,
     ):
         """Bali App entry for version < 4.0"""
         if not any([http, rpc, event, shell]):
@@ -243,21 +250,25 @@ class Bali:
             ctx: dict = {'db': db}
             code.interact(banner=banner, local=ctx)
 
-    def register(self, resources_cls):
+    def register(self, resources_cls, with_http=True, with_rpc=True):
         if not isinstance(resources_cls, list):
             resources_cls = [resources_cls]
 
         for resource_cls in resources_cls:
-            # Register HTTP service
-            self._app.include_router(
-                router=resource_cls.as_router(),
-                prefix=resource_cls._http_endpoint,
-            )
-            # Register RPC service
-            if self._rpc_servicer:
-                resource_cls.as_servicer(self)
+            if with_http:
+                # Register HTTP service
+                self._app.include_router(
+                    router=resource_cls.as_router(),
+                    prefix=resource_cls._http_endpoint,
+                )
 
-        add_pagination(self._app)
+            if with_rpc:
+                # Register RPC service
+                if self._rpc_servicer:
+                    resource_cls.as_servicer(self)
+
+        if with_http:
+            add_pagination(self._app)
 
     def resolve_declarative(self):
         """Resolve declarative APIs"""
