@@ -1,13 +1,14 @@
 [tool.poetry]
 name = "bali"
-version = "0.1.0"
+version = "3.4.1"
 description = ""
 authors = ["Your Name <you@example.com>"]
 license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.7"
+
 greenlet = ">1.0,<=2.0.1"
 aiomysql = "^0.1.1"
 aiosqlite = "^0.18.0"
@@ -48,3 +49,7 @@ wheel = "^0.38.4"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+#[build-system]
+#requires = ["setuptools", "setuptools-scm"]
+#build-backend = "setuptools.build_meta"
