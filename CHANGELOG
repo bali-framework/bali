@@ -3,7 +3,12 @@
 # This project adheres to [Semantic Versioning](http://semver.org/).
 # includes Added / Changed / Fixed
 
-## [3.5.0] UNRELEASED
+## [3.5.1] UNRELEASED
+
+## [3.5.0] 2022-03-08
+### Added
+- Hybrid property to dict [PR#168](https://github.com/bali-framework/bali/pull/168)
+- Enhanced Bali.register() make http/rpc register optinal [PR#170](https://github.com/bali-framework/bali/pull/170)
 ### Changed
 - Created a typing.py file dedicated to storing type annotations
 - Make response code more appropriate for Resource create route
