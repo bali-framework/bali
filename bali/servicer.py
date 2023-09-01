@@ -49,7 +49,8 @@ def make_grpc_serve(app):
 
     # noinspection PyProtectedMember
     def serve():
-        port = 9080
+        host = app.rpc_host
+        port = app.rpc_port
         server = grpc.server(
             futures.ThreadPoolExecutor(max_workers=10),
             interceptors=[ProcessInterceptor()],
@@ -57,9 +58,10 @@ def make_grpc_serve(app):
 
         servicer = getattr(app._pb2_grpc, servicer_method)
         servicer(app._rpc_servicer(), server)
-        server.add_insecure_port(f'[::]:{port}')
+        server.add_insecure_port(f'{host}:{port}')
         server.start()
-        logger.info("Service started on port: %s (env: %s)", port, 'default')
+        logger.info("RPC Service started on port: %s (env: %s)", port, 'default')
+        print(f"RPC Service started on host: {host}:{port} (env: {'default'})") # async, will not show log
         server.wait_for_termination()
 
     return serve
