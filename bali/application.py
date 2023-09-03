@@ -57,6 +57,14 @@ class Bali:
         self.kwargs = kwargs
         self.title = kwargs.get('title', 'Bali')
 
+        # http host+port
+        self.http_host = kwargs.get('http_host', '0.0.0.0')  # 127. still works
+        self.http_port = kwargs.get('http_port', 8000)
+
+        # rpc host+port
+        self.rpc_host = kwargs.get('rpc_host', '[::]')
+        self.rpc_port = kwargs.get('rpc_port', 9080)
+
         self._app = None
 
         self._pb2 = None
@@ -93,11 +101,11 @@ class Bali:
     def rpc_servicer(self):
         return self._rpc_servicer
 
-    @staticmethod
-    def _launch_http():
+    def _launch_http(self):
         uvicorn.run(
             "main:app",
-            port=8000,
+            host=self.http_host,  # fix for docker port mapping
+            port=self.http_port,
             reload=True,
             access_log=True,
             reload_excludes=['*.log'],
