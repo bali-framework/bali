@@ -6,9 +6,13 @@
 > includes Added / Changed / Fixed
 > 
 
-## [3.5.1] UNRELEASED
+## [3.5.2] UNRELEASED
 
-## [3.5.0] 2022-03-08
+## [3.5.1] 2023-09-03
+### Added
+- Allows custom http host/port and rpc host/port [PR#172](https://github.com/bali-framework/bali/pull/172)
+
+## [3.5.0] 2023-03-08
 ### Added
 - Hybrid property to dict [PR#168](https://github.com/bali-framework/bali/pull/168)
 - Enhanced Bali.register() make http/rpc register optinal [PR#170](https://github.com/bali-framework/bali/pull/170)
