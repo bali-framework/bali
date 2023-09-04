@@ -1,6 +1,10 @@
 import typer
+from environs import Env
 
 typer_app = typer.Typer()
+
+env = Env()
+env.read_env()  # read .env file, if it exists
 
 
 def callback():
@@ -25,7 +29,7 @@ def entry(application):
         from config import settings
         enable_migrate = settings.ENABLE_MIGRATE
     except:
-        enable_migrate = False
+        enable_migrate = env.bool("ENABLE_MIGRATE", False)  # FIXME: Temporary solution.
 
     if enable_migrate:
         typer_app.command(name='run')(application.launch)
