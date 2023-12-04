@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "bali-core"
-version = "3.5.0"
+version = "3.5.1"
 description = ""
-authors = ["Your Name <you@example.com>"]
+authors = ["Josh Yu <josh.yu_8@live.com>"]
 license = "MIT"
 readme = "README.md"
 
@@ -10,7 +10,7 @@ readme = "README.md"
 packages = [{include = "bali", from = "."}]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 
 greenlet = ">1.0,<=2.0.1"
 aiomysql = "^0.1.1"
@@ -50,10 +50,21 @@ pytest-mock = "^3.10.0"
 twine = "^4.0.2"
 wheel = "^0.38.4"
 
+[tool.black]
+target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
+include = '\.pyi?$'
+exclude = '''
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | dist
+  )/
+  | setup.py         # also separately exclude a file in
+                     # the root of the project
+)
+'''
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-#[build-system]
-#requires = ["setuptools", "setuptools-scm"]
-#build-backend = "setuptools.build_meta"

@@ -1,4 +1,0 @@
-[style]
-based_on_style = facebook
-COLUMN_LIMIT = 79
-coalesce_brackets = True
