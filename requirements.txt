@@ -1,13 +1,13 @@
 # pre-install
-greenlet>1.0,<=2.0.1
+greenlet>1.0,<3.1
 
 # Bali requirements
-aiomysql
-aiosqlite
+aiomysql>0.1.1,<0.3
+aiosqlite>0.18.0,<0.20
 dateparser>=1.1.0
-fastapi[all]>=0.69.0,<=0.92
+fastapi[all]>=0.69.0,<0.105
 fastapi-migrate==0.1.1
-fastapi-pagination>=0.9.0,<=0.10
+fastapi-pagination>=0.9.0,<0.13
 grpcio>=1.39,<1.60
 grpcio-tools>=1.39,<1.60
 grpc-interceptor==0.15.0
@@ -16,7 +16,7 @@ kombu>=5.2.4,<6.0
 MarkupSafe==2.0.1
 PyMySQL>=0.9,<=1.0.2
 passlib[bcrypt]==1.7.2
-pillow>=7.2.0,<8.4
+pillow>=7.2.0,<11
 pydantic-sqlalchemy>=0.0.7,<1
 pyhumps
 pytz==2021.1
