@@ -1,5 +1,4 @@
-from fastapi_pagination import LimitOffsetParams, set_page
-from fastapi_pagination.limit_offset import Page
+from fastapi_pagination import LimitOffsetParams, set_page, Page
 from pydantic import BaseModel
 
 from .._utils import parse_dict

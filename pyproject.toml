@@ -39,6 +39,7 @@ environs = "^9.5.0"
 
 
 [tool.poetry.group.dev.dependencies]
+black = {extras = ["d"], version = "^21.12b0"}
 coverage = "^7.2.1"
 mkautodoc = "^0.2.0"
 mkdocs-material = "^9.1.1"
