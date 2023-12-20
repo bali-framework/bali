@@ -14,7 +14,7 @@ cache.set(key, value, timeout=10)
 ## cache memoize
 
 ```python
-# Import the cache_memoize from bali core 
+# Import the cache_memoize from bali-core core 
 from bali.core import cache_memoize
 # Attach decorator to cacheable function with a timeout of 100 seconds.
 @cache_memoize(100)

@@ -12,7 +12,7 @@ from typing import Callable, Any
 from grpc.aio import ServerInterceptor
 from ..core import _settings
 
-logger = logging.getLogger('bali')
+logger = logging.getLogger('bali-core')
 
 
 class ProcessInterceptor(ServerInterceptor):

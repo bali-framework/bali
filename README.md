@@ -56,8 +56,8 @@ It gives you the following features:
 ## Install
 
 ```bash
-pip install bali-core # Bali framework 
-pip install bali-cli # Bali command line tool 
+pip install bali-core-core # Bali framework 
+pip install bali-core-cli # Bali command line tool 
 ```
 
 ## Project structure layout
@@ -75,10 +75,10 @@ Launch
 
 ```bash
 
-# With bali-cli 
-bali run http
-bali run rpc
-bali run event
+# With bali-core-cli 
+bali-core run http
+bali-core run rpc
+bali-core run event
 
 python main.py run --http  # launch HTTP in development mode 
 python main.py run --rpc  # launch RPC 
@@ -314,7 +314,7 @@ cache.set(key, value, timeout=10)
 ### cache memoize
 
 ```python
-# Import the cache_memoize from bali core 
+# Import the cache_memoize from bali-core core 
 from bali import cache_memoize
 
 # Attach decorator to cacheable function with a timeout of 100 seconds.

@@ -7,6 +7,9 @@
 > 
 
 ## [3.5.2] UNRELEASED
+### Added
+- Python 3.12 supported
+- Updated dependencies
 
 ## [3.5.1] 2023-09-03
 ### Added

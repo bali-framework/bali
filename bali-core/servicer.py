@@ -6,7 +6,7 @@ from concurrent import futures
 
 import grpc
 
-logger = logging.getLogger('bali')
+logger = logging.getLogger('bali-core')
 
 
 class ServicerNotFound(Exception):

@@ -21,10 +21,10 @@ def entry(application):
     # in <4.0, ENABLE_MIGRATE default is `False`
     # in >=4.0, ENABLE_MIGRATE default is `True`
     #
-    # migrate disabled: cli used as same as bali < 4.0
+    # migrate disabled: cli used as same as bali-core < 4.0
     #   eg: python main.py --http
-    # migrate enabled: cli used as same as bali >= 4.0
-    #   eg: bali run http
+    # migrate enabled: cli used as same as bali-core >= 4.0
+    #   eg: bali-core run http
     try:
         from config import settings
         enable_migrate = settings.ENABLE_MIGRATE

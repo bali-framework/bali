@@ -8,7 +8,7 @@ from fastapi import FastAPI
 
 __all__ = ["add_background_tasks", "run_every"]
 
-logger = logging.getLogger('bali')
+logger = logging.getLogger('bali-core')
 background_tasks = set()
 
 

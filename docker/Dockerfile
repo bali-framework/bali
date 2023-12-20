@@ -24,7 +24,7 @@ RUN apt update && apt install tzdata locales -y \
     && sed -i -e 's/# id_ID.UTF-8 UTF-8/id_ID.UTF-8 UTF-8/' /etc/locale.gen \
     && locale-gen \
     && pip install pytest pytest-mock pytest-cov allure-pytest \
-    && pip install bali-core
+    && pip install bali-core-core
 
 # Add Tini
 ENV TINI_VERSION v0.18.0

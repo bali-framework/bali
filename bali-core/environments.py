@@ -17,7 +17,7 @@ import logging
 import os
 from enum import Enum
 
-logger = logging.getLogger('bali')
+logger = logging.getLogger('bali-core')
 
 
 # noinspection PyArgumentList

@@ -54,7 +54,7 @@ def process_rpc(resource, func):
 
         # if schema_in is not generic schema and has `data` key
         # parse data from `data`
-        # eg : {'data': {'name': 'bali'}}
+        # eg : {'data': {'name': 'bali-core'}}
         if schema_in not in [CreateRequest, UpdateRequest]:
             request_data = request_data.get('data')
 

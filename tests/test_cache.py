@@ -33,7 +33,7 @@ class TestCache:
 
     def test_cache_str(self):
         key = 'test_str'
-        value = 'hello, bali'
+        value = 'hello, bali-core'
         result = cache.set(key, value)
         assert result is True, 'Cache str value failed'
 

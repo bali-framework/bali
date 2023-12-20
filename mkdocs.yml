@@ -17,7 +17,7 @@ theme:
         icon: 'material/lightbulb-outline'
         name: 'Switch to light mode'
 
-repo_name: bali-framework/bali
+repo_name: bali-core-framework/bali-core
 repo_url: https://github.com/bali-framework/bali
 edit_uri: ""
 
@@ -34,7 +34,7 @@ nav:
 - Schema: schema.md
 - Utility: utility.md
 - Testing: testing.md
-- bali-cli: bali-cli.md
+- bali-cli: bali-core-cli.md
 - Release Notes: release-notes.md
 
 markdown_extensions:
@@ -46,8 +46,8 @@ markdown_extensions:
 extra:
   alternate:
     - name: English
-      link: /bali/
+      link: /bali-core/
       lang: en
     - name: 简体中文
-      link: /bali/zh/
+      link: /bali-core/zh/
       lang: zh

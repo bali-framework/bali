@@ -10,7 +10,7 @@ def read(f):
 INSTALL_REQUIREMENTS = read('requirements.txt').splitlines()
 
 setup(
-    name='bali-core',
+    name='bali-core-core',
     version=bali.__version__,
     description='Simplify FastAPI integrate gRPC services development',
     long_description=read('README.md'),
@@ -48,7 +48,7 @@ setup(
             'docs',
         ]
     ),
-    package_data={'bali': ['db/*.pyi']},
+    package_data={'bali-core': ['db/*.pyi']},
     include_package_data=True,
     zip_safe=False,
 )

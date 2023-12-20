@@ -53,8 +53,8 @@ Bali 的特性：
 
 ```shell
 # Bali framework
-pip install bali-core 
+pip install bali-core-core 
 
 # Bali command line tool 
-pip install bali-cli  
+pip install bali-core-cli  
 ```

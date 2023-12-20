@@ -20,7 +20,7 @@ from .middlewares import process_middleware
 from .servicer import get_servicer, make_grpc_serve
 from .utils import sync_exec
 
-logger = logging.getLogger('bali')
+logger = logging.getLogger('bali-core')
 
 
 class GzipRequest(Request):

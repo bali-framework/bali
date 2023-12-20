@@ -11,7 +11,7 @@ class TestEnvironments:
         os.environ['ENV'] = 'TEST'
 
         try:
-            del sys.modules["bali.environments"]
+            del sys.modules["bali-core.environments"]
         except KeyError:
             pass
 

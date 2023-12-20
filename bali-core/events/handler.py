@@ -9,7 +9,7 @@ from kombu import Connection, Queue, connections, Exchange
 REGISTER_EVENT_CALLBACKS = []
 REGISTER_EVENT_TYPES = []
 
-logger = logging.getLogger('bali')
+logger = logging.getLogger('bali-core')
 
 
 class Callback:

@@ -6,7 +6,7 @@ If you don't use `db.BaseModel`, you can compose Mixins to `db.Model`
 Import Mixins in your project examples:
 
     ```python
-    from bali.db.models import GenericModelMixin, ManagerMixin
+    from bali-core.db.models import GenericModelMixin, ManagerMixin
     ```
 
 """

@@ -18,7 +18,7 @@ Github: https://github.com/bali-framework/bali-cli
 ```bash
 # Add user service client to current project
 # run the command in project root directory
-bali add user
+bali-core add user
 ```
 
 **bali build**
@@ -30,5 +30,5 @@ bali add user
 ```bash
 # build gRPC pb2 and pb2_grpc files 
 # run the command in project root directory
-bali build
+bali-core build
 ```

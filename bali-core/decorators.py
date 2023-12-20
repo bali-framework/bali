@@ -14,7 +14,7 @@ from .paginate import paginate
 from .schemas import get_schema_in
 from .utils import MessageToDict, ParseDict
 
-logger = logging.getLogger('bali')
+logger = logging.getLogger('bali-core')
 
 
 def compatible_method(func):
