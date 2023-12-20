@@ -6,9 +6,6 @@ authors = ["Josh Yu <josh.yu_8@live.com>"]
 license = "MIT"
 readme = "README.md"
 
-# fix package dir
-packages = [{include = "bali", from = "."}]
-
 [tool.poetry.dependencies]
 python = "^3.8"
 

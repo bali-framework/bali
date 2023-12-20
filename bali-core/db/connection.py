@@ -10,7 +10,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.decl_api import DeclarativeMeta
 
 from .models import included_models
-from .. import typing
+from .. import typings
 from ..aio.sessions import AsyncSession
 from ..exceptions import DBSetupException
 

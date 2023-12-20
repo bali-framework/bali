@@ -4,10 +4,10 @@ version = "0.1.0"
 description = ""
 authors = ["Your Name <you@example.com>"]
 readme = "README.md"
-packages = [{include = "bali_deploy"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
+fabric = "^3.2.2"
 
 
 [build-system]

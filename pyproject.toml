@@ -66,6 +66,9 @@ exclude = '''
 )
 '''
 
+[tool.poetry-workspace-plugin]
+workspaces = {bali-core = "bali-core",bali-cli = "bali-cli",bali-sqlalchemy = "bali-sqlalchemy",bali-deploy = "bali-deploy",bali-django = "bali-django"}
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
