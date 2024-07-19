@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bali-core"
-version = "3.5.1"
+version = "3.5.2"
 description = ""
 authors = ["Josh Yu <josh.yu_8@live.com>"]
 license = "MIT"
