@@ -48,7 +48,7 @@ It gives you the following features:
 
 ## Requirements
 
-    1. Python 3.7+
+    1. Python 3.9+
     2. FastAPI 0.63+
     3. grpcio>=1.32,<1.50
 

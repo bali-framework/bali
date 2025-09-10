@@ -10,7 +10,7 @@ readme = "README.md"
 packages = [{include = "bali", from = "."}]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 
 greenlet = ">1.0,<3.1"
 aiomysql = ">0.1.1,<0.3"
@@ -52,7 +52,7 @@ twine = "^4.0.2"
 wheel = "^0.38.4"
 
 [tool.black]
-target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
+target-version = ['py39', 'py310', 'py311', 'py312', 'py313']
 include = '\.pyi?$'
 exclude = '''
 (
